@@ -65,7 +65,7 @@ const SelectedDiamondsSummary = ({ selectedIds, allDiamonds, onHold, onUnhold, o
 
       // 3. Call Backend API
       try {
-          const response = await fetch('http://localhost:5000/api/diamonds/order/confirm', {
+          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/order/confirm`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'

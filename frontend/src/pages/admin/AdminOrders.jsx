@@ -117,7 +117,7 @@ const AdminOrders = () => {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/diamonds/admin/orders', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/admin/orders`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -142,7 +142,7 @@ const AdminOrders = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/diamonds/admin/orders/update-status', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/admin/orders/update-status`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
