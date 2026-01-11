@@ -10,6 +10,8 @@ export const AuthProvider = ({ children }) => {
         try {
             const api = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
             
+            const token = localStorage.getItem('token');
+
             // Check if we have a user in localStorage first (optimization for immediate UI render while validating)
             const localUser = localStorage.getItem('user');
             if (localUser) {
@@ -20,8 +22,22 @@ export const AuthProvider = ({ children }) => {
                 }
             }
 
+            if (!token) {
+                // No token, so we are definitely not logged in. Don't call backend.
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+
             // Verify with server (this is the source of truth)
-            const res = await fetch(`${api}/auth/profile`, { credentials: 'include' });
+            // Added x-auth-token header as used elsewhere in the app
+            const res = await fetch(`${api}/auth/profile`, { 
+                headers: {
+                    'x-auth-token': token
+                },
+                credentials: 'include' 
+            });
+
             if (res.ok) {
                 const userData = await res.json();
                 setUser(userData);
@@ -30,7 +46,7 @@ export const AuthProvider = ({ children }) => {
                 // If server says no, clear everything
                 setUser(null);
                 localStorage.removeItem('user');
-                // We do NOT clear token here because we can't access it (HttpOnly), server handles it.
+                localStorage.removeItem('token'); 
             }
         } catch (err) {
             console.error("Auth check failed", err);
