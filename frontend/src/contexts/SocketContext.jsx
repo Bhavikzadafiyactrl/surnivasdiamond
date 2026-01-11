@@ -12,17 +12,10 @@ export const SocketProvider = ({ children }) => {
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        // Connect to Socket.io server (bandwidth efficient settings)
-        // Important: Don't include /api in the URL - Socket.io uses root path
-        // Use VITE_API_URL but strip '/api' to get the root backend URL for socket.io
-  const backendUrl = import.meta.env.VITE_API_URL.replace('/api', ''); // Direct to backend server
-        
-        const socketInstance = io(backendUrl, {
-            transports: ['websocket', 'polling'],
-            reconnection: true,
-            reconnectionDelay: 1000,
-            reconnectionAttempts: 5,
-            withCredentials: false
+        const socketInstance = io("/", {
+            path: "/socket.io",
+            transports: ["websocket"],
+            withCredentials: false,
         });
 
         socketInstance.on('connect', () => {
