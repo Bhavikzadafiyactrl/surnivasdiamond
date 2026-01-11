@@ -9,7 +9,11 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_USER || 'zadafiyaharsh2@gmail.com',
     pass: process.env.EMAIL_PASS // Gmail App Password from .env
-  }
+  },
+  // Add timeouts to prevent hanging (fixes Nginx 504/502 errors)
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 10000,
+  socketTimeout: 10000
 });
 
 // Verify transporter configuration
