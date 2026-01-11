@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Turnstile } from "@marsidev/react-turnstile";
+
 import logo from "../assets/logo.png";
 import brandingVideo from "../assets/SURNIVAS DIAMOND.mp4";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -37,7 +37,7 @@ const Auth = () => {
   });
 
   const [captcha, setCaptcha] = useState({ num1: 0, num2: 0 });
-  const [turnstileToken, setTurnstileToken] = useState("");
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -111,8 +111,7 @@ const Auth = () => {
           address: formData.address,
           city: formData.city,
           country: formData.country,
-          zipCode: formData.zipCode,
-          turnstileToken: turnstileToken
+          zipCode: formData.zipCode
         }),
       });
 
@@ -153,8 +152,7 @@ const Auth = () => {
         credentials: "include",
         body: JSON.stringify({
           email: formData.email,
-          password: formData.password,
-          turnstileToken: turnstileToken
+          password: formData.password
         }),
       });
 
@@ -622,16 +620,7 @@ const Auth = () => {
                 </div>
 
 
-                {/* Cloudflare Turnstile - Bot Protection */}
-                <div className="flex justify-center py-2">
-                  <Turnstile
-                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                    onSuccess={(token) => setTurnstileToken(token)}
-                    onError={() => setTurnstileToken("")}
-                    onExpire={() => setTurnstileToken("")}
-                    theme="light"
-                  />
-                </div>
+
 
 
                 {!isSignup && (

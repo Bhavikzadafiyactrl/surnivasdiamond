@@ -48,9 +48,7 @@ const sendVerifyOtp = async (user, email) => {
 exports.signup = async (req, res) => {
     try {
         console.log('Signup Request received for:', email);
-        let { name, email, password, mobile, companyName, address, city, country, zipCode, turnstileToken } = req.body;
-
-        // Turnstile verification removed as per user request
+        let { name, email, password, mobile, companyName, address, city, country, zipCode } = req.body;
 
         // Normalize email
         if (email) email = email.toLowerCase().trim();
