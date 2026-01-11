@@ -73,7 +73,7 @@ export default function Profile() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/profile`, {
+      const response = await fetch(`${API_URL}/auth/profile`, {
         headers: {
             // 'x-auth-token': token // Removed
         },
@@ -121,7 +121,7 @@ export default function Profile() {
     
     // 1. Request OTP
     try {
-        const response = await fetch(`${API_URL}/profile/send-otp`, {
+        const response = await fetch(`${API_URL}/auth/profile/send-otp`, {
             method: 'POST',
             credentials: 'include' // Add cookie support
         });
@@ -152,7 +152,7 @@ export default function Profile() {
       // const token = localStorage.getItem('token');
 
       try {
-          const response = await fetch(`${API_URL}/profile/verify-update`, {
+          const response = await fetch(`${API_URL}/auth/profile/verify-update`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
@@ -221,7 +221,7 @@ export default function Profile() {
       // const token = localStorage.getItem('token');
 
       try {
-          const response = await fetch(`${API_URL}/profile/send-otp`, {
+          const response = await fetch(`${API_URL}/auth/profile/send-otp`, {
               method: 'POST',
               credentials: 'include'
           });
@@ -251,7 +251,7 @@ export default function Profile() {
       // const token = localStorage.getItem('token');
 
       try {
-          const response = await fetch(`${API_URL}/change-password`, {
+          const response = await fetch(`${API_URL}/auth/change-password`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
