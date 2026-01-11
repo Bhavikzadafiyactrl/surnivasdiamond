@@ -97,7 +97,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/signup`, {
+      const response = await fetch(`${API_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -146,7 +146,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -197,7 +197,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/verify-otp`, {
+      const response = await fetch(`${API_URL}/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -245,7 +245,7 @@ const Auth = () => {
     setError("");
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/forgot-password`, {
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -268,7 +268,7 @@ const Auth = () => {
     setError("");
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/verify-reset-otp`, {
+      const response = await fetch(`${API_URL}/auth/verify-reset-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -290,7 +290,7 @@ const Auth = () => {
     setError("");
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/reset-password`, {
+      const response = await fetch(`${API_URL}/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
