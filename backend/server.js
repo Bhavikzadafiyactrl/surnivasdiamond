@@ -113,6 +113,7 @@ app.use(limiter);
 // Serve static files (uploaded images)
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Make io accessible to routes
 app.set('io', io);
