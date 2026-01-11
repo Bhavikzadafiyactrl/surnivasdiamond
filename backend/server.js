@@ -17,6 +17,10 @@ const server = http.createServer(app);
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://72.61.148.215",
+    "http://surnivasdiamond.com",
+    "https://surnivasdiamond.com",
+    "http://72.61.148.215:5000",
     process.env.FRONTEND_URL,
     "https://surnivashdiamond2.vercel.app", // Example production domain, user will need to update this
     "https://surnivashdiamond.netlify.app"
