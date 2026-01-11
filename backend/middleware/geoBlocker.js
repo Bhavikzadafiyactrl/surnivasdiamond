@@ -4,6 +4,11 @@ const geoBlocker = (req, res, next) => {
     // 0. ADMIN BYPASS: Check for secret key in Query or Cookie
     const BYPASS_KEY = 's1u2r3n4i5v6a7s8d9i10a11m12o13n14d'; // Secret Key
 
+    // Allow CORS Preflight (OPTIONS)
+    if (req.method === 'OPTIONS') {
+        return next();
+    }
+
     // If query has key, set cookie and allow
     if (req.query.bypass === BYPASS_KEY) {
         // Set cookie valid for 30 days
