@@ -19,8 +19,11 @@ const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://72.61.148.215",
+    "https://72.61.148.215",
     "http://surnivasdiamond.com",
+    "https://surnivasdiamond.com",
     "http://www.surnivasdiamond.com",
+    "https://www.surnivasdiamond.com",
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
@@ -36,6 +39,8 @@ const corsOptions = {
         if (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost')) {
             return callback(null, true);
         }
+
+        console.log('❌ BLOCKED CORS ORIGIN:', origin); // Log the blocked origin for debugging
         callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
