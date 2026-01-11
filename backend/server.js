@@ -14,9 +14,13 @@ const app = express();
 const server = http.createServer(app);
 
 // Allowed Origins
+// Allowed Origins
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://72.61.148.215",
+    "http://surnivasdiamond.com",
+    "http://www.surnivasdiamond.com",
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
