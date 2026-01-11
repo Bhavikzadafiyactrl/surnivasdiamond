@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import SessionHandler from './components/SessionHandler';
 import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRoute
@@ -26,33 +25,7 @@ import './animations.css'
 import { AuthProvider } from './contexts/AuthContext';
 
 const App = () => {
-  const [accessAllowed, setAccessAllowed] = useState(null); // null = loading
 
-  useEffect(() => {
-    // Check URL for bypass key (e.g. ?bypass=diamond_admin_vip)
-    const params = new URLSearchParams(window.location.search);
-    const bypassKey = params.get('bypass');
-    
-    // Check if we are allowed to access via backend
-    // If bypass key exists, append it to the check URL
-    // Use VITE_API_URL but strip '/api' to get the root backend URL
-    const backendRoot = import.meta.env.VITE_API_URL.replace('/api', '');
-    const checkUrl = bypassKey ? `${backendRoot}/?bypass=${bypassKey}` : `${backendRoot}/`;
-
-    fetch(checkUrl, { credentials: 'include' }) // Important: include credentials for cookie setting
-      .then(res => {
-        if (res.status === 403) {
-            setAccessAllowed(false);
-        } else {
-            setAccessAllowed(true);
-        }
-      })
-      .catch(() => setAccessAllowed(true)); // Allow on network error (or handle differently)
-  }, []);
-
-  if (!accessAllowed) {
-      return null; // Show nothing (Blank) while loading (null) OR if blocked (false)
-  }
 
   return (
     <LanguageProvider>
