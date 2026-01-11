@@ -30,18 +30,25 @@ const allowedOrigins = [
 // CORS Options
 const corsOptions = {
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, curl, or same-origin)
+        // allow same-origin, curl, mobile apps
         if (!origin) return callback(null, true);
+
         if (allowedOrigins.includes(origin)) {
             return callback(null, true);
         }
-        // In development, you might want to allow all localhost
-        if (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost')) {
+
+        // allow localhost in dev
+        if (
+            process.env.NODE_ENV !== 'production' &&
+            origin.startsWith('http://localhost')
+        ) {
             return callback(null, true);
         }
 
-        console.log('❌ BLOCKED CORS ORIGIN:', origin); // Log the blocked origin for debugging
-        callback(new Error('Not allowed by CORS'));
+        console.log('❌ BLOCKED CORS ORIGIN:', origin);
+
+        // ❗ DO NOT THROW
+        return callback(null, false);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
