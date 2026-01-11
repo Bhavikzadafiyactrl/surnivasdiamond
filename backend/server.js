@@ -40,17 +40,11 @@ const corsOptions = {
 
 // Socket.io with bandwidth optimization
 const io = new Server(server, {
+    path: "/socket.io",
     cors: {
-        origin: allowedOrigins,
-        methods: ["GET", "POST"],
-        credentials: true
-    },
-    // Bandwidth optimizations
-    transports: ['websocket', 'polling'], // Prefer websocket
-    pingTimeout: 60000,
-    pingInterval: 25000,
-    maxHttpBufferSize: 1e6, // 1MB max message size
-    compression: true // Enable compression
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
 });
 
 // Middleware
