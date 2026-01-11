@@ -35,7 +35,7 @@ export default function Contact() {
       let fullUser = localUser;
       if (token && localUser) {
         try {
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/profile`, {
+          const response = await fetch('http://localhost:5000/api/auth/profile', {
             headers: {
               'x-auth-token': token
             }

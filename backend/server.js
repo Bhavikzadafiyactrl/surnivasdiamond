@@ -17,13 +17,7 @@ const server = http.createServer(app);
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://72.61.148.215",
-    "http://surnivasdiamond.com",
-    "https://surnivasdiamond.com",
-    "http://72.61.148.215:5000",
-    process.env.FRONTEND_URL,
-    "https://surnivashdiamond2.vercel.app", // Example production domain, user will need to update this
-    "https://surnivashdiamond.netlify.app"
+    process.env.FRONTEND_URL
 ].filter(Boolean);
 
 // CORS Options
@@ -69,8 +63,7 @@ app.use(cookieParser());
 // Geo-Blocking (Vietnam Only)
 // Place after static files if you want to allow image loading globally, 
 // OR before static files to block everything. Placed here to block API access.
-const geoBlocker = require('./middleware/geoBlocker');
-app.use(geoBlocker);
+
 
 // Security Headers
 app.use(helmet({
@@ -157,6 +150,7 @@ app.use('/api/diamonds', require('./routes/diamondRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 app.use('/api/trending-diamonds', require('./routes/trendingDiamondRoutes'));
 app.use('/api/config', require('./routes/configRoutes'));
+
 
 // Basic Route
 app.get('/', (req, res) => {

@@ -6,26 +6,6 @@ const { logSecurityEvent } = require('../utils/logger');
 const SecurityLog = require('../models/SecurityLog');
 const { getDeviceFingerprint, checkOtpLimit, incrementOtpCount } = require('../utils/otpRateLimiter');
 
-
-// Twilio client initialization removed
-
-// Helper: Format Mobile to E.164
-const formatMobile = (mobile) => {
-    if (!mobile) return '';
-    let cleaned = mobile.toString().replace(/\D/g, ''); // Remove non-digits
-
-    // If 10 digits (e.g. 9876543210), assume India (+91)
-    if (cleaned.length === 10) {
-        return `+91${cleaned}`;
-    }
-    // If 12 digits starting with 91 (e.g. 919876543210), just add +
-    if (cleaned.length === 12 && cleaned.startsWith('91')) {
-        return `+${cleaned}`;
-    }
-    // Otherwise, ensure it has + if strictly needed, or just return +cleaned
-    return `+${cleaned}`;
-};
-
 // Helper: Send Verify OTP (Email)
 const sendVerifyOtp = async (user, email) => {
     if (!email) return false;
@@ -47,8 +27,9 @@ const sendVerifyOtp = async (user, email) => {
 // Signup
 exports.signup = async (req, res) => {
     try {
-        console.log('Signup Request received for:', email);
-        let { name, email, password, mobile, companyName, address, city, country, zipCode } = req.body;
+        let { name, email, password, mobile, companyName, address, city, country, zipCode, turnstileToken } = req.body;
+
+        // Turnstile verification removed as per user request
 
         // Normalize email
         if (email) email = email.toLowerCase().trim();

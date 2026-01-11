@@ -45,7 +45,7 @@ export default function ManageRegistrations() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/users`, {
+      const response = await fetch('http://localhost:5000/api/auth/users', {
         credentials: 'include'
       });
       const data = await response.json();
@@ -78,7 +78,7 @@ export default function ManageRegistrations() {
     try {
         if (action === 'delete') {
              await Promise.all(selectedUsers.map(id => 
-                 fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/users/delete`, {
+                 fetch('http://localhost:5000/api/auth/users/delete', {
                      method: 'DELETE',
                      headers: { 'Content-Type': 'application/json' },
                      credentials: 'include',
@@ -87,7 +87,7 @@ export default function ManageRegistrations() {
              ));
         } else if (action === 'role') {
              await Promise.all(selectedUsers.map(id => 
-                 fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/users/update`, {
+                 fetch('http://localhost:5000/api/auth/users/update', {
                      method: 'PUT',
                      headers: { 'Content-Type': 'application/json' },
                      credentials: 'include',
@@ -96,7 +96,7 @@ export default function ManageRegistrations() {
              ));
         } else if (action === 'verify') {
              await Promise.all(selectedUsers.map(id => 
-                 fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/users/update`, {
+                 fetch('http://localhost:5000/api/auth/users/update', {
                      method: 'PUT',
                      headers: { 'Content-Type': 'application/json' },
                      credentials: 'include',
@@ -105,7 +105,7 @@ export default function ManageRegistrations() {
              ));
         } else if (action === 'approve_owner') {
              await Promise.all(selectedUsers.map(id => 
-                 fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/users/update`, {
+                 fetch('http://localhost:5000/api/auth/users/update', {
                      method: 'PUT',
                      headers: { 'Content-Type': 'application/json' },
                      credentials: 'include',

@@ -54,7 +54,7 @@ export default function HoldDiamonds() {
   const fetchHeldDiamonds = async (userId) => {
     setSearchLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/held?userId=${userId}`, {
+      const response = await fetch(`http://localhost:5000/api/diamonds/held?userId=${userId}`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -120,7 +120,7 @@ export default function HoldDiamonds() {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/unhold`, {
+      const response = await fetch('http://localhost:5000/api/diamonds/unhold', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -163,7 +163,7 @@ export default function HoldDiamonds() {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/basket/add`, {
+      const response = await fetch('http://localhost:5000/api/diamonds/basket/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

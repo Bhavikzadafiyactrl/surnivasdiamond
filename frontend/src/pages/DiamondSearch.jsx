@@ -252,7 +252,7 @@ export default function DiamondSearch() {
       const user = userStr ? JSON.parse(userStr) : null;
       const userId = user ? (user.id || user._id) : null;
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/search`, {
+      const response = await fetch('http://localhost:5000/api/diamonds/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -312,7 +312,7 @@ export default function DiamondSearch() {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/hold`, {
+      const response = await fetch('http://localhost:5000/api/diamonds/hold', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -354,7 +354,7 @@ export default function DiamondSearch() {
     // if (!window.confirm("Are you sure you want to release these diamonds?")) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/unhold`, {
+      const response = await fetch('http://localhost:5000/api/diamonds/unhold', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -395,7 +395,7 @@ export default function DiamondSearch() {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/basket/add`, {
+      const response = await fetch('http://localhost:5000/api/diamonds/basket/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
