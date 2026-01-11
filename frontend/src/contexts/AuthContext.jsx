@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
         try {
-            const api = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+            const api = import.meta.env.VITE_API_URL;
             
             // Check if we have a user in localStorage first (optimization for immediate UI render while validating)
             const localUser = localStorage.getItem('user');
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            const api = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+            const api = import.meta.env.VITE_API_URL;
             await fetch(`${api}/auth/logout`, { method: 'POST', credentials: 'include' });
         } catch (err) {
             console.error(err);

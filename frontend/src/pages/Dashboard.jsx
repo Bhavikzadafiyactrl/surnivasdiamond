@@ -63,7 +63,7 @@ const TrendingDiamondCard = ({ diamond }) => {
           <div className="w-full h-64 bg-white relative">
               {isVideoFile(images[currentImageIndex]) ? (
                 <video 
-                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${images[currentImageIndex]}`}
+                    src={`${import.meta.env.VITE_API_URL}${images[currentImageIndex]}`}
                     className="w-full h-full object-contain absolute inset-0 transition-opacity duration-300 rounded-2xl"
                     autoPlay
                     loop
@@ -72,7 +72,7 @@ const TrendingDiamondCard = ({ diamond }) => {
                 />
               ) : (
                 <img 
-                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${images[currentImageIndex]}`}
+                    src={`${import.meta.env.VITE_API_URL}${images[currentImageIndex]}`}
                     alt={diamond.title}
                     className="w-full h-full object-contain absolute inset-0 transition-opacity duration-300 rounded-2xl"
                 />
@@ -258,7 +258,7 @@ const Dashboard = () => {
   const fetchStats = async () => {
       try {
           // const token = localStorage.getItem('token'); // Removed
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/admin/stats`, {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/admin/stats`, {
              credentials: 'include'
           });
           const data = await response.json();
@@ -274,7 +274,7 @@ const Dashboard = () => {
 
   const fetchTrendingDiamonds = async () => {
       try {
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/trending-diamonds`, {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/trending-diamonds`, {
             credentials: 'include' // Important for Geo-Bypass Cookie
           });
           const data = await response.json();
@@ -290,7 +290,7 @@ const Dashboard = () => {
 
   const fetchConfig = async () => {
       try {
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/config`, { credentials: 'include' });
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/config`, { credentials: 'include' });
           const data = await response.json();
           if (data.success && data.data) {
               setDashboardVideoUrl(data.data.dashboardVideoUrl);
@@ -396,7 +396,7 @@ const Dashboard = () => {
                         <div className="bg-black rounded-xl overflow-hidden shadow-lg h-full min-h-[300px] flex items-center justify-center relative">
                             {dashboardVideoUrl ? (
                                 <video 
-                                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${dashboardVideoUrl}`}
+                                    src={`${import.meta.env.VITE_API_URL}${dashboardVideoUrl}`}
                                     className="w-full h-full object-cover absolute inset-0"
                                     autoPlay
                                     loop

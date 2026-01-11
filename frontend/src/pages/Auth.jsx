@@ -58,7 +58,7 @@ const Auth = () => {
   };
 
   // API Config
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/auth";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [countryCode, setCountryCode] = useState("+91");
 

@@ -27,7 +27,7 @@ const AllOrderAdmin = () => {
 
   useEffect(() => {
     // Fetch All Orders (Admin Endpoint)
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/admin/orders`, {
+    fetch(`${import.meta.env.VITE_API_URL}/diamonds/admin/orders`, {
       credentials: 'include'
     })
     .then(res => res.json())

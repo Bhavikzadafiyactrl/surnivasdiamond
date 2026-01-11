@@ -39,7 +39,7 @@ export default function Profile() {
   const [showPasswordOtpModal, setShowPasswordOtpModal] = useState(false);
   const [showNoChangesModal, setShowNoChangesModal] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/auth";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [isEditing, setIsEditing] = useState(false);
 

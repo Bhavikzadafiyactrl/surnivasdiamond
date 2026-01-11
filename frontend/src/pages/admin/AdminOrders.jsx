@@ -173,7 +173,7 @@ const AdminOrders = () => {
       try {
         const amountToSend = specificAmount !== null ? specificAmount : tempPaymentAmount;
         const token = localStorage.getItem('token');
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/admin/orders/update-payment`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/admin/orders/update-payment`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -535,7 +535,7 @@ const AdminOrders = () => {
                                         // "If action === 'settle' ... currentPaid = paidAmount ... order.discount = total - currentPaid"
                                         // So we just need to send the calculated 'paidAmt' and action='settle'.
                                         
-                                        return fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/diamonds/admin/orders/update-payment`, {
+                                        return fetch(`${import.meta.env.VITE_API_URL}/diamonds/admin/orders/update-payment`, {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
                                             credentials: 'include',

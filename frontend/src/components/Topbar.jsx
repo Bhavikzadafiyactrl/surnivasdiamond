@@ -7,7 +7,7 @@ const Topbar = ({ userName, onMenuClick }) => {
   const navigate = useNavigate();
 
   /* API URL definition */
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/auth";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleLogout = async () => {
     try {

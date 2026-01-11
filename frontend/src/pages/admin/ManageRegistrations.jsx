@@ -357,7 +357,7 @@ export default function ManageRegistrations() {
                                         <select 
                                             value={u.managedBy || 'none'}
                                             onChange={(e) => {
-                                                fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/users/update`, {
+                                                fetch(`${import.meta.env.VITE_API_URL}/auth/users/update`, {
                                                     method: 'PUT',
                                                     headers: { 'Content-Type': 'application/json' },
                                                     credentials: 'include',

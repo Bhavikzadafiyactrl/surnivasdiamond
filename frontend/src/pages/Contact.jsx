@@ -11,7 +11,7 @@ export default function Contact() {
   const location = useLocation();
   const inquiryDiamonds = location.state?.diamonds || [];
   const isInquiry = location.state?.inquiry || false;
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [formData, setFormData] = useState({
     name: '',

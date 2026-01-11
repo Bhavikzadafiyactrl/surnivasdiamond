@@ -46,7 +46,7 @@ const AdminDiamondCard = ({ diamond, onToggle, onEdit, onDelete }) => {
       <div className="relative h-64 bg-white">
         {isVideoFile(images[currentImageIndex]) ? (
           <video 
-            src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${images[currentImageIndex]}`}
+            src={`${import.meta.env.VITE_API_URL}${images[currentImageIndex]}`}
             className="w-full h-full object-contain transition-opacity duration-300 rounded-2xl"
             autoPlay
             loop
@@ -55,7 +55,7 @@ const AdminDiamondCard = ({ diamond, onToggle, onEdit, onDelete }) => {
           />
         ) : (
           <img 
-            src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${images[currentImageIndex]}`}
+            src={`${import.meta.env.VITE_API_URL}${images[currentImageIndex]}`}
             alt={diamond.title}
             className="w-full h-full object-contain transition-opacity duration-300 rounded-2xl"
           />
@@ -236,7 +236,7 @@ const DashboardManagement = () => {
 
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : { name: 'Guest' };
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Dashboard Video State
   const [dashboardVideoUrl, setDashboardVideoUrl] = useState('');
@@ -470,7 +470,7 @@ const DashboardManagement = () => {
                     <div className="w-full md:w-1/2 aspect-video bg-black rounded-xl overflow-hidden relative group">
                         {dashboardVideoUrl ? (
                              <video 
-                                src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${dashboardVideoUrl}`}
+                                src={`${import.meta.env.VITE_API_URL}${dashboardVideoUrl}`}
                                 className="w-full h-full object-contain"
                                 controls
                             />
@@ -605,7 +605,7 @@ const DashboardManagement = () => {
                                  <div key={idx} className="relative group">
                                      {isVideoFile(url) ? (
                                        <video 
-                                         src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`}
+                                         src={`${import.meta.env.VITE_API_URL}${url}`}
                                          className="h-20 w-full object-cover rounded-lg border"
                                          autoPlay
                                          loop
@@ -614,7 +614,7 @@ const DashboardManagement = () => {
                                        />
                                      ) : (
                                        <img 
-                                          src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`}
+                                          src={`${import.meta.env.VITE_API_URL}${url}`}
                                           className="h-20 w-full object-cover rounded-lg border"
                                        />
                                      )}
