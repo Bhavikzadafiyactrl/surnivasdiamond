@@ -1,27 +1,13 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const twilio = require('twilio');
 const { sendOtpEmail } = require('../utils/emailService');
 const { logSecurityEvent } = require('../utils/logger');
 const SecurityLog = require('../models/SecurityLog');
 const { getDeviceFingerprint, checkOtpLimit, incrementOtpCount } = require('../utils/otpRateLimiter');
 
-// Config
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID || "VAbda00d44fdbfe0e0dd74c6c8367dbfee";
 
-let client;
-try {
-    if (accountSid && authToken) {
-        client = twilio(accountSid, authToken);
-    } else {
-        console.warn("Twilio credentials missing. Verify API will fail.");
-    }
-} catch (e) {
-    console.warn("Twilio Client Init Failed:", e.message);
-}
+// Twilio client initialization removed
 
 // Helper: Format Mobile to E.164
 const formatMobile = (mobile) => {
@@ -61,7 +47,7 @@ const sendVerifyOtp = async (user, email) => {
 // Signup
 exports.signup = async (req, res) => {
     try {
-        console.log('Signup Request Body:', req.body);
+        console.log('Signup Request received for:', email);
         let { name, email, password, mobile, companyName, address, city, country, zipCode, turnstileToken } = req.body;
 
         // Turnstile verification removed as per user request
