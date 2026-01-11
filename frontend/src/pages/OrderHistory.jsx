@@ -32,7 +32,7 @@ const OrderHistory = () => {
       const user = JSON.parse(userStr);
       setUserName(user.name || "User");
       
-      fetch(`http://localhost:5000/api/diamonds/orders?userId=${user.id || user._id}`, {
+      fetch(`${import.meta.env.VITE_API_URL}/diamonds/orders?userId=${user.id || user._id}`, {
         credentials: 'include'
       })
       .then(res => res.json())

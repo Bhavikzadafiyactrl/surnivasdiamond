@@ -60,9 +60,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-// Geo-Blocking (Vietnam Only)
-// Place after static files if you want to allow image loading globally, 
-// OR before static files to block everything. Placed here to block API access.
+
 
 
 // Security Headers

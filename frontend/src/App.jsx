@@ -35,7 +35,9 @@ const App = () => {
     
     // Check if we are allowed to access via backend
     // If bypass key exists, append it to the check URL
-    const checkUrl = bypassKey ? `http://localhost:5000/?bypass=${bypassKey}` : 'http://localhost:5000/';
+    // Use VITE_API_URL but strip '/api' to get the root backend URL
+    const backendRoot = import.meta.env.VITE_API_URL.replace('/api', '');
+    const checkUrl = bypassKey ? `${backendRoot}/?bypass=${bypassKey}` : `${backendRoot}/`;
 
     fetch(checkUrl, { credentials: 'include' }) // Important: include credentials for cookie setting
       .then(res => {

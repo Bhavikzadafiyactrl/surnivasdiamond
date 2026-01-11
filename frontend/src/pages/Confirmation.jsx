@@ -84,7 +84,7 @@ const Confirmation = () => {
 
   const fetchOrders = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/diamonds/orders?userId=${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/orders?userId=${userId}`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -232,7 +232,7 @@ const Confirmation = () => {
       if (!window.confirm(`Are you sure you want to cancel ${selectedIds.length} order(s)?`)) return;
 
       try {
-          const response = await fetch('http://localhost:5000/api/diamonds/order/cancel', {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/order/cancel`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'

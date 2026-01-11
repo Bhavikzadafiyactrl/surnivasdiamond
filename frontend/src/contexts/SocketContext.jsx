@@ -14,7 +14,8 @@ export const SocketProvider = ({ children }) => {
     useEffect(() => {
         // Connect to Socket.io server (bandwidth efficient settings)
         // Important: Don't include /api in the URL - Socket.io uses root path
-        const backendUrl = 'http://localhost:5000'; // Direct to backend server
+        // Use VITE_API_URL but strip '/api' to get the root backend URL for socket.io
+  const backendUrl = import.meta.env.VITE_API_URL.replace('/api', ''); // Direct to backend server
         
         const socketInstance = io(backendUrl, {
             transports: ['websocket', 'polling'],

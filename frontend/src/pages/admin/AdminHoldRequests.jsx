@@ -50,7 +50,7 @@ const AdminHoldRequests = () => {
 
   const fetchHeldDiamonds = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/diamonds/admin/held', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/admin/held`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -73,7 +73,7 @@ const AdminHoldRequests = () => {
     if (!window.confirm(`WARNING: Release ${idsToRelease.length} diamond(s)? They will become available for everyone.`)) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/diamonds/admin/release', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/admin/release`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

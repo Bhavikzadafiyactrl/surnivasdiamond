@@ -64,7 +64,7 @@ const AdminMessages = () => {
         field: searchField
       });
 
-      const response = await fetch(`http://localhost:5000/api/contact?${query.toString()}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/contact?${query.toString()}`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -94,7 +94,7 @@ const AdminMessages = () => {
     if (!window.confirm('Are you sure you want to delete this message?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/contact/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/contact/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -116,7 +116,7 @@ const AdminMessages = () => {
     if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} messages?`)) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/contact/bulk-delete', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/contact/bulk-delete`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -141,7 +141,7 @@ const AdminMessages = () => {
 
   const handleStatusUpdate = async (id, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/contact/${id}/status`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/contact/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

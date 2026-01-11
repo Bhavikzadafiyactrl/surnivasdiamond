@@ -55,7 +55,7 @@ export default function Basket() {
   const fetchBasket = async (userId) => {
     setBasketLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/diamonds/basket?userId=${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/basket?userId=${userId}`, {
          credentials: 'include'
       });
       const data = await response.json();
@@ -116,7 +116,7 @@ export default function Basket() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/diamonds/basket/remove', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/basket/remove`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -217,7 +217,7 @@ export default function Basket() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/diamonds/hold', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/hold`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -247,7 +247,7 @@ export default function Basket() {
     if (!userId) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/diamonds/unhold', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/unhold`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
