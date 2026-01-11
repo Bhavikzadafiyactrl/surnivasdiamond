@@ -1,0 +1,28 @@
+﻿                   )}
+                 </div>
+
+                 {/* View Toggle Buttons */}
+                 {filteredOrders.length > 0 && (
+                   <div className="flex justify-center gap-2 my-4">
+                       <button
+                           onClick={() => setViewMode('grid')}
+                           className={`px-4 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-2 ${
+                               viewMode === 'grid'
+                                   ? 'bg-blue-600 text-white shadow-md'
+                                   : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                           }`}
+                       >
+                           <FaTh /> Grid View
+                       </button>
+                       <button
+                           onClick={() => setViewMode('list')}
+                           className={`px-4 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-2 ${
+                               viewMode === 'list'
+                                   ? 'bg-blue-600 text-white shadow-md'
+                                   : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                           }`}
+                       >
+                           <FaThList /> List View
+                       </button>
+                   </div>
+                 )}
