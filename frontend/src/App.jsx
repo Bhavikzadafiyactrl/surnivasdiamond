@@ -32,7 +32,7 @@ const App = () => {
       <SocketProvider>
         <AuthProvider>
           <Router>
-            <SessionHandler />
+            {/* <SessionHandler /> */}
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/contact" element={<Contact />} />
