@@ -14,11 +14,12 @@ const Auth = () => {
   const navigate = useNavigate();
 
   // Redirect if already logged in
+  // Redirect if already logged in - WITH LOADING GUARD
   useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
+    if (user && !loading) {
+      navigate('/dashboard', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   // Form States
   const [formData, setFormData] = useState({
