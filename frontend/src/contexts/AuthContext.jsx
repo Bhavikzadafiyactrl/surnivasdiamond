@@ -21,7 +21,11 @@ export const AuthProvider = ({ children }) => {
             }
 
             // Verify with server (this is the source of truth)
-            const res = await fetch(`${api}/auth/profile`, { credentials: 'include' });
+            // Append timestamp to bypass browser cache (CRITICAL FIX)
+            const res = await fetch(`${api}/auth/profile?_t=${Date.now()}`, { 
+                credentials: 'include',
+                headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+            });
             if (res.ok) {
                 const userData = await res.json();
                 setUser(userData);
