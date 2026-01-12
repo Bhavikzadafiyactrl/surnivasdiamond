@@ -3,12 +3,8 @@ import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
 import { FaGem, FaShoppingBasket, FaHistory, FaSearch, FaArrowRight, FaCheck, FaTimes, FaMoneyBillWave, FaPause, FaBox, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdReceipt, MdDoneAll, MdCheckCircle } from 'react-icons/md';
-import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
-  const { user } = useAuth(); // Use context user
-  // const userStr = localStorage.getItem('user');
-  // const user = userStr ? JSON.parse(userStr) : { name: 'Guest' };
 
 // Helper function to check if a file is a video
 const isVideoFile = (url) => {
@@ -224,6 +220,7 @@ const Dashboard = () => {
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [dashboardVideoUrl, setDashboardVideoUrl] = useState('');
 
+  const { user } = useAuth(); 
   // const userStr = localStorage.getItem('user');
   // const user = userStr ? JSON.parse(userStr) : { name: 'Guest' };
 
