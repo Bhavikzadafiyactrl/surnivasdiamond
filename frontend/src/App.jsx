@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import SessionHandler from './components/SessionHandler';
+// import SessionHandler from './components/SessionHandler';
 import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRoute
 import LandingPage from './components/LandingPage'
 import Dashboard from './pages/Dashboard'
@@ -29,7 +29,8 @@ const App = () => {
 
   return (
     <LanguageProvider>
-      <SocketProvider>
+    <LanguageProvider>
+      {/* <SocketProvider> */}
         <AuthProvider>
           <Router>
             {/* <SessionHandler /> */}
@@ -57,7 +58,8 @@ const App = () => {
             </Routes>
           </Router>
         </AuthProvider>
-      </SocketProvider>
+      {/* </SocketProvider> */}
+    </LanguageProvider>
     </LanguageProvider>
   )
 }
