@@ -10,7 +10,18 @@ export const AuthProvider = ({ children }) => {
         try {
             const api = import.meta.env.VITE_API_URL;
             
-            // Check if we have a user in localStorage first (optimization for immediate UI render while validating)
+            // 1. Explicit Logout Check (The "Redesign")
+            // If the user explicitly logged out, DO NOT even ask the server.
+            // This prevents "Zombie Sessions" from showing up in the UI.
+            const isExplicitlyLoggedOut = localStorage.getItem('logout_marker');
+            if (isExplicitlyLoggedOut) {
+                console.log("User is explicitly logged out. Skipping server check.");
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+
+            // 2. Check if we have a user in localStorage (Optimization)
             const localUser = localStorage.getItem('user');
             if (localUser) {
                 try {
@@ -20,30 +31,24 @@ export const AuthProvider = ({ children }) => {
                 }
             }
 
-            // Verify with server (this is the source of truth)
-            // Append timestamp to bypass browser cache (CRITICAL FIX)
+            // 3. Verify with server
             const res = await fetch(`${api}/auth/profile?_t=${Date.now()}`, { 
                 credentials: 'include',
                 headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
             });
+
             if (res.ok) {
                 const userData = await res.json();
                 setUser(userData);
-                localStorage.setItem('user', JSON.stringify(userData)); // Sync local storage
+                localStorage.setItem('user', JSON.stringify(userData));
+                // Ensure marker is gone if server says we are valid (and we weren't explicitly out)
+                localStorage.removeItem('logout_marker'); 
             } else {
-                // If server says no, clear everything
                 setUser(null);
                 localStorage.removeItem('user');
-                // We do NOT clear token here because we can't access it (HttpOnly), server handles it.
             }
         } catch (err) {
             console.error("Auth check failed", err);
-            // On network error, we might want to keep the userlogged in optimistically? 
-            // For now, let's assume if check fails, we might be offline or session invalid.
-            // But if we have localUser, maybe keep it? 
-            // Safer to assume logged out if verification fails to prevent using stale token.
-            // However, typical pattern: fail softly. 
-            // If API is down, user experience is bad anyway.
         } finally {
             setLoading(false);
         }
@@ -56,12 +61,16 @@ export const AuthProvider = ({ children }) => {
     const login = (userData) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.removeItem('logout_marker'); // Clear the ban
     };
 
     const logout = async () => {
         try {
             const api = import.meta.env.VITE_API_URL;
-            // Clear local storage IMMEDIATELY before request to prevent race conditions or "flicker"
+            
+            // Set the "Ban" flag immediately
+            localStorage.setItem('logout_marker', 'true');
+            
             setUser(null);
             localStorage.removeItem('user');
             
@@ -69,7 +78,6 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
             console.error("Logout error", err);
         } finally {
-            // Force redirect even if API fails
              window.location.href = '/auth';
         }
     };
