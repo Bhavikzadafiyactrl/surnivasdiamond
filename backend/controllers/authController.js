@@ -183,7 +183,8 @@ exports.verifyOtp = async (req, res) => {
         const payload = {
             user: {
                 id: user._id,
-                role: user.role || 'client'
+                role: user.role || 'client',
+                tokenVersion: user.tokenVersion || 0
             }
         };
 
@@ -281,7 +282,8 @@ exports.login = async (req, res) => {
         const payload = {
             user: {
                 id: user._id,
-                role: user.role || 'client'
+                role: user.role || 'client',
+                tokenVersion: user.tokenVersion || 0
             }
         };
 
@@ -316,7 +318,15 @@ exports.login = async (req, res) => {
 };
 
 // Logout
-exports.logout = (req, res) => {
+exports.logout = async (req, res) => {
+    try {
+        if (req.user && req.user.id) {
+            // Invalidate token on server side
+            await User.findByIdAndUpdate(req.user.id, { $inc: { tokenVersion: 1 } });
+        }
+    } catch (e) {
+        console.error("Logout invalidation error", e);
+    }
 
     // NUCLEAR OPTION: Tell browser to clear everything
     res.set('Clear-Site-Data', '"cookies", "storage", "executionContexts"');

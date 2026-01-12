@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = function (req, res, next) {
+const User = require('../models/User');
+
+module.exports = async function (req, res, next) {
     // Get token from cookie (new only) OR header
     const token = req.cookies.session_token || req.header('x-auth-token');
-
-    // Check if not token
 
     // Check if not token
     if (!token) {
@@ -14,9 +14,26 @@ module.exports = function (req, res, next) {
     // Verify token
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Check if token version matches user version in DB (for invalidation)
+        const user = await User.findById(decoded.user.id).select('tokenVersion');
+
+        if (!user) {
+            return res.status(401).json({ message: 'User not found' });
+        }
+
+        // Compare versions (default 0 if undefined)
+        const tokenVersion = decoded.user.tokenVersion || 0;
+        const userVersion = user.tokenVersion || 0;
+
+        if (tokenVersion !== userVersion) {
+            return res.status(401).json({ message: 'Session expired/invalidated' });
+        }
+
         req.user = decoded.user;
         next();
     } catch (err) {
+        console.error("Auth Middleware Error:", err.message);
         res.status(401).json({ message: 'Token is not valid' });
     }
 };

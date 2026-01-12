@@ -81,6 +81,7 @@ const userSchema = new mongoose.Schema({
     otpSentDate: { type: Date },
     loginAttempts: { type: Number, default: 0 },
     lockUntil: { type: Date },
+    tokenVersion: { type: Number, default: 0 },
     createdAt: {
         type: Date,
         default: Date.now
