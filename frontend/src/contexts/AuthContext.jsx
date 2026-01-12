@@ -10,6 +10,17 @@ export const AuthProvider = ({ children }) => {
         try {
             const api = import.meta.env.VITE_API_URL;
             
+            // 1. ZOMBIE KILLER: Explicit Logout Check
+            // If the user manually logged out, we IGNORE the server session.
+            // This prevents "Stale Deployment" or "Old Cookie" issues from auto-logging them in.
+            const isManualLogout = localStorage.getItem('manual_logout');
+            if (isManualLogout) {
+                console.log("Manual logout active. Forcing logout state.");
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+
             // 1. OPTIMIZATION REMOVED: Do not trust localStorage blindly.
             // We wait for the server to confirm validity.
             // const localUser = localStorage.getItem('user');
@@ -25,6 +36,8 @@ export const AuthProvider = ({ children }) => {
                 const userData = await res.json();
                 setUser(userData);
                 localStorage.setItem('user', JSON.stringify(userData));
+                // Clear manual logout flag if server confirms valid session AND we didn't just logout
+                // (Handled by the check at the top)
             } else {
                 setUser(null);
                 localStorage.removeItem('user');
@@ -43,31 +56,26 @@ export const AuthProvider = ({ children }) => {
     const login = (userData) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.removeItem('manual_logout'); // Clear the flag
     };
 
     const logout = async () => {
+        // 1. Set the "Zombie Killer" flag
+        localStorage.setItem('manual_logout', 'true');
+        
+        // 2. Clear State Immediately (Optimistic)
+        setUser(null);
+        localStorage.removeItem('user');
+
         try {
             const api = import.meta.env.VITE_API_URL;
-            
-            // Wait for server to invalidate session
+            // Best effort network call
             const logoutUrl = `${api}/auth/logout`;
-            console.log("ATTEMPTING LOGOUT V5 TO:", logoutUrl);
-            window.APP_VERSION = "V5_LOGOUT_FIX";
-            
-            const res = await fetch(logoutUrl, { method: 'POST', credentials: 'include' });
-            
-            if (res.ok) {
-                console.log("Server logout successful - V5");
-            } else {
-                console.error("Server logout failed - V5", res.status);
-            }
-
+            await fetch(logoutUrl, { method: 'POST', credentials: 'include' });
         } catch (err) {
             console.error("Logout network error", err);
         } finally {
-            // Always clear local state and redirect, but ONLY after the attempt
-            setUser(null);
-            localStorage.removeItem('user');
+             // 3. FORCE REDIRECT
              window.location.href = '/auth';
         }
     };
