@@ -319,53 +319,23 @@ exports.login = async (req, res) => {
 exports.logout = (req, res) => {
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // Helper to clear cookie with various options
-    const paths = ['/', '/api', '/api/auth', '/api/auth/'];
-    const domains = [
-        undefined, // Current host (default)
-        '.surnivasdiamond.com',
-        'surnivasdiamond.com',
-        'www.surnivasdiamond.com',
-        req.hostname,
-        `.${req.hostname}`
-    ];
-
-    // Unique domains
-    const uniqueDomains = [...new Set(domains)];
-
-    // Cookies to clear (old 'token' and new 'session_token')
-    const cookiesToClear = ['session_token', 'token'];
-
-    cookiesToClear.forEach(cookieName => {
-        paths.forEach(path => {
-            uniqueDomains.forEach(domain => {
-                // Try clearing with SameSite: None (Secure)
-                if (isProduction) {
-                    res.clearCookie(cookieName, {
-                        path,
-                        domain,
-                        secure: true,
-                        sameSite: 'none',
-                        httpOnly: true
-                    });
-                }
-
-                // Try clearing with SameSite: Lax (Legacy/Default)
-                res.clearCookie(cookieName, {
-                    path,
-                    domain,
-                    secure: isProduction,
-                    sameSite: 'lax',
-                    httpOnly: true
-                });
-
-                // Try clearing without specific options (minimal)
-                res.clearCookie(cookieName, { path, domain });
-            });
-        });
+    // 1. Clear the primary session token with exact settings used in Login
+    res.clearCookie('session_token', {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
+        path: '/'
     });
 
-    res.json({ message: 'Logged out successfully' });
+    // 2. Clear the fallback/legacy token just in case
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
+        path: '/'
+    });
+
+    return res.status(200).json({ message: 'Logged out successfully' });
 };
 
 
