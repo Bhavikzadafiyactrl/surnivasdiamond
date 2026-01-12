@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const auth = require('../middleware/authMiddleware');
 const {
     signupValidation,
     loginValidation,
@@ -27,8 +28,8 @@ router.post('/login', loginValidation, handleValidationErrors, authController.lo
 
 // @route   POST api/auth/logout
 // @desc    Logout user & clear cookie
-// @access  Public
-router.post('/logout', authController.logout);
+// @access  Private
+router.post('/logout', auth, authController.logout);
 
 // @route   POST api/auth/resend-otp
 // @desc    Resend OTP for verification
@@ -49,8 +50,6 @@ router.post('/verify-reset-otp', authController.verifyResetOtp);
 // @desc    Reset password (final)
 // @access  Public
 router.post('/reset-password', resetPasswordValidation, handleValidationErrors, authController.resetPassword);
-
-const auth = require('../middleware/authMiddleware');
 
 // @route   GET api/auth/profile
 // @desc    Get current user profile

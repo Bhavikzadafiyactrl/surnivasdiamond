@@ -57,13 +57,17 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             const api = import.meta.env.VITE_API_URL;
+            // Clear local storage IMMEDIATELY before request to prevent race conditions or "flicker"
+            setUser(null);
+            localStorage.removeItem('user');
+            
             await fetch(`${api}/auth/logout`, { method: 'POST', credentials: 'include' });
         } catch (err) {
-            console.error(err);
+            console.error("Logout error", err);
+        } finally {
+            // Force redirect even if API fails
+             window.location.href = '/auth';
         }
-        setUser(null);
-        localStorage.removeItem('user');
-        window.location.href = '/auth';
     };
 
     return (
