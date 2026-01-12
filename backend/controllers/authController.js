@@ -320,7 +320,7 @@ exports.logout = (req, res) => {
     const isProduction = process.env.NODE_ENV === 'production';
 
     // Helper to clear cookie with various options
-    const path = '/';
+    const paths = ['/', '/api', '/api/auth', '/api/auth/'];
     const domains = [
         undefined, // Current host (default)
         '.surnivasdiamond.com',
@@ -333,29 +333,31 @@ exports.logout = (req, res) => {
     // Unique domains
     const uniqueDomains = [...new Set(domains)];
 
-    uniqueDomains.forEach(domain => {
-        // Try clearing with SameSite: None (Secure)
-        if (isProduction) {
+    paths.forEach(path => {
+        uniqueDomains.forEach(domain => {
+            // Try clearing with SameSite: None (Secure)
+            if (isProduction) {
+                res.clearCookie('token', {
+                    path,
+                    domain,
+                    secure: true,
+                    sameSite: 'none',
+                    httpOnly: true
+                });
+            }
+
+            // Try clearing with SameSite: Lax (Legacy/Default)
             res.clearCookie('token', {
                 path,
                 domain,
-                secure: true,
-                sameSite: 'none',
+                secure: isProduction,
+                sameSite: 'lax',
                 httpOnly: true
             });
-        }
 
-        // Try clearing with SameSite: Lax (Legacy/Default)
-        res.clearCookie('token', {
-            path,
-            domain,
-            secure: isProduction,
-            sameSite: 'lax',
-            httpOnly: true
+            // Try clearing without specific options (minimal)
+            res.clearCookie('token', { path, domain });
         });
-
-        // Try clearing without specific options (minimal)
-        res.clearCookie('token', { path, domain });
     });
 
     res.json({ message: 'Logged out successfully' });
@@ -419,6 +421,7 @@ exports.resendOtp = async (req, res) => {
 // Get Profile
 exports.getProfile = async (req, res) => {
     try {
+        res.set('Cache-Control', 'no-store');
         const user = await User.findById(req.user.id).select('-password -otp -otpExpires');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
