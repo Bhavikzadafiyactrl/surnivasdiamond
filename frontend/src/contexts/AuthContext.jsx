@@ -10,18 +10,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const api = import.meta.env.VITE_API_URL;
             
-            // 1. Explicit Logout Check (The "Redesign")
-            // If the user explicitly logged out, DO NOT even ask the server.
-            // This prevents "Zombie Sessions" from showing up in the UI.
-            const isExplicitlyLoggedOut = localStorage.getItem('logout_marker');
-            if (isExplicitlyLoggedOut) {
-                console.log("User is explicitly logged out. Skipping server check.");
-                setUser(null);
-                setLoading(false);
-                return;
-            }
-
-            // 2. Check if we have a user in localStorage (Optimization)
+            // 1. Check if we have a user in localStorage (Optimization)
             const localUser = localStorage.getItem('user');
             if (localUser) {
                 try {
@@ -31,7 +20,7 @@ export const AuthProvider = ({ children }) => {
                 }
             }
 
-            // 3. Verify with server
+            // 2. Verify with server
             const res = await fetch(`${api}/auth/profile?_t=${Date.now()}`, { 
                 credentials: 'include',
                 headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
@@ -41,8 +30,6 @@ export const AuthProvider = ({ children }) => {
                 const userData = await res.json();
                 setUser(userData);
                 localStorage.setItem('user', JSON.stringify(userData));
-                // Ensure marker is gone if server says we are valid (and we weren't explicitly out)
-                localStorage.removeItem('logout_marker'); 
             } else {
                 setUser(null);
                 localStorage.removeItem('user');
@@ -61,15 +48,11 @@ export const AuthProvider = ({ children }) => {
     const login = (userData) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.removeItem('logout_marker'); // Clear the ban
     };
 
     const logout = async () => {
         try {
             const api = import.meta.env.VITE_API_URL;
-            
-            // Set the "Ban" flag immediately
-            localStorage.setItem('logout_marker', 'true');
             
             setUser(null);
             localStorage.removeItem('user');

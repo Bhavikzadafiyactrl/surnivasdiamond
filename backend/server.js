@@ -88,7 +88,7 @@ const limiter = rateLimit({
     max: (req, res) => {
         try {
             // Check for token in cookies or header
-            let token = req.cookies?.session_token;
+            let token = req.cookies?.surnivash_auth_v3;
             if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
                 token = req.headers.authorization.split(' ')[1];
             }
@@ -96,7 +96,7 @@ const limiter = rateLimit({
             if (token) {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
                 if (decoded && decoded.user && decoded.user.role === 'owner') {
-                    return 10000; // Owner gets 10000 requests
+                    return 1000; // Owner gets 10000 requests
                 }
             }
         } catch (err) {

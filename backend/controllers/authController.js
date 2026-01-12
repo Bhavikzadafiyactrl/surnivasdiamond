@@ -197,7 +197,7 @@ exports.verifyOtp = async (req, res) => {
 
                 // Send HttpOnly Cookie
                 const isProduction = process.env.NODE_ENV === 'production';
-                res.cookie('session_token', token, {
+                res.cookie('surnivash_auth_v3', token, {
                     httpOnly: true,
                     secure: isProduction,
                     sameSite: isProduction ? 'none' : 'lax',
@@ -299,7 +299,7 @@ exports.login = async (req, res) => {
                 // But Secure MUST be true for SameSite: None
                 const isProduction = process.env.NODE_ENV === 'production';
 
-                res.cookie('session_token', token, {
+                res.cookie('surnivash_auth_v3', token, {
                     httpOnly: true,
                     secure: isProduction, // Secure is required for SameSite: None
                     sameSite: isProduction ? 'none' : 'lax',
@@ -331,20 +331,25 @@ exports.logout = async (req, res) => {
     // NUCLEAR OPTION: Tell browser to clear everything
     res.set('Clear-Site-Data', '"cookies", "storage", "executionContexts"');
 
-    const cookiesToClear = ['session_token', 'token'];
-    const options = [
-        { path: '/', httpOnly: true, secure: true, sameSite: 'none' },
-        { path: '/', httpOnly: true, secure: false, sameSite: 'lax' },
-        { path: '/', httpOnly: true, secure: true, sameSite: 'none', domain: 'surnivasdiamond.com' },
-        { path: '/', httpOnly: true, secure: false, sameSite: 'lax', domain: 'surnivasdiamond.com' },
-        { path: '/', httpOnly: true, secure: true, sameSite: 'none', domain: '.surnivasdiamond.com' },
-        { path: '/', httpOnly: true, secure: false, sameSite: 'lax', domain: '.surnivasdiamond.com' }
-    ];
+    // Clear current and legacy cookies
+    const cookiesToClear = ['surnivash_auth_v3', 'session_token', 'token'];
 
     cookiesToClear.forEach(cookieName => {
-        options.forEach(option => {
-            // Force expire
-            res.clearCookie(cookieName, option);
+        // Clear with standard path
+        res.clearCookie(cookieName, {
+            path: '/',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none'
+        });
+
+        // Also clear explicitly for domain for safety
+        res.clearCookie(cookieName, {
+            path: '/',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            domain: 'surnivasdiamond.com'
         });
     });
 

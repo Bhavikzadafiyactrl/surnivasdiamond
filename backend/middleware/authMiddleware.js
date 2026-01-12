@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 module.exports = async function (req, res, next) {
-    // Get token from cookie (new only) OR header
-    const token = req.cookies.session_token || req.header('x-auth-token');
+    // Get token from cookie (new V3 only) OR header
+    const token = req.cookies.surnivash_auth_v3 || req.header('x-auth-token');
 
     // Check if not token
     if (!token) {
