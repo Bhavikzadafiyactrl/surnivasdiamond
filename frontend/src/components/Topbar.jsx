@@ -1,26 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const Topbar = ({ userName, onMenuClick }) => {
   const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
 
   /* API URL definition */
-  const API_URL = import.meta.env.VITE_API_URL;
+  // const API_URL = import.meta.env.VITE_API_URL;
+  const { logout } = useAuth(); // Use context logout
 
   const handleLogout = async () => {
-    try {
-        await fetch(`${API_URL}/logout`, {
-            method: 'POST',
-            credentials: 'include'
-        });
-    } catch (error) {
-        console.error("Logout error", error);
-    }
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/'; 
+    logout();
   };
 
   return (
