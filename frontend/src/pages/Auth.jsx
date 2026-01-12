@@ -7,7 +7,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 const Auth = () => {
   const { t } = useLanguage();
-  const { login, user } = useAuth();
+  const { login, user, loading: authLoading } = useAuth();
   const [isSignup, setIsSignup] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [view, setView] = useState("login"); // login, signup, forgotPassword, resetOtp, newPassword
@@ -16,10 +16,10 @@ const Auth = () => {
   // Redirect if already logged in
   // Redirect if already logged in - WITH LOADING GUARD
   useEffect(() => {
-    if (user && !loading) {
+    if (user && !authLoading) {
       navigate('/dashboard', { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, authLoading, navigate]);
 
   // Form States
   const [formData, setFormData] = useState({
