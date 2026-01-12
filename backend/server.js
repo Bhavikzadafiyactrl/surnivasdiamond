@@ -119,6 +119,9 @@ app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 app.set('io', io);
 
 // Socket.io connection handler
+const { initSocket } = require('./utils/socketHelper');
+initSocket(io);
+
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
 

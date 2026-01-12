@@ -1,9 +1,11 @@
-// Socket.io utility to broadcast diamond status changes
-// Bandwidth-efficient: only sends minimal data (ID + status)
+let ioInstance;
+
+const initSocket = (io) => {
+    ioInstance = io;
+};
 
 const getIoInstance = () => {
-    const server = require('./server');
-    return server.io;
+    return ioInstance;
 };
 
 // Broadcast diamond status change to all connected clients
@@ -23,5 +25,7 @@ const broadcastDiamondUpdate = (diamondId, updates) => {
 };
 
 module.exports = {
+    initSocket,
+    getIoInstance,
     broadcastDiamondUpdate
 };
