@@ -191,7 +191,7 @@ exports.verifyOtp = async (req, res) => {
         jwt.sign(
             payload,
             process.env.JWT_SECRET,
-            { expiresIn: '30d' },
+            { expiresIn: '10s' }, // DEBUG: 10 seconds
             (err, token) => {
                 if (err) throw err;
 
@@ -201,7 +201,7 @@ exports.verifyOtp = async (req, res) => {
                     httpOnly: true,
                     secure: isProduction,
                     sameSite: isProduction ? 'none' : 'lax',
-                    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+                    maxAge: 10 * 1000, // 10 seconds
                     path: '/'
                 });
 
@@ -292,7 +292,7 @@ exports.login = async (req, res) => {
         jwt.sign(
             payload,
             process.env.JWT_SECRET,
-            { expiresIn: '30d' },
+            { expiresIn: '10s' }, // DEBUG: 10 seconds
             (err, token) => {
                 if (err) throw err;
 
@@ -303,7 +303,7 @@ exports.login = async (req, res) => {
                     httpOnly: true,
                     secure: isProduction, // Secure is required for SameSite: None
                     sameSite: isProduction ? 'none' : 'lax',
-                    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+                    maxAge: 10 * 1000, // 10 seconds
                     path: '/'
                 });
 
