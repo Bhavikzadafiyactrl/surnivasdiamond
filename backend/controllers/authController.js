@@ -319,27 +319,49 @@ exports.login = async (req, res) => {
 exports.logout = (req, res) => {
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // Clear with primary settings
-    res.clearCookie('token', {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? 'none' : 'lax',
-        path: '/'
-    });
+    // Helper to clear cookie with various options
+    const path = '/';
+    const domains = [
+        undefined, // Current host (default)
+        '.surnivasdiamond.com',
+        'surnivasdiamond.com',
+        'www.surnivasdiamond.com',
+        req.hostname,
+        `.${req.hostname}`
+    ];
 
-    // Also attempt to clear legacy/Lax cookie just in case
-    // This handles the transition or if the browser has a 'Lax' cookie stuck
-    if (isProduction) {
+    // Unique domains
+    const uniqueDomains = [...new Set(domains)];
+
+    uniqueDomains.forEach(domain => {
+        // Try clearing with SameSite: None (Secure)
+        if (isProduction) {
+            res.clearCookie('token', {
+                path,
+                domain,
+                secure: true,
+                sameSite: 'none',
+                httpOnly: true
+            });
+        }
+
+        // Try clearing with SameSite: Lax (Legacy/Default)
         res.clearCookie('token', {
-            httpOnly: true,
-            secure: true,
+            path,
+            domain,
+            secure: isProduction,
             sameSite: 'lax',
-            path: '/'
+            httpOnly: true
         });
-    }
+
+        // Try clearing without specific options (minimal)
+        res.clearCookie('token', { path, domain });
+    });
 
     res.json({ message: 'Logged out successfully' });
 };
+
+
 
 // Resend OTP
 exports.resendOtp = async (req, res) => {
