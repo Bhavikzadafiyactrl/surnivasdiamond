@@ -319,20 +319,25 @@ exports.login = async (req, res) => {
 exports.logout = (req, res) => {
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // 1. Clear the primary session token with exact settings used in Login
-    res.clearCookie('session_token', {
+    // NUCLEAR OPTION: Tell browser to clear everything
+    res.set('Clear-Site-Data', '"cookies", "storage", "executionContexts"');
+
+    // 1. Manually expire the session token
+    res.cookie('session_token', '', {
         httpOnly: true,
         secure: isProduction,
-        sameSite: isProduction ? 'none' : 'lax',
-        path: '/'
+        sameSite: isProduction ? 'none' : 'lax', // Must match login
+        path: '/',
+        expires: new Date(0) // 1970
     });
 
-    // 2. Clear the fallback/legacy token just in case
-    res.clearCookie('token', {
+    // 2. Clear old token manually
+    res.cookie('token', '', {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? 'none' : 'lax',
-        path: '/'
+        path: '/',
+        expires: new Date(0)
     });
 
     return res.status(200).json({ message: 'Logged out successfully' });
