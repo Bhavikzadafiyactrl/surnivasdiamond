@@ -196,7 +196,7 @@ exports.verifyOtp = async (req, res) => {
 
                 // Send HttpOnly Cookie
                 const isProduction = process.env.NODE_ENV === 'production';
-                res.cookie('token', token, {
+                res.cookie('session_token', token, {
                     httpOnly: true,
                     secure: isProduction,
                     sameSite: isProduction ? 'none' : 'lax',
@@ -297,7 +297,7 @@ exports.login = async (req, res) => {
                 // But Secure MUST be true for SameSite: None
                 const isProduction = process.env.NODE_ENV === 'production';
 
-                res.cookie('token', token, {
+                res.cookie('session_token', token, {
                     httpOnly: true,
                     secure: isProduction, // Secure is required for SameSite: None
                     sameSite: isProduction ? 'none' : 'lax',
@@ -333,30 +333,35 @@ exports.logout = (req, res) => {
     // Unique domains
     const uniqueDomains = [...new Set(domains)];
 
-    paths.forEach(path => {
-        uniqueDomains.forEach(domain => {
-            // Try clearing with SameSite: None (Secure)
-            if (isProduction) {
-                res.clearCookie('token', {
+    // Cookies to clear (old 'token' and new 'session_token')
+    const cookiesToClear = ['session_token', 'token'];
+
+    cookiesToClear.forEach(cookieName => {
+        paths.forEach(path => {
+            uniqueDomains.forEach(domain => {
+                // Try clearing with SameSite: None (Secure)
+                if (isProduction) {
+                    res.clearCookie(cookieName, {
+                        path,
+                        domain,
+                        secure: true,
+                        sameSite: 'none',
+                        httpOnly: true
+                    });
+                }
+
+                // Try clearing with SameSite: Lax (Legacy/Default)
+                res.clearCookie(cookieName, {
                     path,
                     domain,
-                    secure: true,
-                    sameSite: 'none',
+                    secure: isProduction,
+                    sameSite: 'lax',
                     httpOnly: true
                 });
-            }
 
-            // Try clearing with SameSite: Lax (Legacy/Default)
-            res.clearCookie('token', {
-                path,
-                domain,
-                secure: isProduction,
-                sameSite: 'lax',
-                httpOnly: true
+                // Try clearing without specific options (minimal)
+                res.clearCookie(cookieName, { path, domain });
             });
-
-            // Try clearing without specific options (minimal)
-            res.clearCookie('token', { path, domain });
         });
     });
 
