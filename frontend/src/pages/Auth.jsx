@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import brandingVideo from "../assets/SURNIVAS DIAMOND.mp4";
+import brandingVideo from "../assets/surnivas_diamond.mp4";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
 
