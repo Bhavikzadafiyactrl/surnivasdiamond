@@ -19,7 +19,7 @@ import DashboardManagement from './pages/admin/DashboardManagement'
 import Confirmation from './pages/Confirmation';
 import OrderHistory from './pages/OrderHistory';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { SocketProvider } from './contexts/SocketContext';
+// import { SocketProvider } from './contexts/SocketContext';
 import './animations.css'
 
 import { AuthProvider } from './contexts/AuthContext';
