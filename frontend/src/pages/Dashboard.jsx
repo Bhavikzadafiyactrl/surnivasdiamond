@@ -3,6 +3,8 @@ import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
 import { FaGem, FaShoppingBasket, FaHistory, FaSearch, FaArrowRight, FaCheck, FaTimes, FaMoneyBillWave, FaPause, FaBox, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdReceipt, MdDoneAll, MdCheckCircle } from 'react-icons/md';
+import { Link } from 'react-router-dom';
+import { useSocket } from '../contexts/SocketContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 
