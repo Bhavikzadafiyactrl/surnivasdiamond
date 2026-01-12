@@ -409,9 +409,17 @@ exports.resendOtp = async (req, res) => {
 // Get Profile
 exports.getProfile = async (req, res) => {
     try {
-        res.set('Cache-Control', 'no-store');
+        // Prevent Caching of Auth Status
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+        res.set('Surrogate-Control', 'no-store');
+
+        console.log(`[GET PROFILE] Checking user: ${req.user.id}`);
+
         const user = await User.findById(req.user.id).select('-password -otp -otpExpires');
         if (!user) {
+            console.log(`[GET PROFILE] User not found: ${req.user.id}`);
             return res.status(404).json({ message: 'User not found' });
         }
         res.json(user);

@@ -27,9 +27,11 @@ module.exports = async function (req, res, next) {
         const userVersion = user.tokenVersion || 0;
 
         if (tokenVersion !== userVersion) {
+            console.log(`[AUTH FAIL] Version Mismatch. User: ${user._id}, Token: ${tokenVersion}, DB: ${userVersion}`);
             return res.status(401).json({ message: 'Session expired/invalidated' });
         }
 
+        console.log(`[AUTH SUCCESS] User: ${user._id}, Version: ${tokenVersion}`);
         req.user = decoded.user;
         next();
     } catch (err) {
