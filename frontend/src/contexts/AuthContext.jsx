@@ -53,9 +53,9 @@ export const AuthProvider = ({ children }) => {
             const res = await fetch(`${api}/auth/logout`, { method: 'POST', credentials: 'include' });
             
             if (res.ok) {
-                console.log("Server logout successful");
+                console.log("Server logout successful - V4");
             } else {
-                console.error("Server logout failed", res.status);
+                console.error("Server logout failed - V4", res.status);
             }
 
         } catch (err) {
