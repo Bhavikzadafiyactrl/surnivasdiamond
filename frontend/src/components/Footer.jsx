@@ -8,12 +8,14 @@ const Footer = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
 
+  const showGlobalPresence = user?.verifiedByOwners;
+
   return (
     <footer className="bg-gray-900 text-white py-16 px-6 border-t border-gray-800">
-      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
+      <div className={`max-w-7xl mx-auto grid gap-12 ${showGlobalPresence ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
         
         {/* Global Presence - Only for Verified Users */}
-        {user?.verifiedByOwners && (
+        {showGlobalPresence && (
           <div className="text-center md:text-left">
             <h3 className="text-2xl font-serif mb-8 text-white border-b border-gray-700 inline-block pb-2">{t('footer.globalPresence')}</h3>
             <div className="flex flex-col gap-4 text-gray-300">
@@ -34,11 +36,11 @@ const Footer = () => {
         )}
         
         {/* Contact Details */}
-        <div className="text-center md:text-right">
+        <div className={`text-center ${showGlobalPresence ? 'md:text-right' : ''}`}>
            <h3 className="text-2xl font-serif mb-8 text-white border-b border-gray-700 inline-block pb-2">{t('footer.contactDetails')}</h3>
-           <div className="flex flex-col gap-6 text-gray-300 items-center md:items-end">
+           <div className={`flex flex-col gap-6 text-gray-300 items-center ${showGlobalPresence ? 'md:items-end' : ''}`}>
              {/* Contact 1 */}
-             <div className="flex flex-col items-center md:items-end gap-2">
+             <div className={`flex flex-col items-center ${showGlobalPresence ? 'md:items-end' : ''} gap-2`}>
                 <span className="text-lg tracking-wide hover:text-white transition-colors font-medium">+91 78745 37685</span>
                 <div className="flex gap-3">
                   <a href="https://viber.click/917874537685" target="_blank" rel="noopener noreferrer" className="p-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors" title="Viber">
@@ -54,7 +56,7 @@ const Footer = () => {
              </div>
 
              {/* Contact 2 */}
-             <div className="flex flex-col items-center md:items-end gap-2">
+             <div className={`flex flex-col items-center ${showGlobalPresence ? 'md:items-end' : ''} gap-2`}>
                 <span className="text-lg tracking-wide hover:text-white transition-colors font-medium">+91 92744 89860</span>
                 <div className="flex gap-3">
                   <a href="https://viber.click/919274489860" target="_blank" rel="noopener noreferrer" className="p-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors" title="Viber">
