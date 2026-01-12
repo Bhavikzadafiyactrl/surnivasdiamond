@@ -31,6 +31,9 @@ module.exports = async function (req, res, next) {
             return res.status(401).json({ message: 'Session expired/invalidated' });
         }
 
+        // Set Debug Header
+        res.setHeader('X-Auth-Debug', `User=${user._id}, TokenVer=${tokenVersion}, DBVer=${userVersion}`);
+
         console.log(`[AUTH SUCCESS] User: ${user._id}, Version: ${tokenVersion}`);
         req.user = decoded.user;
         next();

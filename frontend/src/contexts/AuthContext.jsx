@@ -10,15 +10,10 @@ export const AuthProvider = ({ children }) => {
         try {
             const api = import.meta.env.VITE_API_URL;
             
-            // 1. Check if we have a user in localStorage (Optimization)
-            const localUser = localStorage.getItem('user');
-            if (localUser) {
-                try {
-                    setUser(JSON.parse(localUser));
-                } catch (e) {
-                    console.error("Invalid local user data", e);
-                }
-            }
+            // 1. OPTIMIZATION REMOVED: Do not trust localStorage blindly.
+            // We wait for the server to confirm validity.
+            // const localUser = localStorage.getItem('user');
+            // if (localUser) { ... }
 
             // 2. Verify with server
             const res = await fetch(`${api}/auth/profile?_t=${Date.now()}`, { 
@@ -54,13 +49,21 @@ export const AuthProvider = ({ children }) => {
         try {
             const api = import.meta.env.VITE_API_URL;
             
+            // Wait for server to invalidate session
+            const res = await fetch(`${api}/auth/logout`, { method: 'POST', credentials: 'include' });
+            
+            if (res.ok) {
+                console.log("Server logout successful");
+            } else {
+                console.error("Server logout failed", res.status);
+            }
+
+        } catch (err) {
+            console.error("Logout network error", err);
+        } finally {
+            // Always clear local state and redirect, but ONLY after the attempt
             setUser(null);
             localStorage.removeItem('user');
-            
-            await fetch(`${api}/auth/logout`, { method: 'POST', credentials: 'include' });
-        } catch (err) {
-            console.error("Logout error", err);
-        } finally {
              window.location.href = '/auth';
         }
     };
