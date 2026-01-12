@@ -320,9 +320,13 @@ exports.login = async (req, res) => {
 // Logout
 exports.logout = async (req, res) => {
     try {
+        console.log(`[LOGOUT START] User: ${req.user ? req.user.id : 'undefined'}`);
         if (req.user && req.user.id) {
             // Invalidate token on server side
-            await User.findByIdAndUpdate(req.user.id, { $inc: { tokenVersion: 1 } });
+            const updatedUser = await User.findByIdAndUpdate(req.user.id, { $inc: { tokenVersion: 1 } }, { new: true });
+            console.log(`[LOGOUT INVALIDATION] User: ${req.user.id}, New TokenVersion: ${updatedUser ? updatedUser.tokenVersion : 'null'}`);
+        } else {
+            console.log("[LOGOUT ERROR] No user found in request object.");
         }
     } catch (e) {
         console.error("Logout invalidation error", e);
