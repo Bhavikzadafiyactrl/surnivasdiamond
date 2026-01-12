@@ -88,7 +88,7 @@ const limiter = rateLimit({
     max: (req, res) => {
         try {
             // Check for token in cookies or header
-            let token = req.cookies?.token;
+            let token = req.cookies?.session_token;
             if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
                 token = req.headers.authorization.split(' ')[1];
             }
