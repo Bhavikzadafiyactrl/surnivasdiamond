@@ -195,11 +195,13 @@ exports.verifyOtp = async (req, res) => {
                 if (err) throw err;
 
                 // Send HttpOnly Cookie
+                const isProduction = process.env.NODE_ENV === 'production';
                 res.cookie('token', token, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'lax',
-                    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+                    secure: isProduction,
+                    sameSite: isProduction ? 'none' : 'lax',
+                    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+                    path: '/'
                 });
 
                 // Do not send token in JSON
@@ -291,11 +293,16 @@ exports.login = async (req, res) => {
                 if (err) throw err;
 
                 // Send HttpOnly Cookie
+                // Use SameSite: None for production to allow cross-site/cross-domain usage if needed
+                // But Secure MUST be true for SameSite: None
+                const isProduction = process.env.NODE_ENV === 'production';
+
                 res.cookie('token', token, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'lax',
-                    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+                    secure: isProduction, // Secure is required for SameSite: None
+                    sameSite: isProduction ? 'none' : 'lax',
+                    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+                    path: '/'
                 });
 
                 res.json({ user: { id: user._id, name: user.name, email: user.email, mobile: user.mobile, role: user.role || 'client' } });
@@ -310,11 +317,27 @@ exports.login = async (req, res) => {
 
 // Logout
 exports.logout = (req, res) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // Clear with primary settings
     res.clearCookie('token', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax'
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
+        path: '/'
     });
+
+    // Also attempt to clear legacy/Lax cookie just in case
+    // This handles the transition or if the browser has a 'Lax' cookie stuck
+    if (isProduction) {
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            path: '/'
+        });
+    }
+
     res.json({ message: 'Logged out successfully' });
 };
 
