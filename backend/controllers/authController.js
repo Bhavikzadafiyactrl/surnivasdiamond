@@ -287,6 +287,8 @@ exports.login = async (req, res) => {
             }
         };
 
+        console.log(`[LOGIN SUCCESS] User: ${user._id}, TokenVersion: ${user.tokenVersion || 0}`);
+
         jwt.sign(
             payload,
             process.env.JWT_SECRET,
@@ -295,8 +297,6 @@ exports.login = async (req, res) => {
                 if (err) throw err;
 
                 // Send HttpOnly Cookie
-                // Use SameSite: None for production to allow cross-site/cross-domain usage if needed
-                // But Secure MUST be true for SameSite: None
                 const isProduction = process.env.NODE_ENV === 'production';
 
                 res.cookie('surnivash_auth_v3', token, {
@@ -312,7 +312,7 @@ exports.login = async (req, res) => {
         );
 
     } catch (error) {
-        console.error(error);
+        console.error("Login Error:", error);
         res.status(500).json({ message: 'Server error' });
     }
 };
