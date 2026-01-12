@@ -50,12 +50,16 @@ export const AuthProvider = ({ children }) => {
             const api = import.meta.env.VITE_API_URL;
             
             // Wait for server to invalidate session
-            const res = await fetch(`${api}/auth/logout`, { method: 'POST', credentials: 'include' });
+            const logoutUrl = `${api}/auth/logout`;
+            console.log("ATTEMPTING LOGOUT V5 TO:", logoutUrl);
+            window.APP_VERSION = "V5_LOGOUT_FIX";
+            
+            const res = await fetch(logoutUrl, { method: 'POST', credentials: 'include' });
             
             if (res.ok) {
-                console.log("Server logout successful - V4");
+                console.log("Server logout successful - V5");
             } else {
-                console.error("Server logout failed - V4", res.status);
+                console.error("Server logout failed - V5", res.status);
             }
 
         } catch (err) {
