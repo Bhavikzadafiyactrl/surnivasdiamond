@@ -10,8 +10,7 @@ const signupValidation = [
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Invalid email format')
-        .normalizeEmail(),
+        .isEmail().withMessage('Invalid email format'),
 
     body('password')
         .notEmpty().withMessage('Password is required')
@@ -53,8 +52,7 @@ const loginValidation = [
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Invalid email format')
-        .normalizeEmail(),
+        .isEmail().withMessage('Invalid email format'),
 
     body('password')
         .notEmpty().withMessage('Password is required')
@@ -76,7 +74,6 @@ const forgotPasswordValidation = [
         .trim()
         .notEmpty().withMessage('Email is required')
         .isEmail().withMessage('Invalid email format')
-        .normalizeEmail()
 ];
 
 const resetPasswordValidation = [

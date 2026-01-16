@@ -381,7 +381,7 @@ export const translations = {
             tagline: "ĐỊNH NGHĨA LẠI SỰ SANG TRỌNG",
             title1: "Vẻ Đẹp",
             title2: "Vượt Thời Gian",
-            desc1: "Tại Surnivas Diamond, chúng tôi chuyên chế tác những viên kim cương tinh xảo nhất thế giới với độ chính xác và nghệ thuật vô song. Với hơn 50 năm kinh nghiệm, vẻ đẹp thô sơ trở thành kho báu vĩnh cửu, tôn vinh những khoảnh khắc quý giá nhất của cuộc đời.",
+            desc1: "Tại Surnivas Diamond, chúng tôi chuyên chế tác những viên kim cương tinh xảo nhất thế giới với độ chính xác và nghệ thuật vô song. Với hơn 20 năm kinh nghiệm, vẻ đẹp thô sơ trở thành kho báu vĩnh cửu, tôn vinh những khoảnh khắc quý giá nhất của cuộc đời.",
             explore: "Khám Phá Bộ Sưu Tập",
             stats: {
                 legacy: "Năm Di Sản",
