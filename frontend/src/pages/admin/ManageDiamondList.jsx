@@ -369,7 +369,7 @@ const ManageDiamondList = () => {
         'Cut': d.Cut,
         'Polish': d.Polish,
         'Sym': d.Sym,
-        'Flour': d.Flour,
+        'Fluor': d.Flour,
         'Measurement': d.Measurement,
         'Diameter': d['Diameter (MM)'],
         'Depth %': d['Depth %'],
@@ -679,7 +679,7 @@ const ManageDiamondList = () => {
 
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Pol</th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Sym</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Flor</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Fluor</th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Meas</th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Diam</th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Depth</th>

@@ -622,7 +622,7 @@ export default function DiamondSearch() {
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Cut')}>Cut {getSortIndicator('Cut')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Polish')}>Pol {getSortIndicator('Polish')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Sym')}>Sym {getSortIndicator('Sym')}</th>
-                                   <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Flour')}>Flor {getSortIndicator('Flour')}</th>
+                                   <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Flour')}>Fluor {getSortIndicator('Flour')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Measurement')}>Meas {getSortIndicator('Measurement')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Diameter (MM)')}>Diam {getSortIndicator('Diameter (MM)')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Depth %')}>Depth {getSortIndicator('Depth %')}</th>

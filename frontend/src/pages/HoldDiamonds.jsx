@@ -316,7 +316,7 @@ export default function HoldDiamonds() {
                                    <th className="px-1 py-3 border-r border-gray-300 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('Cut')}>Cut {getSortIndicator('Cut')}</th>
                                    <th className="px-1 py-3 border-r border-gray-300 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('Polish')}>Pol {getSortIndicator('Polish')}</th>
                                    <th className="px-1 py-3 border-r border-gray-300 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('Sym')}>Sym {getSortIndicator('Sym')}</th>
-                                   <th className="px-1 py-3 border-r border-gray-300 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('Flour')}>Flor {getSortIndicator('Flour')}</th>
+                                   <th className="px-1 py-3 border-r border-gray-300 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('Flour')}>Fluor {getSortIndicator('Flour')}</th>
                                    <th className="px-1 py-3 border-r border-gray-300 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('Measurement')}>Meas {getSortIndicator('Measurement')}</th>
                                    <th className="px-1 py-3 border-r border-gray-300 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('Diameter (MM)')}>Diam {getSortIndicator('Diameter (MM)')}</th>
                                    <th className="px-1 py-3 border-r border-gray-300 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('Depth %')}>Depth {getSortIndicator('Depth %')}</th>

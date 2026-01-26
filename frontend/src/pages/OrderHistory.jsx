@@ -321,7 +321,7 @@ const OrderHistory = () => {
                                 <th className="px-2 py-3 border-r border-gray-200">Cut</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Pol</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Sym</th>
-                                <th className="px-2 py-3 border-r border-gray-200">Flor</th>
+                                <th className="px-2 py-3 border-r border-gray-200">Fluor</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Meas</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Diam</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Depth</th>

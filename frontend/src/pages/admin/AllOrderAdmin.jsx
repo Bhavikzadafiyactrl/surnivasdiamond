@@ -157,7 +157,7 @@ const AllOrderAdmin = () => {
         CUT: order.diamondId?.Cut,
         POL: order.diamondId?.Polish,
         SYM: order.diamondId?.Sym,
-        FLOR: order.diamondId?.Flour,
+        FLUOR: order.diamondId?.Flour,
         MEAS: order.diamondId?.Measurement,
         DIAM: order.diamondId?.['Diameter (MM)'],
         DEPTH: order.diamondId?.['Depth %'],
@@ -343,7 +343,7 @@ const AllOrderAdmin = () => {
                                <th className="px-2 py-3 text-xs">CUT</th>
                                <th className="px-2 py-3 text-xs">POL</th>
                                <th className="px-2 py-3 text-xs">SYM</th>
-                               <th className="px-2 py-3 text-xs">FLOR</th>
+                               <th className="px-2 py-3 text-xs">FLUOR</th>
                                <th className="px-2 py-3 text-xs">MEAS</th>
                                <th className="px-2 py-3 text-xs">DIAM</th>
                                <th className="px-2 py-3 text-xs">DEPTH</th>

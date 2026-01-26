@@ -229,7 +229,7 @@ export const translations = {
                 cut: "Cut",
                 pol: "Pol",
                 sym: "Sym",
-                flor: "Flor",
+                flor: "Fluor",
                 meas: "Meas",
                 diam: "Diam",
                 depth: "Depth",

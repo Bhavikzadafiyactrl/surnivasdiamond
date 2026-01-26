@@ -600,7 +600,7 @@ const AdminOrders = () => {
                          <th className="px-1 py-3 border-r border-gray-300">Cut</th>
                          <th className="px-1 py-3 border-r border-gray-300">Pol</th>
                          <th className="px-1 py-3 border-r border-gray-300">Sym</th>
-                         <th className="px-1 py-3 border-r border-gray-300">Flor</th>
+                         <th className="px-1 py-3 border-r border-gray-300">Fluor</th>
                          <th className="px-1 py-3 border-r border-gray-300">Lab</th>
                          <th className="px-1 py-3 border-r border-gray-300">Actions</th>
                        </tr>
