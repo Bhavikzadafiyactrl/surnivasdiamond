@@ -14,8 +14,19 @@ const fetchImage = async (url) => {
     }
 };
 
+// Helper: 1 -> A, 2 -> B, ... 27 -> AA
+const getColumnLetter = (colIndex) => {
+    let temp, letter = '';
+    while (colIndex > 0) {
+        temp = (colIndex - 1) % 26;
+        letter = String.fromCharCode(temp + 65) + letter;
+        colIndex = (colIndex - temp - 1) / 26;
+    }
+    return letter;
+};
+
 // Helper to generate professional Excel with styling
-const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
+const generateStyledExcel = async (data, columns, summaryConfig, fileName) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Diamonds');
 
@@ -57,27 +68,30 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
     worksheet.getRow(3).values = [];
     worksheet.getRow(3).height = 10;
 
-    // --- ROW 4 & 5: SUMMARY TABLE (CUSTOM MERGES) ---
-    // Fixed layout relative to sheet, not data columns (since columns moved)
-    // We check visibility/width impact below.
-    // Col 1 (A): Total
-    // Col 2 (B): Pcs
-    // Col 3 (C): Carat
-    // Col 4-6 (D,E,F): Pr/Ct (Merged 3 cols)
-    // Col 7-9 (G,H,I): Amount (Merged 3 cols)
+    // --- DATA RANGE CALCULATION ---
+    const dataStartRow = 8;
+    const dataEndRow = dataStartRow + (data.length > 0 ? data.length - 1 : 0);
+    const hasData = data.length > 0;
 
+    // --- ROW 4 & 5: SUMMARY TABLE ---
     const r4 = worksheet.getRow(4); // Headers
     const r5 = worksheet.getRow(5); // Values
     r4.height = 25;
     r5.height = 25;
 
-    const setSummaryCell = (row, col, value, isHeader) => {
+    const setSummaryCell = (row, col, valueOrObj, isHeader) => {
         const cell = row.getCell(col);
-        cell.value = value;
+
+        if (typeof valueOrObj === 'object' && valueOrObj.formula) {
+            cell.value = { formula: valueOrObj.formula };
+        } else {
+            cell.value = valueOrObj;
+        }
+
         cell.font = isHeader ? { name: 'Calibri', size: 12, bold: true } : { name: 'Calibri', size: 12, bold: true };
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-        if (value === "Total") {
+        if (valueOrObj === "Total") {
             cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDDEBF7' } };
         } else if (isHeader) {
             cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDDEBF7' } };
@@ -90,27 +104,67 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
         return cell;
     };
 
+    // FORMULAS: constructed dynamically based on keys passed in summaryConfig
+    // summaryConfig expect { pcsColKey, caratColKey, amountColKey }
+
+    let pcsFormula = '0';
+    let caratFormula = '0';
+    let amountFormula = '0';
+    let pricePerCtFormula = '0';
+
+    if (hasData) {
+        // Find Column Letters
+        const pcsColIdx = columns.findIndex(c => c.key === summaryConfig.pcsColKey) + 1;
+        const caratColIdx = columns.findIndex(c => c.key === summaryConfig.caratColKey) + 1;
+        const amountColIdx = columns.findIndex(c => c.key === summaryConfig.amountColKey) + 1;
+
+        if (pcsColIdx > 0) {
+            const l = getColumnLetter(pcsColIdx);
+            pcsFormula = `SUBTOTAL(103, ${l}${dataStartRow}:${l}${dataEndRow})`;
+        }
+        if (caratColIdx > 0) {
+            const l = getColumnLetter(caratColIdx);
+            caratFormula = `SUBTOTAL(109, ${l}${dataStartRow}:${l}${dataEndRow})`;
+        }
+        if (amountColIdx > 0) {
+            const l = getColumnLetter(amountColIdx);
+            amountFormula = `SUBTOTAL(109, ${l}${dataStartRow}:${l}${dataEndRow})`;
+        }
+
+        // Pr/Ct = Amount / Carat. 
+        // Summary Table Cells: Carat is C5 (Col 3), Amount is G5 (Col 7).
+        // WARNING: These summary locations (C5, G5) are HARDCODED below in the layout section.
+        // We must ensure formula references match where we PLACE the summary values.
+
+        // Layout Placements:
+        // Pcs -> B5
+        // Carat -> C5
+        // Amount -> G5
+        pricePerCtFormula = `IF(C5>0, G5/C5, 0)`;
+    }
+
+    // Layout
     setSummaryCell(r5, 1, "Total", true);
 
     setSummaryCell(r4, 2, "Pcs", true);
-    setSummaryCell(r5, 2, summaryObj.pcs, false);
+    setSummaryCell(r5, 2, { formula: pcsFormula }, false);
 
     setSummaryCell(r4, 3, "Carat", true);
-    const cVal = setSummaryCell(r5, 3, summaryObj.carat, false);
+    const cVal = setSummaryCell(r5, 3, { formula: caratFormula }, false);
     cVal.numFmt = '0.00';
 
     worksheet.mergeCells(4, 4, 4, 6);
     setSummaryCell(r4, 4, "Pr/Ct", true);
 
     worksheet.mergeCells(5, 4, 5, 6);
-    const pVal = setSummaryCell(r5, 4, summaryObj.pricePerCt, false);
+    const pVal = setSummaryCell(r5, 4, { formula: pricePerCtFormula }, false);
     pVal.numFmt = '#,##0.00';
 
     worksheet.mergeCells(4, 7, 4, 9);
     setSummaryCell(r4, 7, "Amount", true);
 
     worksheet.mergeCells(5, 7, 5, 9);
-    const aVal = setSummaryCell(r5, 7, summaryObj.amount, false);
+    const aVal = setSummaryCell(r5, 7, { formula: amountFormula }, false);
     aVal.numFmt = '#,##0.00';
 
 
@@ -164,17 +218,6 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
 };
 
 export const exportDiamondsToExcel = (diamonds, fileName = "Surnivas_Diamonds.xlsx") => {
-    const totalDiamonds = diamonds.length;
-    const totalCarat = diamonds.reduce((sum, d) => sum + (parseFloat(d.Carats) || 0), 0);
-    const totalAmount = diamonds.reduce((sum, d) => sum + (parseFloat(d['Amount$']) || 0), 0);
-    const avgPricePerCarat = totalCarat > 0 ? (totalAmount / totalCarat) : 0;
-
-    const summaryObj = {
-        pcs: totalDiamonds,
-        carat: totalCarat,
-        pricePerCt: avgPricePerCarat,
-        amount: totalAmount
-    };
 
     // Reordered Columns
     const columns = [
@@ -221,27 +264,18 @@ export const exportDiamondsToExcel = (diamonds, fileName = "Surnivas_Diamonds.xl
         VideoLink: d.videoLink || ''
     }));
 
-    generateStyledExcel(formattedData, columns, summaryObj, fileName);
+    // Config for Formulas
+    const summaryConfig = {
+        pcsColKey: 'StockID',
+        caratColKey: 'Carats',
+        amountColKey: 'Price'
+    };
+
+    generateStyledExcel(formattedData, columns, summaryConfig, fileName);
 };
 
 export const exportOrdersToExcel = (orders, fileName = "Order_History.xlsx") => {
-    const totalOrders = orders.length;
-    const totalCarat = orders.reduce((sum, o) => sum + (parseFloat(o.diamondId?.Carats) || 0), 0);
-    const totalAmount = orders.reduce((sum, o) => sum + (o.totalAmount || o.diamondId?.['Amount$'] || 0), 0);
-    const avgPricePerCarat = totalCarat > 0 ? (totalAmount / totalCarat) : 0;
-
-    const summaryObj = {
-        pcs: totalOrders,
-        carat: totalCarat,
-        pricePerCt: avgPricePerCarat,
-        amount: totalAmount
-    };
-
-    // Keep Orders table as is unless requested otherwise? 
-    // User technically asked for "export" generally, but provided image of Diamond Search.
-    // I will leave Orders export as is for now to avoid confusion, or map it if it shares similar fields.
-    // Usually "Status" etc order applies to Diamond Search. I'll stick to updating `exportDiamondsToExcel`.
-
+    // Orders Columns
     const columns = [
         { header: "Date", key: "Date", width: 12 },
         { header: "Order ID", key: "OrderID", width: 20 },
@@ -286,5 +320,12 @@ export const exportOrdersToExcel = (orders, fileName = "Order_History.xlsx") => 
         };
     });
 
-    generateStyledExcel(formattedData, columns, summaryObj, fileName);
+    // Config for Formulas
+    const summaryConfig = {
+        pcsColKey: 'StockID',
+        caratColKey: 'Carats',
+        amountColKey: 'Total'
+    };
+
+    generateStyledExcel(formattedData, columns, summaryConfig, fileName);
 };
