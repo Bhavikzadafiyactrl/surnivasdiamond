@@ -195,6 +195,32 @@ export default function DiamondSearch() {
         }
       }
 
+      // 1B. Logic for "3VG+" selection
+      // "when user select 3vg+ then also select all VG if round if not then only polish and symetri"
+      if (category === 'finishing' && value === '3VG+') {
+        // Check if we just turned ON 3VG+
+        if (!prev.finishing.includes('3VG+')) {
+           const isFancyShapeOnly = nextFilters.shape.length > 0 && !nextFilters.shape.includes('ROUND');
+
+           if (!isFancyShapeOnly) {
+              // Round included: Select VG in Cut, Polish, and Symmetry
+              if (!nextFilters.cut.includes('VG')) nextFilters.cut = [...nextFilters.cut, 'VG'];
+              if (!nextFilters.polish.includes('VG')) nextFilters.polish = [...nextFilters.polish, 'VG'];
+              if (!nextFilters.symmetry.includes('VG')) nextFilters.symmetry = [...nextFilters.symmetry, 'VG'];
+           } else {
+              // Fancy shape only: Select VG only in Polish and Symmetry (not Cut)
+              nextFilters.cut = []; // Clear cut for fancy shapes
+              if (!nextFilters.polish.includes('VG')) nextFilters.polish = [...nextFilters.polish, 'VG'];
+              if (!nextFilters.symmetry.includes('VG')) nextFilters.symmetry = [...nextFilters.symmetry, 'VG'];
+           }
+           
+           // Uncheck 3EX
+           if (nextFilters.finishing.includes('3EX')) {
+             nextFilters.finishing = nextFilters.finishing.filter(f => f !== '3EX');
+           }
+        }
+      }
+
       // 2. Logic for "VG" selection in Cut/Polish/Sym
       // "then user will select any VG then 3VG+ shoud be automaticaly auto select and 3EX will not selected"
       if (['cut', 'polish', 'symmetry'].includes(category) && value === 'VG') {
