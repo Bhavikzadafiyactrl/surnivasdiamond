@@ -238,13 +238,17 @@ exports.searchDiamonds = async (req, res) => {
 
         // --- Fetch Initial Results ---
         // We execute the Mongo query first, then filter Measurements in memory
-        // --- Fetch Initial Results ---
-        // We execute the Mongo query first, then filter Measurements in memory
         // 🚀 OPTIMIZATION: Limit to 500 immediately and sort by price
-        let diamonds = await Diamond.find(query)
-            .sort({ 'Amount$': 1 })
-            .limit(500)
-            .lean();
+        // BUT: Don't limit if measurement filters are active (they run in-memory after DB query)
+        const hasMeasurementFilter = filters.length?.min || filters.length?.max || filters.width?.min || filters.width?.max || filters.diameter;
+
+        let diamondQuery = Diamond.find(query).sort({ 'Amount$': 1 });
+
+        if (!hasMeasurementFilter) {
+            diamondQuery = diamondQuery.limit(500);
+        }
+
+        let diamonds = await diamondQuery.lean();
         console.log("Docs fetched from DB:", diamonds.length);
 
         // --- Measurement Filtering (In-Memory) ---
@@ -311,12 +315,12 @@ exports.searchDiamonds = async (req, res) => {
             console.log("===== END MEASUREMENT FILTER DEBUG =====");
         }
 
-
         // --- Sort by Price Ascending ---
         diamonds.sort((a, b) => (a['Amount$'] || 0) - (b['Amount$'] || 0));
 
-        // --- Limit Results (Already limited by DB query) ---
-        // diamonds = diamonds.slice(0, 500);
+        // --- Limit Results to 500 ---
+        // If measurement filters were used, we didn't limit at DB level, so limit here
+        diamonds = diamonds.slice(0, 500);
 
         // --- Add isInMyBasket field based on userId from query/body ---
         const userId = req.body.userId || req.query.userId;
