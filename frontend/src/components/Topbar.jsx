@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import logo from '../assets/logo.png';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -6,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 const Topbar = ({ userName, onMenuClick }) => {
   const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState('');
 
   /* API URL definition */
   // const API_URL = import.meta.env.VITE_API_URL;
@@ -13,6 +15,12 @@ const Topbar = ({ userName, onMenuClick }) => {
 
   const handleLogout = async () => {
     logout();
+  };
+
+  const handleSearch = () => {
+    if (searchValue.trim()) {
+      navigate(`/diamonds?q=${encodeURIComponent(searchValue)}`);
+    }
   };
 
   return (
@@ -34,29 +42,41 @@ const Topbar = ({ userName, onMenuClick }) => {
 
       {/* Middle: Search Bar */}
       <div className="flex-1 max-w-xl mx-8 hidden md:block">
-        <div className="relative">
-          <input 
-             type="text" 
-             placeholder={t('topbar.searchPlaceholder')}
-             className="w-full bg-gray-50 border border-gray-200 text-sm px-4 py-2.5 rounded-full outline-none focus:border-black focus:ring-1 focus:ring-black transition-all pl-10"
-             onKeyDown={(e) => {
-               if (e.key === 'Enter') {
-                 navigate(`/diamonds?q=${encodeURIComponent(e.target.value)}`);
-               }
-             }}
-          />
-          <button 
-             onClick={(e) => {
-               // Find the input sibling and get its value (simple way without controlled state if we want to avoid re-renders, or just use controlled state)
-               // Let's use simple DOM traversal since we didn't add state yet, or better, just add state.
-               const input = e.currentTarget.previousElementSibling;
-               navigate(`/diamonds?q=${encodeURIComponent(input.value)}`);
-             }}
-             className="absolute left-1 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-gray-200 text-gray-400 hover:text-black transition-colors"
+        <div className="relative flex items-center gap-2">
+          <div className="relative flex-1">
+            <input 
+               type="text" 
+               placeholder={t('topbar.searchPlaceholder')}
+               value={searchValue}
+               onChange={(e) => setSearchValue(e.target.value)}
+               className="w-full bg-gray-50 border border-gray-200 text-sm px-4 py-2.5 rounded-full outline-none focus:border-black focus:ring-1 focus:ring-black transition-all pl-10"
+               onKeyDown={(e) => {
+                 if (e.key === 'Enter') {
+                   handleSearch();
+                 }
+               }}
+            />
+            <button 
+               onClick={handleSearch}
+               className="absolute left-1 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-gray-200 text-gray-400 hover:text-black transition-colors"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+              </svg>
+            </button>
+          </div>
+          
+          {/* SEARCH Button */}
+          <button
+            onClick={handleSearch}
+            className={`px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
+              searchValue.trim() 
+                ? 'bg-black text-white hover:bg-gray-800' 
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+            disabled={!searchValue.trim()}
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-            </svg>
+            Search
           </button>
         </div>
       </div>
