@@ -5,7 +5,6 @@ import LandingPage from './components/LandingPage'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import DiamondSearch from './pages/DiamondSearch'
-import DiamondSearchNew from './pages/DiamondSearchNew'
 import HoldDiamonds from './pages/HoldDiamonds'
 import Basket from './pages/Basket'
 import Contact from './pages/Contact'
@@ -44,7 +43,7 @@ const App = () => {
               <Route path="/order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              <Route path="/diamonds" element={<ProtectedRoute><DiamondSearchNew /></ProtectedRoute>} />
+              <Route path="/diamonds" element={<ProtectedRoute><DiamondSearch /></ProtectedRoute>} />
               <Route path="/held-diamonds" element={<ProtectedRoute><HoldDiamonds /></ProtectedRoute>} />
               <Route path="/basket" element={<ProtectedRoute><Basket /></ProtectedRoute>} />
               
