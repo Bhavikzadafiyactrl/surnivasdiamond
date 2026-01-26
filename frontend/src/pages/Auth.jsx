@@ -5,6 +5,36 @@ import brandingVideo from "../assets/surnivas_diamond.mp4";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
 
+const StyledInput = ({ 
+  containerClassName = "relative w-full group", 
+  value, 
+  placeholder, 
+  required, 
+  className, 
+  ...props 
+}) => {
+  const isCentered = className.includes("text-center");
+  return (
+    <div className={containerClassName}>
+      <input
+        {...props}
+        value={value}
+        required={required}
+        placeholder={placeholder}
+        className={`${className.replace("placeholder-gray-400", "placeholder-transparent")}`}
+      />
+      {!value && (
+        <span 
+          className={`absolute top-3 text-gray-400 text-sm pointer-events-none select-none ${isCentered ? 'left-0 right-0 text-center' : 'left-4'}`}
+        >
+          {placeholder}
+          {required && <span className="text-red-500"> *</span>}
+        </span>
+      )}
+    </div>
+  );
+};
+
 const Auth = () => {
   const { t } = useLanguage();
   const { login, user, loading: authLoading } = useAuth();
@@ -81,7 +111,7 @@ const Auth = () => {
     { code: "+41", country: "Switzerland" },
     { code: "+66", country: "Thailand" },
     { code: "+84", country: "Vietnam" },
-    { code: "+90", country: "Turkey" },
+    
   ];
 
   // Handle Signup
@@ -398,7 +428,7 @@ const Auth = () => {
           {view === "forgotPassword" && (
             <form onSubmit={handleForgotPassword} className="space-y-4">
               <div className="relative group">
-                <input
+                <StyledInput
                   type="email"
                   name="email"
                   value={formData.email}
@@ -423,7 +453,7 @@ const Auth = () => {
           {view === "resetOtp" && (
             <form onSubmit={handleVerifyResetOtp} className="space-y-4">
                <div className="space-y-1">
-                <input
+                <StyledInput
                   type="text"
                   name="otp"
                   value={formData.otp}
@@ -448,7 +478,7 @@ const Auth = () => {
           {view === "newPassword" && (
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div className="relative group">
-                <input
+                <StyledInput
                   type="password"
                   name="password"
                   value={formData.password}
@@ -470,7 +500,7 @@ const Auth = () => {
               // ============ OTP FORM (Signup) ============
               <form onSubmit={handleVerifyOtp} className="space-y-4">
                 <div className="space-y-1">
-                  <input
+                  <StyledInput
                     type="text"
                     name="otp"
                     value={formData.otp}
@@ -499,7 +529,7 @@ const Auth = () => {
                 {isSignup && (
                   <div className="space-y-4">
                     <div className="relative group">
-                      <input
+                      <StyledInput
                         type="text"
                         name="name"
                         value={formData.name}
@@ -523,7 +553,8 @@ const Auth = () => {
                               </option>
                           ))}
                       </select>
-                      <input
+                      <StyledInput
+                        containerClassName="relative flex-1 group"
                         type="tel"
                         name="mobile"
                         value={formData.mobile}
@@ -535,7 +566,7 @@ const Auth = () => {
                     </div>
 
                     <div className="relative group">
-                      <input
+                      <StyledInput
                         type="text"
                         name="companyName"
                         value={formData.companyName}
@@ -547,7 +578,7 @@ const Auth = () => {
                     </div>
 
                     <div className="relative group">
-                      <input
+                      <StyledInput
                         type="text"
                         name="address"
                         value={formData.address}
@@ -560,31 +591,31 @@ const Auth = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                        <div>
-                         <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
-                          className="w-full bg-blue-50/50 text-gray-800 px-4 py-3 rounded hover:bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all outline-none placeholder-gray-400 text-sm border border-transparent"
-                          placeholder={t('auth.city')}
-                          required
-                        />
+                          <StyledInput
+                           type="text"
+                           name="city"
+                           value={formData.city}
+                           onChange={handleChange}
+                           className="w-full bg-blue-50/50 text-gray-800 px-4 py-3 rounded hover:bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all outline-none placeholder-gray-400 text-sm border border-transparent"
+                           placeholder={t('auth.city')}
+                           required
+                         />
                        </div>
                        <div>
-                         <input
-                          type="text"
-                          name="zipCode"
-                          value={formData.zipCode}
-                          onChange={handleChange}
-                          className="w-full bg-blue-50/50 text-gray-800 px-4 py-3 rounded hover:bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all outline-none placeholder-gray-400 text-sm border border-transparent"
-                          placeholder={t('auth.zip')}
-                          required
-                        />
+                          <StyledInput
+                           type="text"
+                           name="zipCode"
+                           value={formData.zipCode}
+                           onChange={handleChange}
+                           className="w-full bg-blue-50/50 text-gray-800 px-4 py-3 rounded hover:bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all outline-none placeholder-gray-400 text-sm border border-transparent"
+                           placeholder={t('auth.zip')}
+                           required
+                         />
                        </div>
                     </div>
 
                     <div className="relative group">
-                      <input
+                      <StyledInput
                         type="text"
                         name="country"
                         value={formData.country}
@@ -598,7 +629,7 @@ const Auth = () => {
                 )}
 
                 <div className="relative group">
-                  <input
+                  <StyledInput
                     type="email"
                     name="email"
                     value={formData.email}
@@ -610,7 +641,7 @@ const Auth = () => {
                 </div>
 
                 <div className="relative group">
-                  <input
+                  <StyledInput
                     type="password"
                     name="password"
                     value={formData.password}
