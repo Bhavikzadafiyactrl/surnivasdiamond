@@ -1346,7 +1346,7 @@ exports.bulkUploadCSV = async (req, res) => {
 
     upload(req, res, async (err) => {
         if (err) {
-            return res.status(400).json({ success: false, message: err.message });
+            return res.status(400).json({ success: false, message: `Upload Error: ${err.message}` });
         }
 
         if (!req.file) {
@@ -1357,59 +1357,95 @@ exports.bulkUploadCSV = async (req, res) => {
         const diamonds = [];
         const errors = [];
         let lineNumber = 0;
+        let headers = [];
 
         try {
-            // Parse CSV
+            // Parse CSV with header normalization
             await new Promise((resolve, reject) => {
-                fs.createReadStream(filePath)
-                    .pipe(csv({
-                        mapHeaders: ({ header }) => header.trim().replace(/^\uFEFF/, '')
-                    }))
+                const stream = fs.createReadStream(filePath);
+                stream.on('error', (ioErr) => reject(new Error(`File Read Error: ${ioErr.message}`)));
+
+                stream.pipe(csv({
+                    mapHeaders: ({ header }) => {
+                        // Normalize headers: lowercase, remove non-alphanumeric chars
+                        // e.g. "Stock ID" -> "stockid", "Amount$" -> "amount"
+                        const h = header.trim().replace(/^\uFEFF/, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                        if (lineNumber === 0) headers.push(h); // Collect headers for debug
+                        return h;
+                    }
+                }))
                     .on('data', (row) => {
                         lineNumber++;
 
-                        // Basic validation
-                        let stockId = row['Stock ID'] || row['StockID'] || row['Stone No'] || row['StoneNo'];
-                        if (!stockId || stockId.trim() === '') {
-                            errors.push({ line: lineNumber, error: 'Missing Stock ID / Stone No' });
+                        // Helper to safely get value from multiple possible keys
+                        const getVal = (keys) => {
+                            for (const k of keys) {
+                                if (row[k] !== undefined && row[k] !== '') return row[k];
+                            }
+                            return undefined;
+                        };
+
+                        // Helper to safely parse numbers
+                        const parseNum = (val) => {
+                            if (!val) return 0;
+                            const cleaner = String(val).replace(/,/g, '').replace(/[^0-9.-]/g, '');
+                            return parseFloat(cleaner) || 0;
+                        };
+
+                        // Validation: Stock ID is mandatory
+                        // keys are now lowercased and stripped: "Stock ID" -> "stockid"
+                        const stockId = getVal(['stockid', 'stoneno', 'refno', 'stockno']);
+
+                        if (!stockId) {
+                            errors.push({ line: lineNumber, error: 'Missing Stock ID' });
                             return;
                         }
 
-                        // Create diamond object
-                        // Prioritize 'Diameter (MM)' from the new headers
-                        let rawDiam = row['Diameter (MM)'] || row['DIAM'] || '';
+                        // Diameter cleaning
+                        let rawDiam = getVal(['diametermm', 'diam', 'measurements', 'diameter']);
                         let cleanDiam = rawDiam ? String(rawDiam).trim() : null;
 
                         const diamond = {
                             StockID: stockId,
-                            'Report No': row['Report No'] || '',
-                            'Shape': (row['Shape'] || '').toUpperCase(),
-                            'Carats': parseFloat(row['Carats']) || 0,
-                            'Color': (row['Color'] || '').toUpperCase(),
-                            'Clarity': (row['Clarity'] || '').toUpperCase(),
-                            'Cut': (row['Cut'] || '').toUpperCase(),
-                            'Polish': (row['Polish'] || '').toUpperCase(),
-                            'Sym': (row['Sym'] || '').toUpperCase(),
-                            'Flour': (row['Flour'] || '').toUpperCase(),
-                            'Measurement': row['Measurement'] || '',
+                            'Report No': getVal(['reportno', 'certno', 'report']) || '',
+                            'Shape': (getVal(['shape']) || '').toUpperCase(),
+                            'Carats': parseNum(getVal(['carats', 'weight', 'cts', 'size'])),
+                            'Color': (getVal(['color']) || '').toUpperCase(),
+                            'Clarity': (getVal(['clarity']) || '').toUpperCase(),
+                            'Cut': (getVal(['cut']) || '').toUpperCase(),
+                            'Polish': (getVal(['polish', 'pol']) || '').toUpperCase(),
+                            'Sym': (getVal(['sym', 'symmetry']) || '').toUpperCase(),
+                            'Flour': (getVal(['flour', 'fluor', 'fluorescence']) || '').toUpperCase(),
+                            'Measurement': getVal(['measurement', 'measurements']) || '',
                             'Diameter (MM)': cleanDiam,
-                            'Depth %': parseFloat(row['Depth %']) || 0,
-                            'Table %': parseFloat(row['Table %']) || 0,
-                            'Lab': (row['Lab'] || '').toUpperCase(),
-                            'Amount$': parseFloat(row['Amount$']) || 0,
-                            'GIALINK': row['GIALINK'] || '',
-                            'videoLink': row['videoLink'] || row['Video Link'] || row['VIDEO LINK'] || row['VideoLink'] || '',
-                            'Location': (row['Location'] || '').toUpperCase(),
-                            'Key To Symbols': row['Key To Symbols'] || row['Key to Symbol'] || '',
-                            'BGM': (row['BGM'] || '').toUpperCase(),
+                            'Depth %': parseNum(getVal(['depth', 'depth%'])),
+                            'Table %': parseNum(getVal(['table', 'table%'])),
+                            'Lab': (getVal(['lab', 'cert']) || '').toUpperCase(),
+                            'Amount$': parseNum(getVal(['amount', 'price', 'amount$', 'price$', 'total'])),
+                            'GIALINK': getVal(['gialink', 'certlink', 'link', 'url']) || '',
+                            'videoLink': getVal(['videolink', 'video', 'v360']) || '',
+                            'Location': (getVal(['location', 'loc', 'city']) || '').toUpperCase(),
+                            'Key To Symbols': getVal(['keytosymbols', 'keytosymbol', 'symboldescription']) || '',
+                            'BGM': (getVal(['bgm']) || '').toUpperCase(),
                             'Status': 'available'
                         };
 
                         diamonds.push(diamond);
                     })
                     .on('end', resolve)
-                    .on('error', reject);
+                    .on('error', (parseErr) => reject(new Error(`CSV Parsing Failed: ${parseErr.message}`)));
             });
+
+            // If no diamonds parsed
+            if (diamonds.length === 0) {
+                const msg = errors.length > 0 ? `Found ${errors.length} validation errors` : 'No valid data found in CSV. Check if headers match expected format.';
+                return res.status(400).json({
+                    success: false,
+                    message: msg,
+                    debugHeaders: headers,
+                    errors: errors.slice(0, 5)
+                });
+            }
 
             // Check for duplicate StockID in CSV
             const stockIds = diamonds.map(d => d.StockID);
@@ -1418,13 +1454,11 @@ exports.bulkUploadCSV = async (req, res) => {
             if (duplicatesInCSV.length > 0) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Duplicate Stock ID found in CSV',
-                    duplicates: [...new Set(duplicatesInCSV)]
+                    message: `Duplicate Stock IDs found inside the CSV: ${duplicatesInCSV.slice(0, 5).join(', ')}...`,
                 });
             }
 
-            // Check for existing StockID in database
-            // Optimize: chunk the query if too many diamonds
+            // Check for existing StockID in database (Batch Check)
             const BATCH_SIZE = 1000;
             const existingStockIds = [];
 
@@ -1437,23 +1471,38 @@ exports.bulkUploadCSV = async (req, res) => {
             if (existingStockIds.length > 0) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Some diamonds already exist in database',
-                    existing: existingStockIds.slice(0, 10) // Limit output
+                    message: `Database already contains these Stock IDs: ${existingStockIds.slice(0, 5).join(', ')}... Please update or delete them first.`,
+                    existing: existingStockIds
                 });
             }
 
-            // Bulk insert
-            if (diamonds.length > 0) {
-                await Diamond.insertMany(diamonds);
+            // Bulk Insert with Error Capture
+            try {
+                await Diamond.insertMany(diamonds, { ordered: false });
+            } catch (insertError) {
+                // Handle duplicate key errors from Mongo (if logic above missed something)
+                if (insertError.writeErrors) {
+                    const duplicateErr = insertError.writeErrors.find(e => e.code === 11000);
+                    if (duplicateErr) {
+                        return res.status(400).json({
+                            success: false,
+                            message: `Duplicate StockID during insert: ${JSON.stringify(duplicateErr.keyValue)}`
+                        });
+                    }
+                    // Other write error
+                    return res.status(500).json({
+                        success: false,
+                        message: `Database Write Error: ${insertError.writeErrors[0].errmsg}`
+                    });
+                }
+                throw insertError; // Re-throw strict crashes
             }
 
-            // Delete uploaded file
-            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+            // Cleanup
+            try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch (e) { }
+            try { fs.appendFileSync('csv_upload.log', `[${new Date().toISOString()}] Imported ${diamonds.length} diamonds\n`); } catch (e) { }
 
-            // Log success
-            fs.appendFileSync('csv_upload.log', `[${new Date().toISOString()}] Success: Imported ${diamonds.length} diamonds\n`);
-
-            // Emit socket event
+            // Broadcast
             const io = req.app.get('io');
             if (io) {
                 io.emit('diamondsUpdated');
@@ -1467,20 +1516,19 @@ exports.bulkUploadCSV = async (req, res) => {
             });
 
         } catch (error) {
-            // Delete uploaded file on error
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
+            // Cleanup on error
+            try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch (e) { }
 
-            // Log specific error
-            const errorMsg = `[${new Date().toISOString()}] ERROR: ${error.message}\nStack: ${error.stack}\n`;
-            fs.appendFileSync('csv_error.log', errorMsg);
+            // Log full error
+            const errorDetails = error.stack || error.message;
+            try { fs.appendFileSync('csv_error.log', `[${new Date().toISOString()}] CRITICAL ERROR: ${errorDetails}\n`); } catch (e) { }
+
             console.error('CSV Upload Error:', error);
 
             res.status(500).json({
                 success: false,
-                message: 'Error processing CSV file. See server logs for details.',
-                error: error.message
+                message: `Server Error: ${error.message}`,
+                error: errorDetails
             });
         }
     });

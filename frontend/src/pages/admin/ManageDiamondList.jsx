@@ -266,11 +266,12 @@ const ManageDiamondList = () => {
         alert(`Success! Imported ${data.count} diamonds.`);
         fetchDiamonds();
       } else {
-        alert(data.message || 'Upload failed. Check your CSV format.');
+        const fullError = data.error ? `\n\nDetails: ${data.error}` : '';
+        alert(`Upload Failed:\n${data.message || 'Unknown Error'}${fullError}`);
       }
     } catch (error) {
       console.error('CSV upload error:', error);
-      alert('Error uploading CSV');
+      alert('Network or Server Error uploading CSV');
     } finally {
       setUploading(false);
       e.target.value = ''; // Reset input
