@@ -62,4 +62,57 @@ const sendOtpEmail = async (email, otp) => {
   }
 };
 
-module.exports = { sendOtpEmail };
+const sendContactNotification = async (contactData) => {
+  try {
+    const mailOptions = {
+      from: `"Surnivas Contact" <${process.env.EMAIL_USER || 'zadafiyaharsh2@gmail.com'}>`,
+      to: 'surnivasdiamond75@gmail.com',
+      replyTo: contactData.email,
+      subject: `New Inquiry: ${contactData.subject} - from ${contactData.name}`,
+      html: `
+        <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 8px; background-color: #ffffff;">
+          <h2 style="color: #000; border-bottom: 2px solid #000; padding-bottom: 10px;">New Contact Message</h2>
+          
+          <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; width: 30%;">Name:</td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;">${contactData.name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Email:</td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;">${contactData.email}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Mobile:</td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;">${contactData.mobile}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Subject:</td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;">${contactData.subject}</td>
+            </tr>
+          </table>
+          
+          <div style="margin-top: 20px;">
+            <h3 style="color: #333;">Message:</h3>
+            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 4px; line-height: 1.6;">
+              ${contactData.message.replace(/\n/g, '<br>')}
+            </div>
+          </div>
+          
+          <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #888;">
+            Sent from Surnivas Diamond Website
+          </div>
+        </div>
+      `
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Contact notification email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('❌ Error sending contact notification email:', error.message);
+    return false;
+  }
+};
+
+module.exports = { sendOtpEmail, sendContactNotification };

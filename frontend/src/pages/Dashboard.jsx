@@ -416,7 +416,7 @@ const Dashboard = () => {
                             {/* Overlay Text (Optional) */}
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
                                 <h2 className="text-2xl font-bold mb-1 drop-shadow-md">{t('dashboardPage.welcome')} {user ? user.name : 'Guest'}</h2>
-                                <p className="text-sm opacity-80">{t('dashboardPage.checkOut')}</p>
+
                             </div>
                         </div>
                     </div>
