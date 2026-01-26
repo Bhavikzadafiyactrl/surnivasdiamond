@@ -69,14 +69,9 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
     <div className="relative w-full h-full bg-white flex flex-col overflow-hidden">
       
       {/* SCROLLABLE CONTENT */}
-      <div className="flex-1 overflow-y-auto p-4 lg:p-8 pb-8 data-scroll-container">
-          {/* HEADER */}
-          <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-            <h1 className="text-2xl font-serif font-bold text-gray-900">{t('diamondSearch.title')}</h1>
-          </div>
-
+      <div className="flex-1 overflow-y-auto p-4 lg:p-6 pb-24 data-scroll-container">
           {/* SHAPE ROW */}
-          <div className="mb-6">
+          <div className="mb-3">
             <div className="font-bold text-gray-700 text-sm mb-3">Shape</div>
             <div className="flex flex-wrap gap-2">
               {shapes.map(shape => (
@@ -152,60 +147,69 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
             ))}
           </FilterRow>
 
-          {/* FINISHING (3EX / 3VG+) */}
-          <FilterRow label="Finishing">
-            {finishings.map(f => (
-              <SelectButton 
-                key={f} 
-                active={filters.finishing?.includes(f)} 
-                onClick={() => handleFilterChange('finishing', f)}
-              >
-                {f}
-              </SelectButton>
-            ))}
-          </FilterRow>
-
-          {/* CUT */}
-          <FilterRow label="Cut">
-            {cuts.map(c => (
-              <SelectButton 
-                key={c} 
-                active={filters.cut?.includes(c)} 
-                onClick={() => handleFilterChange('cut', c)}
-                disabled={isCutDisabled || (is3EXActive && c === 'EX')}
-              >
-                {c}
-              </SelectButton>
-            ))}
-          </FilterRow>
-
-          {/* POLISH */}
-          <FilterRow label="Polish">
-            {polishes.map(p => (
-              <SelectButton 
-                key={p} 
-                active={filters.polish?.includes(p)} 
-                onClick={() => handleFilterChange('polish', p)}
-                disabled={is3EXActive && p === 'EX'}
-              >
-                {p}
-              </SelectButton>
-            ))}
-          </FilterRow>
-
-          {/* SYMMETRY */}
-          <FilterRow label="Symmetry">
-            {symmetries.map(s => (
-              <SelectButton 
-                key={s} 
-                active={filters.symmetry?.includes(s)} 
-                onClick={() => handleFilterChange('symmetry', s)}
-                disabled={is3EXActive && s === 'EX'}
-              >
-                {s}
-              </SelectButton>
-            ))}
-          </FilterRow>
+          {/* FINISHING + CUT + POLISH + SYMMETRY - COMBINED IN ONE LINE */}
+          <div className="flex flex-col lg:flex-row border-b border-gray-100 last:border-0 py-2">
+            <div className="flex-1 flex flex-wrap items-center gap-4">
+              {/* Finishing */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-gray-600 whitespace-nowrap">Finishing:</span>
+                {finishings.map(f => (
+                  <SelectButton 
+                    key={f} 
+                    active={filters.finishing?.includes(f)} 
+                    onClick={() => handleFilterChange('finishing', f)}
+                  >
+                    {f}
+                  </SelectButton>
+                ))}
+              </div>
+              
+              {/* Cut */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-gray-600 whitespace-nowrap">Cut:</span>
+                {cuts.map(c => (
+                  <SelectButton 
+                    key={c} 
+                    active={filters.cut?.includes(c)} 
+                    onClick={() => handleFilterChange('cut', c)}
+                    disabled={isCutDisabled || (is3EXActive && c === 'EX')}
+                  >
+                    {c}
+                  </SelectButton>
+                ))}
+              </div>
+              
+              {/* Polish */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-gray-600 whitespace-nowrap">Polish:</span>
+                {polishes.map(p => (
+                  <SelectButton 
+                    key={p} 
+                    active={filters.polish?.includes(p)} 
+                    onClick={() => handleFilterChange('polish', p)}
+                    disabled={is3EXActive && p === 'EX'}
+                  >
+                    {p}
+                  </SelectButton>
+                ))}
+              </div>
+              
+              {/* Symmetry */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-gray-600 whitespace-nowrap">Symmetry:</span>
+                {symmetries.map(s => (
+                  <SelectButton 
+                    key={s} 
+                    active={filters.symmetry?.includes(s)} 
+                    onClick={() => handleFilterChange('symmetry', s)}
+                    disabled={is3EXActive && s === 'EX'}
+                  >
+                    {s}
+                  </SelectButton>
+                ))}
+              </div>
+            </div>
+          </div>
 
           {/* MEASUREMENTS (Length, Width, Diameter) */}
           <FilterRow label="Measurements">
@@ -314,17 +318,17 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
             ))}
           </FilterRow>
 
-          {/* ACTION BUTTONS */}
-          <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3">
+          {/* ACTION BUTTONS - FLOATING */}
+          <div className="fixed bottom-4 right-4 flex gap-2 z-50">
                 <button 
                     onClick={() => setFilters({ shape: [], carat: { min: '', max: '' }, color: [], clarity: [], finishing: [], cut: [], polish: [], symmetry: [], fluorescence: [], certificate: [], location: [], length: { min: '', max: '' }, width: { min: '', max: '' }, diameter: '', price: { min: 0, max: 1000000 } })}
-                    className="px-6 py-3 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-black hover:bg-gray-100 rounded transition-colors"
+                    className="px-3 py-2 text-xs font-semibold text-gray-600 bg-white hover:bg-gray-100 rounded-lg transition-colors shadow-md border border-gray-200"
                 >
                     {t('diamondSearch.buttons.reset')}
                 </button>
                 <button 
                   onClick={handleSearch}
-                  className="px-8 py-3 bg-black text-white text-sm font-bold uppercase tracking-wider rounded hover:bg-gray-800 transition-colors shadow-lg"
+                  className="px-4 py-2 bg-black text-white text-xs font-semibold rounded-lg hover:bg-gray-800 transition-colors shadow-lg"
                 >
                     {t('diamondSearch.buttons.search')}
                 </button>
