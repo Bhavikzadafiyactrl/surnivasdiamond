@@ -617,7 +617,7 @@ const ManageDiamondList = () => {
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-2">Location</label>
                     <div className="flex flex-wrap gap-2">
-                      {['HK', 'IND', 'VN'].map(loc => (
+                      {['INDIA', 'HONG KONG', 'VIETNAM'].map(loc => (
                         <button
                           key={loc}
                           onClick={() => toggleFilter('location', loc)}
