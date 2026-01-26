@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FaHistory, FaSpinner, FaSearch, FaFileExcel } from 'react-icons/fa';
-import { FaHistory, FaSpinner, FaSearch, FaFileExcel } from 'react-icons/fa';
+
 import { exportOrdersToExcel } from '../utils/exportUtils';
 
 import Sidebar from '../components/Sidebar';
