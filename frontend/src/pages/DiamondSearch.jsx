@@ -585,7 +585,7 @@ export default function DiamondSearch() {
                      {searchLoading ? (
                         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm flex-1 flex flex-col min-h-0">
                            <div className="overflow-auto flex-1">
-                             <table className="w-full text-xs text-left">
+                             <table className="w-full text-xs text-center">
                                <thead className="bg-gray-50 border-b border-gray-200 whitespace-nowrap">
                                  <tr>
                                    {[...Array(20)].map((_, i) => (
@@ -612,7 +612,7 @@ export default function DiamondSearch() {
                      ) : searchResults.length > 0 ? (
                         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm flex-1 flex flex-col min-h-0">
                            <div className="overflow-auto flex-1">
-                             <table className="w-full text-xs text-left leading-tight relative border-collapse">
+                             <table className="w-full text-xs text-center leading-tight relative border-collapse">
                                <thead className="bg-[#f8f9fa] text-gray-600 font-bold uppercase text-[10px] tracking-wider border-b border-gray-200 whitespace-nowrap sticky top-0 z-10 shadow-sm">
                                   <tr>
                                     <th className="px-2 py-3 border-r border-gray-200 text-center bg-[#f8f9fa] w-8">
