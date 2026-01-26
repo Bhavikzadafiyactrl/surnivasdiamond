@@ -1362,15 +1362,11 @@ exports.bulkUploadCSV = async (req, res) => {
             // Parse CSV
             await new Promise((resolve, reject) => {
                 fs.createReadStream(filePath)
-                    .pipe(csv({ mapHeaders: ({ header }) => header.trim() })) // Trim headers to remove spaces
+                    .pipe(csv({
+                        mapHeaders: ({ header }) => header.trim().replace(/^\uFEFF/, '')
+                    }))
                     .on('data', (row) => {
                         lineNumber++;
-
-                        // Debug: Log headers of first row to check for mismatches
-                        if (lineNumber === 1) {
-                            console.log('[CSV Upload DEBUG] Row 1 Keys:', Object.keys(row));
-                            console.log('[CSV Upload DEBUG] Video Link Value:', row['videoLink'] || row['Video Link'] || row['VIDEO LINK'] || row['VideoLink']);
-                        }
 
                         // Basic validation
                         let stockId = row['Stock ID'] || row['StockID'] || row['Stone No'] || row['StoneNo'];
@@ -1380,19 +1376,9 @@ exports.bulkUploadCSV = async (req, res) => {
                         }
 
                         // Create diamond object
-                        // Prioritize 'Diameter (MM)' from the new headers, fallback to others if needed
+                        // Prioritize 'Diameter (MM)' from the new headers
                         let rawDiam = row['Diameter (MM)'] || row['DIAM'] || '';
-
-                        // If user wants to store it exactly as string from CSV without stripping "0" (e.g. "13.80"), 
-                        // we can assign rawDiam directly if schema is String.
-                        // However, previous logic cleaned it. We will keep cleaning for consistency but ensure it's robust.
-                        // Actually, if we want "13.80" to stay "13.80", we should NOT use Number().
-                        // Let's store it as a clean string.
-                        let cleanDiam = null;
-                        if (rawDiam) {
-                            // strict check: if it's already a clean number-like string, keep it.
-                            cleanDiam = String(rawDiam).trim();
-                        }
+                        let cleanDiam = rawDiam ? String(rawDiam).trim() : null;
 
                         const diamond = {
                             StockID: stockId,
@@ -1409,12 +1395,11 @@ exports.bulkUploadCSV = async (req, res) => {
                             'Diameter (MM)': cleanDiam,
                             'Depth %': parseFloat(row['Depth %']) || 0,
                             'Table %': parseFloat(row['Table %']) || 0,
-                            'Lab': (row['Lab'] || '').toUpperCase(), // Not in new headers, will be empty if missing
+                            'Lab': (row['Lab'] || '').toUpperCase(),
                             'Amount$': parseFloat(row['Amount$']) || 0,
                             'GIALINK': row['GIALINK'] || '',
                             'videoLink': row['videoLink'] || row['Video Link'] || row['VIDEO LINK'] || row['VideoLink'] || '',
                             'Location': (row['Location'] || '').toUpperCase(),
-                            // New header is 'Key To Symbols', keeping fallback to 'Key to Symbol' just in case
                             'Key To Symbols': row['Key To Symbols'] || row['Key to Symbol'] || '',
                             'BGM': (row['BGM'] || '').toUpperCase(),
                             'Status': 'available'
@@ -1439,15 +1424,21 @@ exports.bulkUploadCSV = async (req, res) => {
             }
 
             // Check for existing StockID in database
-            const existingStones = await Diamond.find({
-                StockID: { $in: stockIds }
-            }).select('StockID');
+            // Optimize: chunk the query if too many diamonds
+            const BATCH_SIZE = 1000;
+            const existingStockIds = [];
 
-            if (existingStones.length > 0) {
+            for (let i = 0; i < stockIds.length; i += BATCH_SIZE) {
+                const chunk = stockIds.slice(i, i + BATCH_SIZE);
+                const existing = await Diamond.find({ StockID: { $in: chunk } }).select('StockID').lean();
+                existingStockIds.push(...existing.map(d => d.StockID));
+            }
+
+            if (existingStockIds.length > 0) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Some diamonds already exist in database (Duplicate Stock ID)',
-                    existing: existingStones.map(d => d.StockID)
+                    message: 'Some diamonds already exist in database',
+                    existing: existingStockIds.slice(0, 10) // Limit output
                 });
             }
 
@@ -1457,7 +1448,10 @@ exports.bulkUploadCSV = async (req, res) => {
             }
 
             // Delete uploaded file
-            fs.unlinkSync(filePath);
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+            // Log success
+            fs.appendFileSync('csv_upload.log', `[${new Date().toISOString()}] Success: Imported ${diamonds.length} diamonds\n`);
 
             // Emit socket event
             const io = req.app.get('io');
@@ -1478,10 +1472,14 @@ exports.bulkUploadCSV = async (req, res) => {
                 fs.unlinkSync(filePath);
             }
 
+            // Log specific error
+            const errorMsg = `[${new Date().toISOString()}] ERROR: ${error.message}\nStack: ${error.stack}\n`;
+            fs.appendFileSync('csv_error.log', errorMsg);
             console.error('CSV Upload Error:', error);
+
             res.status(500).json({
                 success: false,
-                message: 'Error processing CSV file',
+                message: 'Error processing CSV file. See server logs for details.',
                 error: error.message
             });
         }
