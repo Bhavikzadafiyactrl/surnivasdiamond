@@ -58,6 +58,8 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
     worksheet.getRow(3).height = 10;
 
     // --- ROW 4 & 5: SUMMARY TABLE (CUSTOM MERGES) ---
+    // Fixed layout relative to sheet, not data columns (since columns moved)
+    // We check visibility/width impact below.
     // Col 1 (A): Total
     // Col 2 (B): Pcs
     // Col 3 (C): Carat
@@ -69,44 +71,34 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
     r4.height = 25;
     r5.height = 25;
 
-    // TOTAL (A4, A5)
     const setSummaryCell = (row, col, value, isHeader) => {
         const cell = row.getCell(col);
         cell.value = value;
-        cell.font = isHeader
-            ? { name: 'Calibri', size: 12, bold: true }
-            : { name: 'Calibri', size: 12, bold: true }; // Values also bold as per previous image
+        cell.font = isHeader ? { name: 'Calibri', size: 12, bold: true } : { name: 'Calibri', size: 12, bold: true };
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-        // Colors
         if (value === "Total") {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDDEBF7' } }; // Blue
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDDEBF7' } };
         } else if (isHeader) {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDDEBF7' } }; // Blue
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDDEBF7' } };
         } else {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2DCDB' } }; // Pink
-            cell.font = { name: 'Calibri', size: 12 }; // Values normal weight? Image looked boldish but let's stick to standard
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2DCDB' } };
+            cell.font = { name: 'Calibri', size: 12 };
         }
 
         cell.border = { top: { style: 'medium' }, bottom: { style: 'medium' }, left: { style: 'medium' }, right: { style: 'medium' } };
         return cell;
     };
 
-    // A4 (Empty Header for Total column?) -> Image had empty space
-    // Let's leave A4 empty but styled? Or just skip.
-    // A5 -> "Total"
     setSummaryCell(r5, 1, "Total", true);
 
-    // PCS (B4, B5)
     setSummaryCell(r4, 2, "Pcs", true);
     setSummaryCell(r5, 2, summaryObj.pcs, false);
 
-    // CARAT (C4, C5)
     setSummaryCell(r4, 3, "Carat", true);
     const cVal = setSummaryCell(r5, 3, summaryObj.carat, false);
     cVal.numFmt = '0.00';
 
-    // PR/CT (Merge D4-F4, D5-F5) -> Cols 4, 5, 6
     worksheet.mergeCells(4, 4, 4, 6);
     setSummaryCell(r4, 4, "Pr/Ct", true);
 
@@ -114,7 +106,6 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
     const pVal = setSummaryCell(r5, 4, summaryObj.pricePerCt, false);
     pVal.numFmt = '#,##0.00';
 
-    // AMOUNT (Merge G4-I4, G5-I5) -> Cols 7, 8, 9
     worksheet.mergeCells(4, 7, 4, 9);
     setSummaryCell(r4, 7, "Amount", true);
 
@@ -161,7 +152,6 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
         });
     });
 
-    // Final Width Adjustments - Resetting to standard since we are using merges now
     columns.forEach((col, index) => {
         const column = worksheet.getColumn(index + 1);
         if (!column.width || column.width < col.width) {
@@ -186,8 +176,13 @@ export const exportDiamondsToExcel = (diamonds, fileName = "Surnivas_Diamonds.xl
         amount: totalAmount
     };
 
+    // Reordered Columns
     const columns = [
+        { header: "Status", key: "Status", width: 12 },
+        { header: "Loc", key: "Location", width: 10 },
         { header: "Stock ID", key: "StockID", width: 15 },
+        { header: "Report No", key: "ReportNo", width: 15 },
+        { header: "Lab", key: "Lab", width: 8 },
         { header: "Shape", key: "Shape", width: 12 },
         { header: "Carat", key: "Carats", width: 10, format: '0.00' },
         { header: "Color", key: "Color", width: 8 },
@@ -196,14 +191,10 @@ export const exportDiamondsToExcel = (diamonds, fileName = "Surnivas_Diamonds.xl
         { header: "Pol", key: "Polish", width: 8 },
         { header: "Sym", key: "Sym", width: 8 },
         { header: "Fluor", key: "Flour", width: 10 },
-        { header: "Lab", key: "Lab", width: 8 },
-        { header: "Price ($)", key: "Price", width: 12, format: '"$"#,##0.00' },
-        { header: "Report No", key: "ReportNo", width: 15 },
-        { header: "Loc", key: "Location", width: 10 },
         { header: "Meas", key: "Measurement", width: 18 },
-        { header: "Table %", key: "Table", width: 10 },
         { header: "Depth %", key: "Depth", width: 10 },
-        { header: "Status", key: "Status", width: 12 },
+        { header: "Table %", key: "Table", width: 10 },
+        { header: "Price ($)", key: "Price", width: 12, format: '"$"#,##0.00' },
         { header: "GIA Link", key: "GIALink", width: 30 },
         { header: "Video", key: "VideoLink", width: 30 }
     ];
@@ -245,6 +236,11 @@ export const exportOrdersToExcel = (orders, fileName = "Order_History.xlsx") => 
         pricePerCt: avgPricePerCarat,
         amount: totalAmount
     };
+
+    // Keep Orders table as is unless requested otherwise? 
+    // User technically asked for "export" generally, but provided image of Diamond Search.
+    // I will leave Orders export as is for now to avoid confusion, or map it if it shares similar fields.
+    // Usually "Status" etc order applies to Diamond Search. I'll stick to updating `exportDiamondsToExcel`.
 
     const columns = [
         { header: "Date", key: "Date", width: 12 },
