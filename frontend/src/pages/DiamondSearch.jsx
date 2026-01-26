@@ -196,22 +196,27 @@ export default function DiamondSearch() {
       }
 
       // 1B. Logic for "3VG+" selection
-      // "when user select 3vg+ then also select all VG if round if not then only polish and symetri"
+      // "when user select 3vg+ then also select all VG and EX if round if not then only polish and symetri"
       if (category === 'finishing' && value === '3VG+') {
         // Check if we just turned ON 3VG+
         if (!prev.finishing.includes('3VG+')) {
            const isFancyShapeOnly = nextFilters.shape.length > 0 && !nextFilters.shape.includes('ROUND');
 
            if (!isFancyShapeOnly) {
-              // Round included: Select VG in Cut, Polish, and Symmetry
+              // Round included: Select both VG and EX in Cut, Polish, and Symmetry
               if (!nextFilters.cut.includes('VG')) nextFilters.cut = [...nextFilters.cut, 'VG'];
+              if (!nextFilters.cut.includes('EX')) nextFilters.cut = [...nextFilters.cut, 'EX'];
               if (!nextFilters.polish.includes('VG')) nextFilters.polish = [...nextFilters.polish, 'VG'];
+              if (!nextFilters.polish.includes('EX')) nextFilters.polish = [...nextFilters.polish, 'EX'];
               if (!nextFilters.symmetry.includes('VG')) nextFilters.symmetry = [...nextFilters.symmetry, 'VG'];
+              if (!nextFilters.symmetry.includes('EX')) nextFilters.symmetry = [...nextFilters.symmetry, 'EX'];
            } else {
-              // Fancy shape only: Select VG only in Polish and Symmetry (not Cut)
+              // Fancy shape only: Select both VG and EX only in Polish and Symmetry (not Cut)
               nextFilters.cut = []; // Clear cut for fancy shapes
               if (!nextFilters.polish.includes('VG')) nextFilters.polish = [...nextFilters.polish, 'VG'];
+              if (!nextFilters.polish.includes('EX')) nextFilters.polish = [...nextFilters.polish, 'EX'];
               if (!nextFilters.symmetry.includes('VG')) nextFilters.symmetry = [...nextFilters.symmetry, 'VG'];
+              if (!nextFilters.symmetry.includes('EX')) nextFilters.symmetry = [...nextFilters.symmetry, 'EX'];
            }
            
            // Uncheck 3EX
