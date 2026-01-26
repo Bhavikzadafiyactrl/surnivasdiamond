@@ -677,29 +677,29 @@ const ManageDiamondList = () => {
                               className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                           />
                       </th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">LOC</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Stock ID</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Report</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Video</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Lab</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Shape</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Carat</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Color</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Clarity</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Cut</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">LOC</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Stock ID</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Report</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Video</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Lab</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Shape</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Carat</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Color</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Clarity</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Cut</th>
 
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Pol</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Sym</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Fluor</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Meas</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Diam</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Depth</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Table</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Key</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">BGM</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Status</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Price</th>
-                      <th className="px-2 py-2 whitespace-nowrap">Actions</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Pol</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Sym</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Fluor</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Meas</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Diam</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Depth</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Table</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Key</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">BGM</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Status</th>
+                      <th className="px-2 py-2 whitespace-nowrap text-center">Price</th>
+                      <th className="px-2 py-2 whitespace-nowrap text-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -716,9 +716,9 @@ const ManageDiamondList = () => {
                                   className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                               />
                           </td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Location || '-'}</td>
-                          <td className="px-2 py-2 font-medium border-r border-gray-200">{diamond.StockID || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Location || '-'}</td>
+                          <td className="px-2 py-2 font-medium border-r border-gray-200 text-center">{diamond.StockID || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">
                             {diamond["Report No"] ? (
                                 <a href={diamond.GIALINK || `https://www.gia.edu/report-check?reportno=${diamond["Report No"]}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                                   {diamond["Report No"]} 🔗
@@ -737,22 +737,22 @@ const ManageDiamondList = () => {
                                 </a>
                             ) : '-'}
                           </td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Lab || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Shape || '-'}</td>
-                          <td className="px-2 py-2 font-semibold border-r border-gray-200">{diamond.Carats || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Color || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Clarity || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Cut || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Polish || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Sym || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Flour || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.Measurement || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond["Diameter (MM)"] || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond["Depth %"] || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond["Table %"] || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond["Key To Symbols"] || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">{diamond.BGM || '-'}</td>
-                          <td className="px-2 py-2 border-r border-gray-200">
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Lab || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Shape || '-'}</td>
+                          <td className="px-2 py-2 font-semibold border-r border-gray-200 text-center">{diamond.Carats || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Color || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Clarity || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Cut || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Polish || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Sym || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Flour || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.Measurement || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond["Diameter (MM)"] || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond["Depth %"] || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond["Table %"] || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond["Key To Symbols"] || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">{diamond.BGM || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center">
                             <span className={`px-2 py-1 rounded text-xs font-semibold ${
                               diamond.Status === 'available' ? 'bg-green-100 text-green-700' :
                               diamond.Status === 'hold' ? 'bg-yellow-100 text-yellow-700' :
@@ -763,8 +763,8 @@ const ManageDiamondList = () => {
                               {diamond.Status || 'available'}
                             </span>
                           </td>
-                          <td className="px-2 py-2 text-green-600 font-semibold border-r border-gray-200">${diamond["Amount$"] || '-'}</td>
-                          <td className="px-2 py-2 flex gap-1">
+                          <td className="px-2 py-2 text-green-600 font-semibold text-center">${diamond["Amount$"] || '-'}</td>
+                          <td className="px-2 py-2 flex gap-1 justify-center">
                             <button onClick={() => openModal(diamond)} className="text-blue-500 hover:text-blue-700"><FaEdit size={12} /></button>
                             <button onClick={() => handleDelete(diamond._id)} className="text-red-500 hover:text-red-700"><FaTrash size={12} /></button>
                           </td>
