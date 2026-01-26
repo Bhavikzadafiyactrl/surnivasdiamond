@@ -1398,26 +1398,26 @@ exports.bulkUploadCSV = async (req, res) => {
                         const diamond = {
                             'Stone No': row['Stone No'],
                             'Report No': row['Report No'] || '',
-                            'Shape': row['Shape'] || '',
+                            'Shape': (row['Shape'] || '').toUpperCase(),
                             'Carats': parseFloat(row['Carats']) || 0,
-                            'Color': row['Color'] || '',
-                            'Clarity': row['Clarity'] || '',
-                            'Cut': row['Cut'] || '',
-                            'Polish': row['Polish'] || '',
-                            'Sym': row['Sym'] || '',
-                            'Flour': row['Flour'] || '',
+                            'Color': (row['Color'] || '').toUpperCase(),
+                            'Clarity': (row['Clarity'] || '').toUpperCase(),
+                            'Cut': (row['Cut'] || '').toUpperCase(),
+                            'Polish': (row['Polish'] || '').toUpperCase(),
+                            'Sym': (row['Sym'] || '').toUpperCase(),
+                            'Flour': (row['Flour'] || '').toUpperCase(),
                             'Measurement': row['Measurement'] || '',
                             'Diameter (MM)': cleanDiam,
                             'Depth %': parseFloat(row['Depth %']) || 0,
                             'Table %': parseFloat(row['Table %']) || 0,
-                            'Lab': row['Lab'] || '', // Not in new headers, will be empty if missing
+                            'Lab': (row['Lab'] || '').toUpperCase(), // Not in new headers, will be empty if missing
                             'Amount$': parseFloat(row['Amount$']) || 0,
                             'GIALINK': row['GIALINK'] || '',
                             'videoLink': row['videoLink'] || row['Video Link'] || row['VIDEO LINK'] || row['VideoLink'] || '',
-                            'Location': row['Location'] || '',
+                            'Location': (row['Location'] || '').toUpperCase(),
                             // New header is 'Key To Symbols', keeping fallback to 'Key to Symbol' just in case
                             'Key To Symbols': row['Key To Symbols'] || row['Key to Symbol'] || '',
-                            'BGM': row['BGM'] || '',
+                            'BGM': (row['BGM'] || '').toUpperCase(),
                             'Status': 'available'
                         };
 
@@ -1487,5 +1487,26 @@ exports.bulkUploadCSV = async (req, res) => {
             });
         }
     });
+};
+
+// Admin: Bulk Delete Diamonds
+exports.bulkDeleteDiamonds = async (req, res) => {
+    try {
+        const { diamondIds } = req.body;
+
+        if (!diamondIds || !Array.isArray(diamondIds) || diamondIds.length === 0) {
+            return res.status(400).json({ success: false, message: "No diamond IDs provided for deletion" });
+        }
+
+        const result = await Diamond.deleteMany({ _id: { $in: diamondIds } });
+
+        res.json({
+            success: true,
+            message: `${result.deletedCount} diamonds deleted successfully`
+        });
+    } catch (error) {
+        console.error("Bulk Delete Error:", error);
+        res.status(500).json({ success: false, message: "Server Error deleting diamonds" });
+    }
 };
 

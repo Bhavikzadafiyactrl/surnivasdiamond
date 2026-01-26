@@ -352,6 +352,40 @@ const ManageDiamondList = () => {
     }
   };
 
+  // Bulk Delete
+  const handleBulkDelete = async () => {
+      if (selectedDiamonds.length === 0) return;
+      
+      if (!window.confirm(`Are you sure you want to delete ${selectedDiamonds.length} diamonds? This action cannot be undone.`)) {
+          return;
+      }
+
+      try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/diamonds/admin/bulk-delete`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+              },
+              credentials: 'include',
+              body: JSON.stringify({ diamondIds: selectedDiamonds.map(d => d._id) })
+          });
+
+          const data = await response.json();
+          if (data.success) {
+              alert(`✅ ${data.message}`);
+              setSelectedDiamonds([]);
+              fetchDiamonds(); // Refresh list
+          } else {
+              alert(`❌ Failed to delete: ${data.message}`);
+          }
+      } catch (error) {
+          console.error("Bulk delete error:", error);
+          alert("❌ Error deleting diamonds.");
+      }
+  };
+
   // Export Logic
   const handleExportSelected = () => {
     if (selectedDiamonds.length === 0) return;
@@ -434,12 +468,20 @@ const ManageDiamondList = () => {
                   
                   {/* Export Button */}
                   {selectedDiamonds.length > 0 && (
+                    <>
                     <button 
                         onClick={handleExportSelected}
                         className="px-4 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2 hover:bg-green-700 whitespace-nowrap animate-fadeIn"
                     >
                         <FaDownload /> Export ({selectedDiamonds.length})
                     </button>
+                    <button 
+                        onClick={handleBulkDelete}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg flex items-center gap-2 hover:bg-red-700 whitespace-nowrap animate-fadeIn"
+                    >
+                        <FaTrash /> Delete ({selectedDiamonds.length})
+                    </button>
+                    </>
                   )}
 
                   <button 
