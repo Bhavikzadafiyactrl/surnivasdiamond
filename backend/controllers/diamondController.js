@@ -168,7 +168,7 @@ exports.searchDiamonds = async (req, res) => {
         }
 
         // --- Location Filter ---
-        // Frontend now sends: HK, IND, VN
+        // Frontend now sends: INDIA, HONG KONG, VIETNAM
         if (filters.location && filters.location.length > 0) {
             query.Location = { $in: filters.location };
         }

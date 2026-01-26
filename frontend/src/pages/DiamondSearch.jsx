@@ -56,7 +56,7 @@ export default function DiamondSearch() {
   const symmetries = ['EX', 'VG', 'GD', 'F'];
   const fluorescences = ['NON', 'FNT', 'MED', 'STG', 'VST', 'VSL'];
   const certificates = ['GIA', 'IGI'];
-  const locations = ['IND', 'HK', 'VN'];
+  const locations = ['INDIA', 'HONG KONG', 'VIETNAM'];
 
   // Auth & Initial Logic
   useEffect(() => {

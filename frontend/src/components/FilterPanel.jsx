@@ -89,7 +89,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
                       <img 
                         src={shapeImages[shape]} 
                         alt={shape} 
-                        className={`w-10 h-10 object-contain ${filters.shape.includes(shape) ? '' : 'opacity-70 group-hover:opacity-100'}`} 
+                        className={`${shape === 'OTHER' ? 'w-12 h-12' : 'w-10 h-10'} object-contain ${filters.shape.includes(shape) ? '' : 'opacity-70 group-hover:opacity-100'}`} 
                       />
                     )}
                   </div>
