@@ -666,7 +666,7 @@ const ManageDiamondList = () => {
 
             <div className="bg-white rounded-xl shadow-sm overflow-hidden border">
               <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left border-collapse">
+                <table className="w-full text-xs text-center border-collapse">
                   <thead className="bg-gray-50 text-gray-700 font-bold uppercase text-xs border-b">
                     <tr>
                       <th className="px-2 py-3 border-r border-gray-200 w-8 text-center">
