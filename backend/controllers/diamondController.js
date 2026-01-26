@@ -93,21 +93,34 @@ exports.searchDiamonds = async (req, res) => {
         // --- Finishing Filter (3EX / 3VG+) ---        
         // 3EX => Cut: EX, Polish: EX, Sym: EX
         // 3VG+ => All three must be EX or VG (any combination)
+        // IMPORTANT: Cut only applies to ROUND diamonds, not fancy shapes
         if (filters.finishing && filters.finishing.length > 0) {
             const finishingConditions = [];
 
             // Check if search is limited to Fancy Shapes only (No Round)
             const isFancyShapeOnly = filters.shape && filters.shape.length > 0 && !filters.shape.some(s => s.toUpperCase() === 'ROUND');
+            const hasRound = filters.shape && filters.shape.some(s => s.toUpperCase() === 'ROUND');
+            const hasFancy = filters.shape && filters.shape.some(s => s.toUpperCase() !== 'ROUND' && s.toUpperCase() !== 'OTHER');
 
             if (filters.finishing.includes('3EX')) {
                 if (isFancyShapeOnly) {
-                    // For Fancy Shapes: 3EX means Polish=EX and Sym=EX (Ignore Cut)
+                    // For Fancy Shapes ONLY: 3EX means Polish=EX and Sym=EX (Ignore Cut)
                     finishingConditions.push({
                         Polish: 'EX',
                         Sym: 'EX'
                     });
+                } else if (hasRound && hasFancy) {
+                    // Mixed shapes (ROUND + Fancy): Need to handle separately
+                    // For ROUND: Cut=EX, Polish=EX, Sym=EX
+                    // For Fancy: Only Polish=EX, Sym=EX
+                    finishingConditions.push({
+                        $or: [
+                            { Shape: 'ROUND', Cut: 'EX', Polish: 'EX', Sym: 'EX' },
+                            { Shape: { $ne: 'ROUND' }, Polish: 'EX', Sym: 'EX' }
+                        ]
+                    });
                 } else {
-                    // For Round (or Mixed/All): 3EX means Cut=EX, Polish=EX, Sym=EX
+                    // For Round only (or All): 3EX means Cut=EX, Polish=EX, Sym=EX
                     finishingConditions.push({
                         Cut: 'EX',
                         Polish: 'EX',
@@ -119,13 +132,21 @@ exports.searchDiamonds = async (req, res) => {
             if (filters.finishing.includes('3VG+')) {
                 const vgOrEx = ['VG', 'EX'];
                 if (isFancyShapeOnly) {
-                    // For Fancy: 3VG+ -> Polish & Sym are VG or EX
+                    // For Fancy ONLY: 3VG+ -> Polish & Sym are VG or EX
                     finishingConditions.push({
                         Polish: { $in: vgOrEx },
                         Sym: { $in: vgOrEx }
                     });
+                } else if (hasRound && hasFancy) {
+                    // Mixed shapes: Handle separately
+                    finishingConditions.push({
+                        $or: [
+                            { Shape: 'ROUND', Cut: { $in: vgOrEx }, Polish: { $in: vgOrEx }, Sym: { $in: vgOrEx } },
+                            { Shape: { $ne: 'ROUND' }, Polish: { $in: vgOrEx }, Sym: { $in: vgOrEx } }
+                        ]
+                    });
                 } else {
-                    // For Round: All three must be VG or EX
+                    // For Round only: All three must be VG or EX
                     finishingConditions.push({
                         Cut: { $in: vgOrEx },
                         Polish: { $in: vgOrEx },
@@ -135,13 +156,31 @@ exports.searchDiamonds = async (req, res) => {
             }
 
             if (finishingConditions.length > 0) {
-                query.$or = query.$or ? [...query.$or, ...finishingConditions] : finishingConditions;
+                query.$and = query.$and || [];
+                query.$and.push({ $or: finishingConditions });
             }
         }
 
         // --- Individual Cut Filter ---
+        // Cut should only apply to ROUND diamonds when mixed shapes are selected
         if (filters.cut && filters.cut.length > 0) {
-            query.Cut = { $in: filters.cut };
+            const hasRound = filters.shape && filters.shape.some(s => s.toUpperCase() === 'ROUND');
+            const hasFancy = filters.shape && filters.shape.some(s => s.toUpperCase() !== 'ROUND' && s.toUpperCase() !== 'OTHER');
+
+            if (hasRound && hasFancy) {
+                // Mixed shapes: Cut only applies to ROUND
+                query.$and = query.$and || [];
+                query.$and.push({
+                    $or: [
+                        { Shape: 'ROUND', Cut: { $in: filters.cut } },
+                        { Shape: { $ne: 'ROUND' } }
+                    ]
+                });
+            } else if (!hasFancy || hasRound) {
+                // ROUND only or no shape filter: apply Cut normally
+                query.Cut = { $in: filters.cut };
+            }
+            // If fancy shapes only, don't apply Cut filter at all
         }
 
         // --- Individual Polish Filter ---
