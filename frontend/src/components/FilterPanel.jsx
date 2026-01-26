@@ -89,7 +89,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
                       <img 
                         src={shapeImages[shape]} 
                         alt={shape} 
-                        className={`${shape === 'OTHER' ? 'w-12 h-12' : 'w-10 h-10'} object-contain ${filters.shape.includes(shape) ? '' : 'opacity-70 group-hover:opacity-100'}`} 
+                        className={`${shape === 'OTHER' ? 'w-14 h-14' : 'w-10 h-10'} object-contain ${filters.shape.includes(shape) ? '' : 'opacity-70 group-hover:opacity-100'}`} 
                       />
                     )}
                   </div>
@@ -152,7 +152,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
             <div className="flex-1 flex flex-wrap items-center gap-8">
               {/* Finishing */}
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-600 whitespace-nowrap">Finishing:</span>
+                <span className="text-sm font-bold text-gray-700 whitespace-nowrap">Finishing:</span>
                 {finishings.map(f => (
                   <SelectButton 
                     key={f} 
@@ -166,7 +166,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
               
               {/* Cut */}
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-600 whitespace-nowrap">Cut:</span>
+                <span className="text-sm font-bold text-gray-700 whitespace-nowrap">Cut:</span>
                 {cuts.map(c => (
                   <SelectButton 
                     key={c} 
@@ -181,7 +181,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
               
               {/* Polish */}
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-600 whitespace-nowrap">Polish:</span>
+                <span className="text-sm font-bold text-gray-700 whitespace-nowrap">Polish:</span>
                 {polishes.map(p => (
                   <SelectButton 
                     key={p} 
@@ -196,7 +196,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
               
               {/* Symmetry */}
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-600 whitespace-nowrap">Symmetry:</span>
+                <span className="text-sm font-bold text-gray-700 whitespace-nowrap">Symmetry:</span>
                 {symmetries.map(s => (
                   <SelectButton 
                     key={s} 
