@@ -636,7 +636,7 @@ export default function DiamondSearch() {
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Diameter (MM)')}>Diam {getSortIndicator('Diameter (MM)')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Depth %')}>Depth {getSortIndicator('Depth %')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Table %')}>Table {getSortIndicator('Table %')}</th>
-                                   <th className="px-2 py-3 border-gray-200 text-right cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Amount$')}>Price {getSortIndicator('Amount$')}</th>
+                                   <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Amount$')}>Price {getSortIndicator('Amount$')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Key</th>
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">BGM</th>
 
@@ -719,7 +719,7 @@ export default function DiamondSearch() {
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Diameter (MM)']}</td>
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Depth %']}</td>
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Table %']}</td>
-                                      <td className="px-2 py-2 font-bold text-green-600 tracking-wide">${Number(diamond['Amount$']).toFixed(2)}</td>
+                                      <td className="px-2 py-2 border-r border-gray-100 font-bold text-green-600 tracking-wide">${Number(diamond['Amount$']).toFixed(2)}</td>
                                       <td className="px-2 py-2 border-r border-gray-100 max-w-xs truncate text-xs text-gray-500" title={diamond['Key To Symbols']}>{diamond['Key To Symbols']}</td>
                                       <td className="px-2 py-2 border-r border-gray-100">{diamond.BGM}</td>
                                     </tr>
