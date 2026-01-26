@@ -252,6 +252,11 @@ exports.searchDiamonds = async (req, res) => {
         // Filter fields: length (min/max), width (min/max), diameter (specific from 'Diameter (MM)')
 
         if (filters.length?.min || filters.length?.max || filters.width?.min || filters.width?.max || filters.diameter) {
+            console.log("===== MEASUREMENT FILTER DEBUG =====");
+            console.log("Length filter:", filters.length);
+            console.log("Width filter:", filters.width);
+            console.log("Diameter filter:", filters.diameter);
+
             diamonds = diamonds.filter((d, i) => {
                 try {
                     let L = 0, W = 0;
@@ -263,26 +268,47 @@ exports.searchDiamonds = async (req, res) => {
                             L = parts[0];
                             W = parts[1];
                         }
+
+                        // Debug first 5 diamonds
+                        if (i < 5) {
+                            console.log(`Diamond ${i}: Measurement="${d.Measurement}", Parsed L=${L}, W=${W}`);
+                        }
                     }
 
                     // Check Length
-                    if (filters.length?.min && L < parseFloat(filters.length.min)) return false;
-                    if (filters.length?.max && L > parseFloat(filters.length.max)) return false;
+                    if (filters.length?.min && L < parseFloat(filters.length.min)) {
+                        if (i < 5) console.log(`  -> Rejected: Length ${L} < ${filters.length.min}`);
+                        return false;
+                    }
+                    if (filters.length?.max && L > parseFloat(filters.length.max)) {
+                        if (i < 5) console.log(`  -> Rejected: Length ${L} > ${filters.length.max}`);
+                        return false;
+                    }
 
                     // Check Width
-                    if (filters.width?.min && W < parseFloat(filters.width.min)) return false;
-                    if (filters.width?.max && W > parseFloat(filters.width.max)) return false;
+                    if (filters.width?.min && W < parseFloat(filters.width.min)) {
+                        if (i < 5) console.log(`  -> Rejected: Width ${W} < ${filters.width.min}`);
+                        return false;
+                    }
+                    if (filters.width?.max && W > parseFloat(filters.width.max)) {
+                        if (i < 5) console.log(`  -> Rejected: Width ${W} > ${filters.width.max}`);
+                        return false;
+                    }
 
                     // Check Diameter (Specific from 'Diameter (MM)')
                     // Handled in Mongo Query now
                     // if (filters.diameter) { ... }
 
+                    if (i < 5) console.log(`  -> Accepted!`);
                     return true;
                 } catch (err) {
                     fs.appendFileSync('backend_debug.log', `Error in filter item ${i}: ${err.message}\n`);
                     return false;
                 }
             });
+
+            console.log(`After measurement filter: ${diamonds.length} diamonds`);
+            console.log("===== END MEASUREMENT FILTER DEBUG =====");
         }
 
 

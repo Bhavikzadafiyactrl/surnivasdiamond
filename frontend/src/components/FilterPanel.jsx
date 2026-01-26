@@ -260,7 +260,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
                       />
                   </div>
                 </div>
-
+ 
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-gray-500 w-16">Diameter</span>
                   <div className="flex items-center gap-2">
