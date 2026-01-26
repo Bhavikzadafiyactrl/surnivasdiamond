@@ -149,7 +149,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
 
           {/* FINISHING + CUT + POLISH + SYMMETRY - COMBINED IN ONE LINE */}
           <div className="flex flex-col lg:flex-row border-b border-gray-100 last:border-0 py-2">
-            <div className="flex-1 flex flex-wrap items-center gap-4">
+            <div className="flex-1 flex flex-wrap items-center gap-8">
               {/* Finishing */}
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-gray-600 whitespace-nowrap">Finishing:</span>
