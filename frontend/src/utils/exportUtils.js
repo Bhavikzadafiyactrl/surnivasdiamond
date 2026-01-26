@@ -19,7 +19,17 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Diamonds');
 
-    // 1. Define Columns
+    // 1. Define Columns & Set Initial Widths
+    // Crucial: Set widths wide enough for the Summary Table floating above columns 2, 3, 4, 5
+    // Column Mapping:
+    // Col 1 (A): Stock ID -> "Total" Label
+    // Col 2 (B): Shape -> "Pcs" Value
+    // Col 3 (C): Carat -> "Carat" Value
+    // Col 4 (D): Color -> "Pr/Ct" Value (Needs width for currency)
+    // Col 5 (E): Clarity -> "Amount" Value (Needs width for currency)
+
+    // We update the widths in the columns definition below, but let's ensure we enforce them.
+
     worksheet.columns = columns.map(col => ({
         header: col.header,
         key: col.key,
@@ -28,48 +38,54 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
     const totalCols = columns.length;
 
     // --- LOGO & TITLE ---
-    // Fetch logo
     const logoBuffer = await fetchImage(logo);
 
-    // Row 1: Title (Merged)
-    const r1 = worksheet.getRow(1);
-    r1.values = ["SURNIVAS DIAMOND"];
-    worksheet.mergeCells(1, 1, 1, totalCols);
-    r1.height = 60; // Increased height for logo
-    r1.font = { name: 'Arial', size: 24, bold: true, color: { argb: 'FFFFFFFF' } };
-    r1.alignment = { vertical: 'middle', horizontal: 'center' };
-    r1.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E40AF' } }; // Dark Blue
+    // Merge Rows 1 and 2 for the Title to create a taller header area
+    // This gives space for the logo without "cutting it" or cramping it.
+    worksheet.mergeCells(1, 1, 2, totalCols); // Merge A1 to [End]2
 
-    // Add Image if available
+    const titleCell = worksheet.getCell(1, 1);
+    titleCell.value = "SURNIVAS DIAMOND";
+    titleCell.font = { name: 'Arial', size: 24, bold: true, color: { argb: 'FFFFFFFF' } };
+    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E40AF' } }; // Dark Blue
+
+    // Ensure the merged rows have height
+    worksheet.getRow(1).height = 40;
+    worksheet.getRow(2).height = 40;
+    // Total visual height approx 80px
+
+    // Add Image
     if (logoBuffer) {
         const imageId = workbook.addImage({
             buffer: logoBuffer,
             extension: 'png',
         });
 
-        // Position Image in Top-Left (over the blue background)
-        // We generally can't put it *inside* a cell content efficiently, but overlaying works.
-        // Let's float it on the left side of the title.
+        // Position Logo roughly in the top-left of the merged block
         worksheet.addImage(imageId, {
-            tl: { col: 0.2, row: 0.2 }, // Slightly offset from top-left
-            ext: { width: 150, height: 50 } // Adjust size as needed
+            tl: { col: 0.1, row: 0.1 },
+            ext: { width: 160, height: 60 } // Slightly larger to fit the new double-row height
         });
     }
 
-    // --- ROW 2: SPACER ---
-    worksheet.addRow([]);
+    // --- ROW 3: SPACER (Actually Row 3 is now available? No, we merged 1 and 2. So next is Row 3. 
+    // Wait, merging 1 and 2 means cells (1,1) to (2,total) are one block. 
+    // The next visual row is Row 3.
+    // Let's add a spacer at Row 3.
+    worksheet.getRow(3).values = [];
+    worksheet.getRow(3).height = 10; // Small spacer
 
-    // --- ROW 3 & 4: SPECIFIC SUMMARY TABLE ---
-    // Layout: | Pcs | Carat | Pr/Ct | Amount
-    // Total   | ... | ...   | ...   | ...
+    // --- ROW 4 & 5: SUMMARY TABLE ---
+    // Moved down by one due to the spacer and merge.
 
-    // Summary Headers (Row 3)
-    const r3 = worksheet.getRow(3);
-    r3.height = 25;
+    // Summary Headers (Row 4)
+    const r4 = worksheet.getRow(4);
+    r4.height = 25;
 
     const headers = ["Pcs", "Carat", "Pr/Ct", "Amount"];
     headers.forEach((h, i) => {
-        const cell = r3.getCell(i + 2); // Start at Col 2 (B)
+        const cell = r4.getCell(i + 2); // Start at Col 2 (B)
         cell.value = h;
         cell.font = { name: 'Calibri', size: 12, bold: true };
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -77,11 +93,11 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
         cell.border = { top: { style: 'medium' }, bottom: { style: 'medium' }, left: { style: 'medium' }, right: { style: 'medium' } };
     });
 
-    // Summary Values (Row 4)
-    const r4 = worksheet.getRow(4);
-    r4.height = 25;
+    // Summary Values (Row 5)
+    const r5 = worksheet.getRow(5);
+    r5.height = 25;
 
-    const totalLabelCell = r4.getCell(1); // A4
+    const totalLabelCell = r5.getCell(1); // A5
     totalLabelCell.value = "Total";
     totalLabelCell.font = { name: 'Calibri', size: 12, bold: true };
     totalLabelCell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -90,7 +106,7 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
 
     const values = [summaryObj.pcs, summaryObj.carat, summaryObj.pricePerCt, summaryObj.amount];
     values.forEach((v, i) => {
-        const cell = r4.getCell(i + 2); // Start at Col 2
+        const cell = r5.getCell(i + 2); // Start at Col 2
         cell.value = v;
         cell.font = { name: 'Calibri', size: 12 };
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -101,18 +117,19 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
         if (i === 2 || i === 3) cell.numFmt = '#,##0.00'; // Pr/Ct, Amount
     });
 
-    // --- ROW 5: SPACER ---
-    worksheet.addRow([]);
+    // --- ROW 6: SPACER ---
+    worksheet.getRow(6).values = [];
+    worksheet.getRow(6).height = 10;
 
-    // --- ROW 6: MAIN TABLE HEADERS ---
-    const r6 = worksheet.getRow(6);
-    r6.values = columns.map(c => c.header);
-    r6.height = 25;
-    r6.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
-    r6.alignment = { vertical: 'middle', horizontal: 'center' };
+    // --- ROW 7: MAIN TABLE HEADERS ---
+    const r7 = worksheet.getRow(7);
+    r7.values = columns.map(c => c.header);
+    r7.height = 25;
+    r7.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+    r7.alignment = { vertical: 'middle', horizontal: 'center' };
 
     for (let i = 1; i <= totalCols; i++) {
-        const cell = r6.getCell(i);
+        const cell = r7.getCell(i);
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF000000' } };
         cell.border = { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin', color: { argb: 'FF555555' } } };
     }
@@ -138,8 +155,10 @@ const generateStyledExcel = async (data, columns, summaryObj, fileName) => {
         });
     });
 
+    // Final Width Adjustments
     columns.forEach((col, index) => {
         const column = worksheet.getColumn(index + 1);
+        // Ensure manual widths override auto if needed, especially for Col 4 and 5
         if (!column.width || column.width < col.width) {
             column.width = col.width || 15;
         }
@@ -162,12 +181,13 @@ export const exportDiamondsToExcel = (diamonds, fileName = "Surnivas_Diamonds.xl
         amount: totalAmount
     };
 
+    // Columns with UPDATED WIDTHS for Cols 4 & 5
     const columns = [
         { header: "Stock ID", key: "StockID", width: 15 },
         { header: "Shape", key: "Shape", width: 12 },
-        { header: "Carat", key: "Carats", width: 8, format: '0.00' },
-        { header: "Color", key: "Color", width: 8 },
-        { header: "Clarity", key: "Clarity", width: 10 },
+        { header: "Carat", key: "Carats", width: 10, format: '0.00' }, // increased slighly
+        { header: "Color", key: "Color", width: 14 }, // Widened for "Pr/Ct"
+        { header: "Clarity", key: "Clarity", width: 18 }, // Widened for "Amount"
         { header: "Cut", key: "Cut", width: 8 },
         { header: "Pol", key: "Polish", width: 8 },
         { header: "Sym", key: "Sym", width: 8 },
@@ -229,8 +249,8 @@ export const exportOrdersToExcel = (orders, fileName = "Order_History.xlsx") => 
         { header: "Status", key: "Status", width: 12 },
         { header: "Shape", key: "Shape", width: 10 },
         { header: "Carat", key: "Carats", width: 8, format: '0.00' },
-        { header: "Color", key: "Color", width: 8 },
-        { header: "Clarity", key: "Clarity", width: 10 },
+        { header: "Color", key: "Color", width: 14 }, // Widened
+        { header: "Clarity", key: "Clarity", width: 18 }, // Widened
         { header: "Total ($)", key: "Total", width: 12, format: '"$"#,##0.00' },
         { header: "Paid ($)", key: "Paid", width: 12, format: '"$"#,##0.00' },
         { header: "Due ($)", key: "Due", width: 12, format: '"$"#,##0.00' },
