@@ -160,15 +160,10 @@ export default function DiamondSearch() {
 
       // Handle main toggle logic first
       if (Array.isArray(current)) {
-        if (category === 'shape') {
-          // Single select for Shape: If clicking same, deselect; otherwise replace with new value
-          nextFilters[category] = current.includes(value) ? [] : [value];
-        } else {
-          // Multi select for others
-          nextFilters[category] = current.includes(value) 
-            ? current.filter(item => item !== value)
-            : [...current, value];
-        }
+        // Multi select for all array-based filters including shape
+        nextFilters[category] = current.includes(value) 
+          ? current.filter(item => item !== value)
+          : [...current, value];
       } else {
         nextFilters[category] = value;
       }
