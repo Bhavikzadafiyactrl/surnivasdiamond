@@ -219,7 +219,7 @@ export const translations = {
             table: {
                 status: "Status",
                 loc: "Loc",
-                stoneId: "Stone ID",
+                stoneId: "Stock ID",
                 report: "Report",
                 lab: "Lab",
                 shape: "Shape",
@@ -240,7 +240,7 @@ export const translations = {
             }
         },
         topbar: {
-            searchPlaceholder: "Search Diamonds, ID, or Certificate...",
+            searchPlaceholder: "Search Diamonds, Stock ID, or Certificate...",
             logout: "Logout",
             user: "User"
         },
@@ -259,7 +259,7 @@ export const translations = {
                 rejected: 'Rejected',
                 history: 'All Done (History)'
             },
-            searchPlaceholder: 'Search Stone ID, Shape, Report No...',
+            searchPlaceholder: 'Search Stock ID, Shape, Report No...',
             status: {
                 pending: 'PENDING',
                 confirmed: 'CONFIRMED',
@@ -300,7 +300,7 @@ export const translations = {
         // --- ORDER HISTORY PAGE ---
         orderHistory: {
             title: 'Order History',
-            searchPlaceholder: 'Search Stone ID, Report No, Shape...',
+            searchPlaceholder: 'Search Stock ID, Report No, Shape...',
             status: {
                 all: 'All Orders',
                 confirmed: 'Confirmed',
@@ -588,7 +588,7 @@ export const translations = {
             table: {
                 status: "Trạng Thái",
                 loc: "Vị Trí",
-                stoneId: "Đá ID",
+                stoneId: "Mã Stock",
                 report: "Báo Cáo",
                 lab: "Lab",
                 shape: "Hình Dạng",
@@ -609,7 +609,7 @@ export const translations = {
             }
         },
         topbar: {
-            searchPlaceholder: "Tìm kiếm Kim cương, ID hoặc Mã chứng nhận...",
+            searchPlaceholder: "Tìm kiếm Kim cương, Mã Stock hoặc Mã chứng nhận...",
             logout: "Đăng Xuất",
             user: "Người dùng"
         },
@@ -628,7 +628,7 @@ export const translations = {
                 rejected: 'Đã Từ Chối',
                 history: 'Lịch Sử (Đã Hoàn Thành)'
             },
-            searchPlaceholder: 'Tìm Mã Đá, Hình Dạng, Số Báo Cáo...',
+            searchPlaceholder: 'Tìm Mã Stock, Hình Dạng, Số Báo Cáo...',
             status: {
                 pending: 'ĐANG XỬ LÝ',
                 confirmed: 'ĐÃ XÁC NHẬN',
@@ -669,7 +669,7 @@ export const translations = {
         // --- ORDER HISTORY PAGE ---
         orderHistory: {
             title: 'Lịch Sử Đơn Hàng',
-            searchPlaceholder: 'Tìm Mã Đá, Số Báo Cáo, Hình Dạng...',
+            searchPlaceholder: 'Tìm Mã Stock, Số Báo Cáo, Hình Dạng...',
             status: {
                 all: 'Tất Cả Đơn',
                 confirmed: 'Đã Xác Nhận',

@@ -3,6 +3,7 @@ import Sidebar from '../../components/Sidebar';
 import Topbar from '../../components/Topbar';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaUpload, FaFilter, FaDownload } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
+import { exportDiamondsToExcel } from '../../utils/exportUtils';
 
 const ManageDiamondList = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -49,7 +50,7 @@ const ManageDiamondList = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingDiamond, setEditingDiamond] = useState(null);
   const [formData, setFormData] = useState({
-    "Stone No": '',
+    StockID: '',
     "Report No": '',
     Shape: '',
     Carats: '',
@@ -196,7 +197,7 @@ const ManageDiamondList = () => {
     if (diamond) {
       setEditingDiamond(diamond);
       setFormData({
-        "Stone No": diamond["Stone No"] || '',
+        StockID: diamond.StockID || '',
         "Report No": diamond["Report No"] || '',
         Shape: diamond.Shape || '',
         Carats: diamond.Carats || '',
@@ -222,7 +223,7 @@ const ManageDiamondList = () => {
     } else {
       setEditingDiamond(null);
       setFormData({
-        "Stone No": '', "Report No": '', Shape: '', Carats: '', Color: '', Clarity: '',
+        StockID: '', "Report No": '', Shape: '', Carats: '', Color: '', Clarity: '',
         Cut: '', Polish: '', Sym: '', Flour: '', Measurement: '', "Diameter (MM)": '',
         "Depth %": '', "Table %": '', "Key To Symbols": '', BGM: '', Lab: '', "Amount$": '',
         Location: '', GIALINK: '', videoLink: '', Status: 'available'
@@ -389,40 +390,7 @@ const ManageDiamondList = () => {
   // Export Logic
   const handleExportSelected = () => {
     if (selectedDiamonds.length === 0) return;
-    
-    // Format for Excel
-    const dataToExport = selectedDiamonds.map(d => ({
-        'Stone No': d['Stone No'],
-        'Report No': d['Report No'],
-        'Location': d.Location,
-        'Lab': d.Lab,
-        'Shape': d.Shape,
-        'Carats': d.Carats,
-        'Color': d.Color,
-        'Clarity': d.Clarity,
-        'Cut': d.Cut,
-        'Polish': d.Polish,
-        'Sym': d.Sym,
-        'Fluor': d.Flour,
-        'Measurement': d.Measurement,
-        'Diameter': d['Diameter (MM)'],
-        'Depth %': d['Depth %'],
-        'Table %': d['Table %'],
-        'Key To Symbols': d['Key To Symbols'],
-        'BGM': d.BGM,
-        'Status': d.Status,
-        'Price': d['Amount$'],
-        'GIA Link': d.GIALINK || (d['Report No'] ? `https://www.gia.edu/report-check?reportno=${d['Report No']}` : ''),
-        'Video Link': d.videoLink
-    }));
-
-    // Create Sheet
-    const ws = XLSX.utils.json_to_sheet(dataToExport);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Selected Diamonds");
-    
-    // Write File
-    XLSX.writeFile(wb, "Selected_Diamonds.xlsx");
+    exportDiamondsToExcel(selectedDiamonds, 'Admin_Selected_Diamonds.xlsx');
   };
 
   return (
@@ -445,7 +413,7 @@ const ManageDiamondList = () => {
                 <form onSubmit={handleSearch} className="flex-1 md:w-64 flex">
                   <input
                     type="text"
-                    placeholder="Search Stone No or Report No..."
+                    placeholder="Search Stock ID or Report No..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="w-full px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-1 focus:ring-black"
@@ -709,7 +677,7 @@ const ManageDiamondList = () => {
                           />
                       </th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">LOC</th>
-                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Stone ID</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Stock ID</th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Report</th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Video</th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200">Lab</th>
@@ -748,7 +716,7 @@ const ManageDiamondList = () => {
                               />
                           </td>
                           <td className="px-2 py-2 border-r border-gray-200">{diamond.Location || '-'}</td>
-                          <td className="px-2 py-2 font-medium border-r border-gray-200">{diamond["Stone No"] || '-'}</td>
+                          <td className="px-2 py-2 font-medium border-r border-gray-200">{diamond.StockID || '-'}</td>
                           <td className="px-2 py-2 border-r border-gray-200">
                             {diamond["Report No"] ? (
                                 <a href={diamond.GIALINK || `https://www.gia.edu/report-check?reportno=${diamond["Report No"]}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
@@ -842,8 +810,8 @@ const ManageDiamondList = () => {
               <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 
                 <div className="col-span-1">
-                  <label className="block text-xs font-bold mb-1">Stone No *</label>
-                  <input type="text" name="Stone No" required value={formData["Stone No"]} onChange={handleInputChange} className="w-full px-2 py-1 border rounded" />
+                  <label className="block text-xs font-bold mb-1">Stock ID *</label>
+                  <input type="text" name="StockID" required value={formData.StockID} onChange={handleInputChange} className="w-full px-2 py-1 border rounded" />
                 </div>
                 <div className="col-span-1">
                   <label className="block text-xs font-bold mb-1">Report No</label>

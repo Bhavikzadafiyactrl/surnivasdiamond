@@ -124,7 +124,7 @@ const Confirmation = () => {
   const filteredOrders = tabOrders.filter(order => {
       const term = searchTerm ? searchTerm.toLowerCase() : '';
       const diamond = order.diamondId || {};
-      const stoneNo = diamond['Stone No'] ? diamond['Stone No'].toLowerCase() : '';
+      const stoneNo = diamond.StockID ? diamond.StockID.toLowerCase() : '';
       const reportNo = diamond['Report No'] ? diamond['Report No'].toString().toLowerCase() : '';
       const shape = diamond.Shape ? diamond.Shape.toLowerCase() : '';
       const color = diamond.Color ? diamond.Color.toLowerCase() : '';
@@ -504,7 +504,7 @@ const Confirmation = () => {
                                                   </td>
                                                   <td className="px-6 py-4">
                                                       <div className="font-medium text-gray-900">{new Date(order.createdAt).toLocaleDateString()}</div>
-                                                      <div className="text-xs text-gray-500 font-mono mt-0.5">{diamond['Stone No']}</div>
+                                                      <div className="text-xs text-gray-500 font-mono mt-0.5">{diamond.StockID}</div>
                                                       <div className="text-[10px] text-gray-400 mt-0.5">{order._id.slice(-6).toUpperCase()}</div>
                                                   </td>
                                                   <td className="px-6 py-4">
@@ -597,7 +597,7 @@ const Confirmation = () => {
                                             className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                         />
                                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                                            <span className="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 text-xs">ID: {diamond['Stone No']}</span>
+                                            <span className="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 text-xs">ID: {diamond.StockID}</span>
                                             <span>•</span>
                                             <span>Ordered: {new Date(order.createdAt).toLocaleDateString()} {new Date(order.createdAt).toLocaleTimeString()}</span>
                                          </div>

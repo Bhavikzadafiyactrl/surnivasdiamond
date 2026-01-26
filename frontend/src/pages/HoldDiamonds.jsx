@@ -306,7 +306,7 @@ export default function HoldDiamonds() {
                                     </th>
                                     <th className="px-1 py-3 border-r border-gray-300">Status</th>
                                     <th className="px-1 py-3 border-r border-gray-300">Loc</th>
-                                   <th className="px-1 py-3 border-r border-gray-300">Stone ID</th>
+                                   <th className="px-1 py-3 border-r border-gray-300">Stock ID</th>
                                    <th className="px-1 py-3 border-r border-gray-300">Report</th>
                                    <th className="px-1 py-3 border-r border-gray-300">Lab</th>
                                    <th className="px-1 py-3 border-r border-gray-300">Shape</th>
@@ -353,7 +353,7 @@ export default function HoldDiamonds() {
                                          )}
                                        </td>
                                        <td className="px-1 py-2 border-r border-gray-300 font-medium">{diamond.Location}</td>
-                                     <td className="px-1 py-2 border-r border-gray-300">{diamond['Stone No']}</td>
+                                     <td className="px-1 py-2 border-r border-gray-300">{diamond.StockID}</td>
                                      <td className="px-1 py-2 border-r border-gray-300">
                                        {diamond['Report No'] ? (
                                          <a 

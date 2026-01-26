@@ -61,7 +61,7 @@ const AllOrderAdmin = () => {
       
       // Search filter (Stone, Report, User, Company, Order ID)
       const searchMatch = (
-          (diamond['Stone No'] && diamond['Stone No'].toLowerCase().includes(term)) ||
+          (diamond.StockID && diamond.StockID.toLowerCase().includes(term)) ||
           (diamond['Report No'] && diamond['Report No'].toLowerCase().includes(term)) ||
           (diamond.Shape && diamond.Shape.toLowerCase().includes(term)) ||
           (order._id && order._id.toLowerCase().includes(term)) ||
@@ -147,7 +147,7 @@ const AllOrderAdmin = () => {
         EMAIL: order.userId?.email,
         MOBILE: order.userId?.mobile,
         LOC: order.diamondId?.Location,
-        'STONE ID': order.diamondId?.['Stone No'],
+        'STOCK ID': order.diamondId?.StockID,
         REPORT: order.diamondId?.['Report No'],
         LAB: order.diamondId?.Lab,
         SHAPE: order.diamondId?.Shape,
@@ -250,7 +250,7 @@ const AllOrderAdmin = () => {
                       <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input 
                         type="text" 
-                        placeholder="Search Stone ID, User, Company..." 
+                        placeholder="Search Stock ID, User, Company..." 
                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-black outline-none text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -333,7 +333,7 @@ const AllOrderAdmin = () => {
                                <th className="px-2 py-3 text-xs">EMAIL</th>
                                <th className="px-2 py-3 text-xs">MOBILE</th>
                                <th className="px-2 py-3 text-xs">LOC</th>
-                               <th className="px-2 py-3 text-xs">STONE ID</th>
+                               <th className="px-2 py-3 text-xs">STOCK ID</th>
                                <th className="px-2 py-3 text-xs">REPORT</th>
                                <th className="px-2 py-3 text-xs">LAB</th>
                                <th className="px-2 py-3 text-xs">SHAPE</th>
@@ -393,7 +393,7 @@ const AllOrderAdmin = () => {
                                        <td className="px-2 py-2 text-xs text-gray-600">{user.email || '-'}</td>
                                        <td className="px-2 py-2 text-xs text-gray-600">{user.mobile || '-'}</td>
                                        <td className="px-2 py-2 text-xs text-gray-600">{diamond.Location || '-'}</td>
-                                       <td className="px-2 py-2 text-xs font-semibold">{diamond['Stone No'] || '-'}</td>
+                                       <td className="px-2 py-2 text-xs font-semibold">{diamond.StockID || '-'}</td>
                                        <td className="px-2 py-2 text-xs text-blue-600">{diamond['Report No'] || '-'}</td>
                                        <td className="px-2 py-2 text-xs text-gray-600">{diamond.Lab || '-'}</td>
                                        <td className="px-2 py-2 text-xs">{diamond.Shape || '-'}</td>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FaHistory, FaSpinner, FaSearch, FaFileExcel } from 'react-icons/fa';
-import * as XLSX from 'xlsx';
+import { FaHistory, FaSpinner, FaSearch, FaFileExcel } from 'react-icons/fa';
+import { exportOrdersToExcel } from '../utils/exportUtils';
 
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
@@ -66,7 +67,7 @@ const OrderHistory = () => {
       
       // Search filter
       const searchMatch = (
-          (diamond['Stone No'] && diamond['Stone No'].toLowerCase().includes(term)) ||
+          (diamond.StockID && diamond.StockID.toLowerCase().includes(term)) ||
           (diamond['Report No'] && diamond['Report No'].toLowerCase().includes(term)) ||
           (diamond.Shape && diamond.Shape.toLowerCase().includes(term)) ||
           (order._id && order._id.toLowerCase().includes(term)) 
@@ -133,47 +134,7 @@ const OrderHistory = () => {
 
     if (dataToExport.length === 0) return;
 
-    // Flatten data for Excel
-    const excelData = dataToExport.map(order => {
-        const diamond = order.diamondId || {};
-        const total = order.totalAmount || diamond['Amount$'] || 0;
-        const paid = order.paidAmount || 0;
-        const discount = order.discount || 0;
-        const due = order.status === 'confirmed' ? (total - paid - discount) : 0;
-
-        return {
-            "Date": new Date(order.createdAt).toLocaleDateString(),
-            "Order ID": order._id,
-            "Stone ID": diamond['Stone No'] || '-',
-            "Report No": diamond['Report No'] || '-',
-            "Shape": diamond.Shape || '-',
-            "Carat": Number(diamond.Carats || 0).toFixed(2),
-            "Color": diamond.Color || '-',
-            "Clarity": diamond.Clarity || '-',
-            "Cut": diamond.Cut || '-',
-            "Polish": diamond.Polish || '-',
-            "Symmetry": diamond.Sym || '-',
-            "Fluor": diamond.Flour || '-',
-            "Lab": diamond.Lab || '-',
-            "Status": order.status.toUpperCase(),
-            "Payment Status": (order.paymentStatus || 'pending').toUpperCase(),
-            "Total Amount ($)": Number(total).toFixed(2),
-            "Paid Amount ($)": Number(paid).toFixed(2),
-            "Discount ($)": Number(discount).toFixed(2),
-            "Due Amount ($)": Number(due).toFixed(2),
-            "Sold Date": order.completedAt ? new Date(order.completedAt).toLocaleDateString() : '-'
-        };
-    });
-
-    // Create Worksheet
-    const ws = XLSX.utils.json_to_sheet(excelData);
-
-    // Create Workbook
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Order History");
-
-    // Generate Excel File
-    XLSX.writeFile(wb, selectedOrderIds.length > 0 ? "Selected_Order_History.xlsx" : `Order_History_${new Date().toISOString().split('T')[0]}.xlsx`);
+    exportOrdersToExcel(dataToExport, selectedOrderIds.length > 0 ? "Selected_Order_History.xlsx" : `Order_History_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
   const toggleSelectAll = () => {
@@ -311,7 +272,7 @@ const OrderHistory = () => {
                                 <th className="px-2 py-3 border-r border-gray-200">Date</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Sold Date</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Loc</th>
-                                <th className="px-2 py-3 border-r border-gray-200">Stone ID</th>
+                                <th className="px-2 py-3 border-r border-gray-200">Stock ID</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Report</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Lab</th>
                                 <th className="px-2 py-3 border-r border-gray-200">Shape</th>
@@ -363,7 +324,7 @@ const OrderHistory = () => {
                                                 {order.completedAt ? new Date(order.completedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-'}
                                             </td>
                                             <td className="px-2 py-2 border-r border-gray-100 font-medium">{diamond.Location}</td>
-                                            <td className="px-2 py-2 border-r border-gray-100">{diamond['Stone No']}</td>
+                                            <td className="px-2 py-2 border-r border-gray-100">{diamond.StockID}</td>
                                             <td className="px-2 py-2 border-r border-gray-100 text-blue-600 underline cursor-pointer" title="View Report">
                                                  {diamond['Report No'] ? (
                                                      <a href={diamond.GIALINK || `https://www.gia.edu/report-check?reportno=${diamond['Report No']}`} target="_blank" rel="noopener noreferrer">{diamond['Report No']}</a>

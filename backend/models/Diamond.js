@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const diamondSchema = new mongoose.Schema({
     Location: String,
-    "Stone No": { type: String, unique: true, required: true },
+    StockID: { type: String, unique: true, required: true },
     "Report No": { type: String, sparse: true },
     Shape: String,
     Carats: Number,

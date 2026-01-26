@@ -43,7 +43,7 @@ exports.searchDiamonds = async (req, res) => {
         if (filters.search && filters.search.trim() !== "") {
             const searchTerm = filters.search.trim();
             query.$or = [
-                { 'Stone No': { $regex: searchTerm, $options: 'i' } },
+                { StockID: { $regex: searchTerm, $options: 'i' } },
                 { 'Report No': { $regex: searchTerm, $options: 'i' } }
             ];
         }
@@ -1100,14 +1100,14 @@ exports.createDiamond = async (req, res) => {
         const diamondData = req.body;
 
         // Basic validation
-        if (!diamondData["Stone No"] || !diamondData["Amount$"]) {
-            return res.status(400).json({ success: false, message: "Stone No and Amount$ are required" });
+        if (!diamondData.StockID || !diamondData["Amount$"]) {
+            return res.status(400).json({ success: false, message: "StockID and Amount$ are required" });
         }
 
-        // Check if Stone No already exists
-        const existing = await Diamond.findOne({ "Stone No": diamondData["Stone No"] });
+        // Check if StockID already exists
+        const existing = await Diamond.findOne({ StockID: diamondData.StockID });
         if (existing) {
-            return res.status(400).json({ success: false, message: "Diamond with this Stone No already exists" });
+            return res.status(400).json({ success: false, message: "Diamond with this Stock ID already exists" });
         }
 
         const newDiamond = new Diamond(diamondData);
@@ -1171,7 +1171,7 @@ exports.getAdminDiamonds = async (req, res) => {
         // Search by Stone No or Report No
         if (search) {
             query.$or = [
-                { "Stone No": { $regex: search, $options: 'i' } },
+                { StockID: { $regex: search, $options: 'i' } },
                 { "Report No": { $regex: search, $options: 'i' } }
             ];
         }
@@ -1373,13 +1373,12 @@ exports.bulkUploadCSV = async (req, res) => {
                         }
 
                         // Basic validation
-                        if (!row['Stone No'] || row['Stone No'].trim() === '') {
-                            errors.push({ line: lineNumber, error: 'Missing Stone No' });
+                        let stockId = row['Stock ID'] || row['StockID'] || row['Stone No'] || row['StoneNo'];
+                        if (!stockId || stockId.trim() === '') {
+                            errors.push({ line: lineNumber, error: 'Missing Stock ID / Stone No' });
                             return;
                         }
 
-                        // Create diamond object
-                        // Create diamond object
                         // Create diamond object
                         // Prioritize 'Diameter (MM)' from the new headers, fallback to others if needed
                         let rawDiam = row['Diameter (MM)'] || row['DIAM'] || '';
@@ -1396,7 +1395,7 @@ exports.bulkUploadCSV = async (req, res) => {
                         }
 
                         const diamond = {
-                            'Stone No': row['Stone No'],
+                            StockID: stockId,
                             'Report No': row['Report No'] || '',
                             'Shape': (row['Shape'] || '').toUpperCase(),
                             'Carats': parseFloat(row['Carats']) || 0,
@@ -1427,28 +1426,28 @@ exports.bulkUploadCSV = async (req, res) => {
                     .on('error', reject);
             });
 
-            // Check for duplicate Stone No in CSV
-            const stoneNos = diamonds.map(d => d['Stone No']);
-            const duplicatesInCSV = stoneNos.filter((item, index) => stoneNos.indexOf(item) !== index);
+            // Check for duplicate StockID in CSV
+            const stockIds = diamonds.map(d => d.StockID);
+            const duplicatesInCSV = stockIds.filter((item, index) => stockIds.indexOf(item) !== index);
 
             if (duplicatesInCSV.length > 0) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Duplicate Stone No found in CSV',
+                    message: 'Duplicate Stock ID found in CSV',
                     duplicates: [...new Set(duplicatesInCSV)]
                 });
             }
 
-            // Check for existing Stone No in database
+            // Check for existing StockID in database
             const existingStones = await Diamond.find({
-                'Stone No': { $in: stoneNos }
-            }).select('Stone No');
+                StockID: { $in: stockIds }
+            }).select('StockID');
 
             if (existingStones.length > 0) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Some diamonds already exist in database (Duplicate Stone No)',
-                    existing: existingStones.map(d => d['Stone No'])
+                    message: 'Some diamonds already exist in database (Duplicate Stock ID)',
+                    existing: existingStones.map(d => d.StockID)
                 });
             }
 

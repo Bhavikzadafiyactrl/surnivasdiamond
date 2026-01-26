@@ -248,7 +248,7 @@ const AdminOrders = () => {
     // 3. Search Filter
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
-    const stoneNo = item.diamondId?.['Stone No'] ? item.diamondId['Stone No'].toLowerCase() : '';
+    const stoneNo = item.diamondId?.StockID ? item.diamondId.StockID.toLowerCase() : '';
     const reportNo = item.diamondId?.['Report No'] ? item.diamondId['Report No'].toLowerCase() : '';
     const userName = item.userId?.name ? item.userId.name.toLowerCase() : '';
     const userEmail = item.userId?.email ? item.userId.email.toLowerCase() : '';
@@ -592,7 +592,7 @@ const AdminOrders = () => {
                          
                          {/* Diamond Details */}
                          <th className="px-1 py-3 border-r border-gray-300">Loc</th>
-                         <th className="px-1 py-3 border-r border-gray-300">Stone ID</th>
+                         <th className="px-1 py-3 border-r border-gray-300">Stock ID</th>
                          <th className="px-1 py-3 border-r border-gray-300">Shape</th>
                          <th className="px-1 py-3 border-r border-gray-300">Carat</th>
                          <th className="px-1 py-3 border-r border-gray-300">Color</th>
@@ -666,7 +666,7 @@ const AdminOrders = () => {
                              
                              {/* Diamond Specs */}
                              <td className="px-1 py-2 border-r border-gray-300">{diamond.Location}</td>
-                             <td className="px-1 py-2 border-r border-gray-300 font-mono">{diamond['Stone No']}</td>
+                             <td className="px-1 py-2 border-r border-gray-300 font-mono">{diamond.StockID}</td>
                              <td className="px-1 py-2 border-r border-gray-300">{diamond.Shape}</td>
                              <td className="px-1 py-2 border-r border-gray-300 font-bold">{diamond.Carats}</td>
                              <td className="px-1 py-2 border-r border-gray-300">{diamond.Color}</td>
@@ -725,7 +725,7 @@ const AdminOrders = () => {
                          <div className="p-6 pl-14 flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
                             {/* Top Meta Row (Order ID, Date) */}
                             <div className="flex items-center gap-3 text-xs text-gray-400 mb-2 font-mono">
-                                <span className="border border-gray-200 rounded px-1.5 py-0.5">ID: {diamond['Stone No'] || order._id.slice(-6).toUpperCase()}</span>
+                                <span className="border border-gray-200 rounded px-1.5 py-0.5">ID: {diamond.StockID || order._id.slice(-6).toUpperCase()}</span>
                                 <span>•</span>
                                 <span className="flex items-center gap-1"><FaCalendarAlt /> Ordered: {new Date(order.createdAt).toLocaleDateString()} {new Date(order.createdAt).toLocaleTimeString()}</span>
                             </div>

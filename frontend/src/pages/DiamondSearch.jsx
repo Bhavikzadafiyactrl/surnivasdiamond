@@ -8,6 +8,8 @@ import FilterPanel from '../components/FilterPanel';
 import { useSocket } from '../contexts/SocketContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
+import { exportDiamondsToExcel } from '../utils/exportUtils';
+import { FaFileExcel } from 'react-icons/fa';
 
 export default function DiamondSearch() {
   const location = useLocation();
@@ -553,6 +555,18 @@ export default function DiamondSearch() {
                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
                                  {t('diamondSearch.buttons.filter')}
                              </button>
+                             
+                             {searchResults.length > 0 && selectedDiamonds.length > 0 && (
+                                <button
+                                    onClick={() => {
+                                        const selectedData = searchResults.filter(d => selectedDiamonds.includes(d._id));
+                                        exportDiamondsToExcel(selectedData, 'Selected_Diamonds.xlsx');
+                                    }}
+                                    className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors shadow-sm flex items-center gap-2"
+                                >
+                                    <FaFileExcel /> Export ({selectedDiamonds.length})
+                                </button>
+                             )}
                         </div>
 
                         {/* Summary Row */}
@@ -610,8 +624,8 @@ export default function DiamondSearch() {
                                       />
                                     </th>
                                     <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Status</th>
-                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Loc</th>
-                                   <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Stone ID</th>
+                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Location</th>
+                                   <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Stock ID</th>
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Report</th>
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Video</th>
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Lab</th>
@@ -623,13 +637,13 @@ export default function DiamondSearch() {
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Polish')}>Pol {getSortIndicator('Polish')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Sym')}>Sym {getSortIndicator('Sym')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Flour')}>Fluor {getSortIndicator('Flour')}</th>
-                                   <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Measurement')}>Meas {getSortIndicator('Measurement')}</th>
+                                   <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Measurement')}>Measurement {getSortIndicator('Measurement')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Diameter (MM)')}>Diam {getSortIndicator('Diameter (MM)')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Depth %')}>Depth {getSortIndicator('Depth %')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Table %')}>Table {getSortIndicator('Table %')}</th>
+                                   <th className="px-2 py-3 border-gray-200 text-right cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Amount$')}>Price {getSortIndicator('Amount$')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Key</th>
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">BGM</th>
-                                   <th className="px-2 py-3 border-gray-200 text-right cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Amount$')}>Price {getSortIndicator('Amount$')}</th>
 
                                   </tr>
                                 </thead>
@@ -665,7 +679,7 @@ export default function DiamondSearch() {
                                          )}
                                        </td>
                                       <td className="px-2 py-2 border-r border-gray-100 font-medium text-gray-700">{diamond.Location}</td>
-                                     <td className="px-2 py-2 border-r border-gray-100 font-medium">{diamond['Stone No']}</td>
+                                     <td className="px-2 py-2 border-r border-gray-100 font-medium">{diamond.StockID}</td>
                                      <td className="px-2 py-2 border-r border-gray-100">
                                        {diamond['Report No'] ? (
                                          <a 
@@ -710,9 +724,9 @@ export default function DiamondSearch() {
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Diameter (MM)']}</td>
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Depth %']}</td>
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Table %']}</td>
-                                     <td className="px-2 py-2 border-r border-gray-100 max-w-xs truncate text-xs text-gray-500" title={diamond['Key To Symbols']}>{diamond['Key To Symbols']}</td>
-                                     <td className="px-2 py-2 border-r border-gray-100">{diamond.BGM}</td>
-                                      <td className="px-2 py-2 text-right font-bold text-green-600 tracking-wide">${Number(diamond['Amount$']).toFixed(2)}</td>
+                                      <td className="px-2 py-2 text-right font-bold text-green-600 tracking-wide border-r">${Number(diamond['Amount$']).toFixed(2)}</td>
+                                      <td className="px-2 py-2 border-r border-gray-100 max-w-xs truncate text-xs text-gray-500" title={diamond['Key To Symbols']}>{diamond['Key To Symbols']}</td>
+                                      <td className="px-2 py-2 border-r border-gray-100">{diamond.BGM}</td>
                                     </tr>
                                     );
                                   })}
