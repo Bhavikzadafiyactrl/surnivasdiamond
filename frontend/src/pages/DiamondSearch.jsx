@@ -47,7 +47,7 @@ export default function DiamondSearch() {
     diameter: ''
   });
 
-  const shapes = ['ROUND', 'PRINCESS', 'CUSHION', 'OVAL', 'EMERALD', 'PEAR', 'RADIANT', 'MARQUISE', 'HEART'];
+  const shapes = ['ROUND', 'PRINCESS', 'CUSHION', 'OVAL', 'EMERALD', 'PEAR', 'RADIANT', 'MARQUISE', 'HEART', 'OTHER'];
   const colors = Array.from({ length: 23 }, (_, i) => String.fromCharCode(68 + i)); 
   const clarities = ['FL', 'IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2', 'I1', 'I2', 'I3'];
   const finishings = ['3EX', '3VG+'];

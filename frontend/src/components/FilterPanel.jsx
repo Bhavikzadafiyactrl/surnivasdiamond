@@ -7,6 +7,7 @@ import img7 from '../assets/Pear.webp';
 import img8 from '../assets/Radiant.webp';
 import img9 from '../assets/Heart.webp';
 import img10 from '../assets/Cushion.webp';
+import imgOther from '../assets/OTHER.png.png';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const shapeImages = {
@@ -18,7 +19,8 @@ const shapeImages = {
   'PEAR': img7,
   'RADIANT': img8,
   'HEART': img9,
-  'CUSHION': img10
+  'CUSHION': img10,
+  'OTHER': imgOther
 };
 
 const FilterRow = ({ label, children, className = "" }) => (

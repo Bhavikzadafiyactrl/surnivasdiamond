@@ -50,9 +50,23 @@ exports.searchDiamonds = async (req, res) => {
 
         // --- Shape Filter ---
         if (filters.shape && filters.shape.length > 0) {
-            // Map frontend shape names to backend values (UPPERCASE usually)
-            const shapeMap = filters.shape.map(s => s.toUpperCase());
-            query.Shape = { $in: shapeMap };
+            const standardShapes = ['ROUND', 'PRINCESS', 'CUSHION', 'OVAL', 'EMERALD', 'PEAR', 'RADIANT', 'MARQUISE', 'HEART'];
+            const hasOther = filters.shape.includes('OTHER');
+            const regularShapes = filters.shape.filter(s => s !== 'OTHER').map(s => s.toUpperCase());
+
+            if (hasOther && regularShapes.length > 0) {
+                // User selected OTHER + some standard shapes
+                query.$or = [
+                    { Shape: { $in: regularShapes } },
+                    { Shape: { $nin: standardShapes } }
+                ];
+            } else if (hasOther) {
+                // User selected ONLY OTHER
+                query.Shape = { $nin: standardShapes };
+            } else {
+                // User selected only standard shapes
+                query.Shape = { $in: regularShapes };
+            }
         }
 
         // --- Carat Filter ---
