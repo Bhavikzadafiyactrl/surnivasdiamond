@@ -70,7 +70,7 @@ const OrderHistory = () => {
           (diamond.StockID && diamond.StockID.toLowerCase().includes(term)) ||
           (diamond['Report No'] && diamond['Report No'].toLowerCase().includes(term)) ||
           (diamond.Shape && diamond.Shape.toLowerCase().includes(term)) ||
-          (order._id && order._id.toLowerCase().includes(term)) 
+          (diamond.Shape && diamond.Shape.toLowerCase().includes(term)) 
       );
       
       // Date range filter

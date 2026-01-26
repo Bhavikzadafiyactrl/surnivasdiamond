@@ -64,7 +64,6 @@ const AllOrderAdmin = () => {
           (diamond.StockID && diamond.StockID.toLowerCase().includes(term)) ||
           (diamond['Report No'] && diamond['Report No'].toLowerCase().includes(term)) ||
           (diamond.Shape && diamond.Shape.toLowerCase().includes(term)) ||
-          (order._id && order._id.toLowerCase().includes(term)) ||
           (user.name && user.name.toLowerCase().includes(term)) ||
           (user.companyName && user.companyName.toLowerCase().includes(term)) || 
           (user.email && user.email.toLowerCase().includes(term))

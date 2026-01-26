@@ -257,8 +257,7 @@ const AdminOrders = () => {
     return stoneNo.includes(term) || 
            reportNo.includes(term) || 
            userName.includes(term) || 
-           userEmail.includes(term) ||
-           orderId.includes(term);
+           userEmail.includes(term);
   }).sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
 
   const getStatusBadge = (status) => {
@@ -725,7 +724,7 @@ const AdminOrders = () => {
                          <div className="p-6 pl-14 flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
                             {/* Top Meta Row (Order ID, Date) */}
                             <div className="flex items-center gap-3 text-xs text-gray-400 mb-2 font-mono">
-                                <span className="border border-gray-200 rounded px-1.5 py-0.5">ID: {diamond.StockID || order._id.slice(-6).toUpperCase()}</span>
+                                <span className="border border-gray-200 rounded px-1.5 py-0.5">ID: {diamond.StockID || '-'}</span>
                                 <span>•</span>
                                 <span className="flex items-center gap-1"><FaCalendarAlt /> Ordered: {new Date(order.createdAt).toLocaleDateString()} {new Date(order.createdAt).toLocaleTimeString()}</span>
                             </div>

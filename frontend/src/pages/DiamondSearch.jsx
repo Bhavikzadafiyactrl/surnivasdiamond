@@ -741,12 +741,7 @@ export default function DiamondSearch() {
                            </div>
                            <h3 className="text-xl font-bold text-gray-900 mb-2">No Diamonds Found</h3>
                            <p className="text-gray-500 max-w-md mx-auto mb-6">We couldn't find any diamonds matching your specific criteria. Try relaxing your filters.</p>
-                           <button 
-                             onClick={() => setFilters({ shape: [], carat: { min: '', max: '' }, color: [], clarity: [], finishing: [], cut: [], polish: [], symmetry: [], fluorescence: [], certificate: [], location: [], length: { min: '', max: '' }, width: { min: '', max: '' }, diameter: '', price: { min: '', max: '' } })}
-                             className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium shadow-md"
-                           >
-                             Clear All Filters
-                           </button>
+
                         </div>
                      )}
                   </div>

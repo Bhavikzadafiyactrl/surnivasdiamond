@@ -278,7 +278,6 @@ export const exportOrdersToExcel = (orders, fileName = "Order_History.xlsx") => 
     // Orders Columns
     const columns = [
         { header: "Date", key: "Date", width: 12 },
-        { header: "Order ID", key: "OrderID", width: 20 },
         { header: "Stock ID", key: "StockID", width: 15 },
         { header: "Status", key: "Status", width: 12 },
         { header: "Shape", key: "Shape", width: 10 },
@@ -303,7 +302,6 @@ export const exportOrdersToExcel = (orders, fileName = "Order_History.xlsx") => 
 
         return {
             Date: new Date(order.createdAt).toLocaleDateString(),
-            OrderID: order._id,
             StockID: diamond.StockID || diamond['Stone No'] || '-',
             Status: order.status ? order.status.toUpperCase() : '-',
             Shape: diamond.Shape || '-',
