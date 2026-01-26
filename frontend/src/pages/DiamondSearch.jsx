@@ -724,7 +724,7 @@ export default function DiamondSearch() {
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Diameter (MM)']}</td>
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Depth %']}</td>
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Table %']}</td>
-                                      <td className="px-2 py-2 text-right font-bold text-green-600 tracking-wide border-r">${Number(diamond['Amount$']).toFixed(2)}</td>
+                                      <td className="px-2 py-2 font-bold text-green-600 tracking-wide">${Number(diamond['Amount$']).toFixed(2)}</td>
                                       <td className="px-2 py-2 border-r border-gray-100 max-w-xs truncate text-xs text-gray-500" title={diamond['Key To Symbols']}>{diamond['Key To Symbols']}</td>
                                       <td className="px-2 py-2 border-r border-gray-100">{diamond.BGM}</td>
                                     </tr>
