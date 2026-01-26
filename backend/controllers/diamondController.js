@@ -1477,43 +1477,68 @@ exports.bulkUploadCSV = async (req, res) => {
             }
 
             // Bulk Insert with Error Capture
+            // Bulk Insert with Partial Success Handling
+            let insertedCount = 0;
+            let writeErrors = [];
+
             try {
-                await Diamond.insertMany(diamonds, { ordered: false });
+                const result = await Diamond.insertMany(diamonds, { ordered: false });
+                insertedCount = result.length;
             } catch (insertError) {
-                // Handle duplicate key errors from Mongo (if logic above missed something)
-                if (insertError.writeErrors) {
-                    const duplicateErr = insertError.writeErrors.find(e => e.code === 11000);
-                    if (duplicateErr) {
-                        return res.status(400).json({
-                            success: false,
-                            message: `Duplicate StockID during insert: ${JSON.stringify(duplicateErr.keyValue)}`
-                        });
-                    }
-                    // Other write error
-                    return res.status(500).json({
-                        success: false,
-                        message: `Database Write Error: ${insertError.writeErrors[0].errmsg}`
-                    });
+                if (insertError.insertedDocs) {
+                    insertedCount = insertError.insertedDocs.length;
+                } else if (insertError.result && insertError.result.nInserted) {
+                    insertedCount = insertError.result.nInserted;
                 }
-                throw insertError; // Re-throw strict crashes
+
+                if (insertError.writeErrors) {
+                    writeErrors = insertError.writeErrors.map(e => ({
+                        code: e.code,
+                        msg: e.errmsg,
+                        key: e.keyValue
+                    }));
+                } else {
+                    // Critical failure (not write error)
+                    throw insertError;
+                }
             }
 
             // Cleanup
             try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch (e) { }
-            try { fs.appendFileSync('csv_upload.log', `[${new Date().toISOString()}] Imported ${diamonds.length} diamonds\n`); } catch (e) { }
 
-            // Broadcast
-            const io = req.app.get('io');
-            if (io) {
-                io.emit('diamondsUpdated');
+            if (insertedCount > 0) {
+                // Success or Partial Success
+                let msg = `Successfully imported ${insertedCount} diamonds.`;
+                if (writeErrors.length > 0) {
+                    msg += ` WARNING: Skipped ${writeErrors.length} duplicates/errors.`;
+                    // Log details to server log
+                    fs.appendFileSync('csv_error.log', `[${new Date().toISOString()}] Partial Success. Skipped: ${JSON.stringify(writeErrors)}\n`);
+                } else {
+                    fs.appendFileSync('csv_upload.log', `[${new Date().toISOString()}] Success: Imported ${insertedCount} diamonds\n`);
+                }
+
+                // Broadcast
+                const io = req.app.get('io');
+                if (io) io.emit('diamondsUpdated');
+
+                return res.status(200).json({
+                    success: true,
+                    message: msg,
+                    count: insertedCount,
+                    warnings: writeErrors.slice(0, 10) // Limit output
+                });
+
+            } else {
+                // Total failure
+                const duplicates = writeErrors.filter(e => e.code === 11000).map(e => e.key?.StockID || 'unknown').join(', ');
+                const msg = duplicates ? `All items failed. Duplicates found: ${duplicates}` : `Failed to insert any diamonds. Errors: ${writeErrors[0]?.msg}`;
+
+                return res.status(400).json({
+                    success: false,
+                    message: msg,
+                    errors: writeErrors
+                });
             }
-
-            res.status(200).json({
-                success: true,
-                message: `Successfully imported ${diamonds.length} diamonds`,
-                count: diamonds.length,
-                errors: errors.length > 0 ? errors : null
-            });
 
         } catch (error) {
             // Cleanup on error
