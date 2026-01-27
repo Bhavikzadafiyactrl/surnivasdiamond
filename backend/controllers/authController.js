@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { sendOtpEmail } = require('../utils/emailService');
+const { sendOtpEmail, sendRegistrationNotification } = require('../utils/emailService');
 const { logSecurityEvent } = require('../utils/logger');
 const SecurityLog = require('../models/SecurityLog');
 const { getDeviceFingerprint, checkOtpLimit, incrementOtpCount } = require('../utils/otpRateLimiter');
@@ -119,6 +119,20 @@ exports.signup = async (req, res) => {
         if (io) {
             io.emit('user:registered', { userId: user._id, name: user.name });
         }
+
+        // Send registration notification to admin (non-blocking)
+        sendRegistrationNotification({
+            name: user.name,
+            email: user.email,
+            mobile: user.mobile,
+            companyName: user.companyName,
+            address: user.address,
+            city: user.city,
+            country: user.country,
+            zipCode: user.zipCode
+        }).catch(err => {
+            console.error('[Registration Notification] Background error:', err);
+        });
 
         res.status(200).json({ message: 'OTP sent to your Email.', userId: user._id });
 
