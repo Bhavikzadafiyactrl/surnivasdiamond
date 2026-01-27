@@ -1465,16 +1465,12 @@ exports.getAdminDiamonds = async (req, res) => {
         if (dateFrom || dateTo) {
             query.createdAt = {};
             if (dateFrom) {
-                // Set to start of day (00:00:00)
-                const fromDate = new Date(dateFrom);
-                fromDate.setHours(0, 0, 0, 0);
-                query.createdAt.$gte = fromDate;
+                // Parse datetime-local value directly (already includes time)
+                query.createdAt.$gte = new Date(dateFrom);
             }
             if (dateTo) {
-                // Set to end of day (23:59:59)
-                const toDate = new Date(dateTo);
-                toDate.setHours(23, 59, 59, 999);
-                query.createdAt.$lte = toDate;
+                // Parse datetime-local value directly (already includes time)
+                query.createdAt.$lte = new Date(dateTo);
             }
         }
 
