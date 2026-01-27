@@ -130,7 +130,7 @@ export default function LandingPage() {
                 onClick={() => setLanguage('vn')}
                 className={`transition-colors hover:text-black ${language === 'vn' ? 'text-black' : 'text-gray-400'}`}
               >
-                Vientnamese
+                Vietnamese
               </button>
             </div>
 
