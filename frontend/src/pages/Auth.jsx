@@ -10,13 +10,18 @@ const StyledInput = ({
   value, 
   placeholder, 
   required, 
-  className, 
+  className,
+  name,
+  id,
   ...props 
 }) => {
   const inputRef = React.useRef(null);
   const [hasContent, setHasContent] = React.useState(false);
   
   const isCentered = className.includes("text-center");
+  
+  // Auto-generate id from name if not provided
+  const inputId = id || (name ? `input-${name}` : undefined);
   
   // Check for autofill and actual value
   React.useEffect(() => {
@@ -39,6 +44,8 @@ const StyledInput = ({
       <input
         {...props}
         ref={inputRef}
+        id={inputId}
+        name={name}
         value={value}
         required={required}
         placeholder={placeholder}
@@ -658,6 +665,7 @@ const Auth = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
+                    autoComplete="email"
                     className="w-full bg-blue-50/50 text-gray-800 px-4 py-3 rounded hover:bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all outline-none placeholder-gray-400 text-sm border border-transparent"
                     placeholder={isSignup ? t('auth.email') : t('auth.userEmail')}
                     required
@@ -670,6 +678,7 @@ const Auth = () => {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
+                    autoComplete={isSignup ? "new-password" : "current-password"}
                     className="w-full bg-blue-50/50 text-gray-800 px-4 py-3 rounded hover:bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all outline-none placeholder-gray-400 text-sm border border-transparent"
                     placeholder={t('auth.password')}
                     required
