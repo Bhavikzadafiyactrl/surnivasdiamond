@@ -1460,6 +1460,24 @@ exports.getAdminDiamonds = async (req, res) => {
             if (caratMax) query.Carats.$lte = Number(caratMax);
         }
 
+        // Filter by Date Added (createdAt)
+        const { dateFrom, dateTo } = req.query;
+        if (dateFrom || dateTo) {
+            query.createdAt = {};
+            if (dateFrom) {
+                // Set to start of day (00:00:00)
+                const fromDate = new Date(dateFrom);
+                fromDate.setHours(0, 0, 0, 0);
+                query.createdAt.$gte = fromDate;
+            }
+            if (dateTo) {
+                // Set to end of day (23:59:59)
+                const toDate = new Date(dateTo);
+                toDate.setHours(23, 59, 59, 999);
+                query.createdAt.$lte = toDate;
+            }
+        }
+
         const total = await Diamond.countDocuments(query);
         const diamonds = await Diamond.find(query)
             .sort({ _id: -1 }) // Newest first (by ObjectId)

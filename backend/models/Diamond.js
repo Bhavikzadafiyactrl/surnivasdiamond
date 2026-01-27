@@ -26,7 +26,8 @@ const diamondSchema = new mongoose.Schema({
     InBasketBy: String, // User ID who added to basket
     InBasketAt: Date, // Timestamp when added to basket
     GIALINK: String, // Link to certificate
-    videoLink: String // Link to diamond video
+    videoLink: String, // Link to diamond video
+    createdAt: { type: Date, default: Date.now } // Automatically track when diamond is added
 }, { collection: 'surnivasdiamondlist' }); // Explicitly bind to 'surnivasdiamondlist' collection
 
 // Add index for common search fields

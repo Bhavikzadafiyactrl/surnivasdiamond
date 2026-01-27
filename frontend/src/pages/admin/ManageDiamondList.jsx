@@ -13,6 +13,7 @@ const ManageDiamondList = () => {
   const [selectedDiamonds, setSelectedDiamonds] = useState([]); // Store full objects { _id, ... }
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [dateFilter, setDateFilter] = useState({ from: '', to: '' }); // Date range filter
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -82,7 +83,7 @@ const ManageDiamondList = () => {
 
   useEffect(() => {
     fetchDiamonds();
-  }, [page, search, appliedFilters]);
+  }, [page, search, appliedFilters, dateFilter]);
 
   const fetchDiamonds = async () => {
     setLoading(true);
@@ -109,6 +110,10 @@ const ManageDiamondList = () => {
       if (appliedFilters.status.length > 0) params.append('status', JSON.stringify(appliedFilters.status));
       if (appliedFilters.carat.min) params.append('caratMin', appliedFilters.carat.min);
       if (appliedFilters.carat.max) params.append('caratMax', appliedFilters.carat.max);
+      
+      // Add date filter params
+      if (dateFilter.from) params.append('dateFrom', dateFilter.from);
+      if (dateFilter.to) params.append('dateTo', dateFilter.to);
 
       const response = await fetch(`${API_URL}/diamonds/admin/list?${params}`, {
         credentials: 'include'
@@ -478,6 +483,46 @@ const ManageDiamondList = () => {
                       disabled={uploading}
                     />
                   </label>
+              </div>
+            </div>
+
+            {/* Date Range Filter Section */}
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl shadow-sm border border-purple-200 p-4 mb-4">
+              <div className="flex flex-col md:flex-row items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span className="font-bold text-gray-700">Filter by Date Added</span>
+                </div>
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium text-gray-600">From:</label>
+                    <input
+                      type="date"
+                      value={dateFilter.from}
+                      onChange={(e) => setDateFilter(prev => ({ ...prev, from: e.target.value }))}
+                      className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium text-gray-600">To:</label>
+                    <input
+                      type="date"
+                      value={dateFilter.to}
+                      onChange={(e) => setDateFilter(prev => ({ ...prev, to: e.target.value }))}
+                      className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  {(dateFilter.from || dateFilter.to) && (
+                    <button
+                      onClick={() => setDateFilter({ from: '', to: '' })}
+                      className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                    >
+                      Clear Dates
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
