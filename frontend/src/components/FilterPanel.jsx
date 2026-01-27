@@ -351,55 +351,41 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
             ))}
           </FilterRow>
 
-          {/* LOCATION & ACTION BUTTONS - FIXED TO BOTTOM RIGHT */}
-          <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-3 items-end">
-            {/* Location Row */}
-            <div className="flex items-center gap-2 bg-white px-4 py-3 rounded-lg shadow-lg border border-gray-200">
-              <span className="text-sm font-bold text-gray-700 mr-2" style={{ fontSize: '12px' }}>Location</span>
-              <button
-                onClick={() => handleSelectAll('location')}
-                className={`px-3 py-1.5 font-semibold uppercase tracking-wide rounded border transition-all ${
-                  filters.location?.length === locations.length && locations.length > 0
-                    ? 'bg-black text-white border-black'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}
-                style={{ fontSize: '11px', width: '60px', height: '32px' }}
+          {/* LOCATION */}
+          <FilterRow label="Location">
+            <SelectButton 
+              active={filters.location?.length === locations.length && locations.length > 0}
+              onClick={() => handleSelectAll('location')}
+            >
+              ALL
+            </SelectButton>
+            {locations.map(l => (
+              <SelectButton 
+                key={l} 
+                active={filters.location?.includes(l)} 
+                onClick={() => handleFilterChange('location', l)}
               >
-                ALL
-              </button>
-              {locations.map(l => (
-                <button
-                  key={l}
-                  onClick={() => handleFilterChange('location', l)}
-                  className={`px-3 py-1.5 font-semibold uppercase tracking-wide rounded border transition-all ${
-                    filters.location?.includes(l)
-                      ? 'bg-black text-white border-black'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                  style={{ fontSize: '11px', width: '110px', height: '32px' }}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
+                {l}
+              </SelectButton>
+            ))}
+          </FilterRow>
 
-            {/* Action Buttons Row */}
-            <div className="flex gap-2 bg-white px-4 py-3 rounded-lg shadow-lg border border-gray-200">
-              <button 
-                onClick={() => setFilters({ shape: [], carat: { min: '', max: '' }, color: [], clarity: [], finishing: [], cut: [], polish: [], symmetry: [], fluorescence: [], certificate: [], location: [], length: { min: '', max: '' }, width: { min: '', max: '' }, diameter: '', price: { min: 0, max: 1000000 } })}
-                className="font-semibold text-gray-700 bg-white hover:bg-gray-100 rounded-lg transition-colors border border-gray-300"
-                style={{ fontSize: '13px', width: '120px', height: '40px' }}
-              >
-                {t('diamondSearch.buttons.reset')}
-              </button>
-              <button 
-                onClick={handleSearch}
-                className="bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
-                style={{ fontSize: '13px', width: '150px', height: '40px' }}
-              >
-                {t('diamondSearch.buttons.search')}
-              </button>
-            </div>
+          {/* ACTION BUTTONS - FIXED TO BOTTOM RIGHT */}
+          <div className="fixed bottom-4 right-4 z-50 flex gap-2 bg-white px-4 py-3 rounded-lg shadow-lg border border-gray-200">
+            <button 
+              onClick={() => setFilters({ shape: [], carat: { min: '', max: '' }, color: [], clarity: [], finishing: [], cut: [], polish: [], symmetry: [], fluorescence: [], certificate: [], location: [], length: { min: '', max: '' }, width: { min: '', max: '' }, diameter: '', price: { min: 0, max: 1000000 } })}
+              className="font-semibold text-gray-700 bg-white hover:bg-gray-100 rounded-lg transition-colors border border-gray-300"
+              style={{ fontSize: '13px', width: '120px', height: '40px' }}
+            >
+              {t('diamondSearch.buttons.reset')}
+            </button>
+            <button 
+              onClick={handleSearch}
+              className="bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+              style={{ fontSize: '13px', width: '150px', height: '40px' }}
+            >
+              {t('diamondSearch.buttons.search')}
+            </button>
           </div>
       </div>
 
