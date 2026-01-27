@@ -121,6 +121,7 @@ exports.signup = async (req, res) => {
         }
 
         // Send registration notification to admin (non-blocking)
+        console.log('[Registration Notification] Attempting to send notification email...');
         sendRegistrationNotification({
             name: user.name,
             email: user.email,
@@ -130,8 +131,14 @@ exports.signup = async (req, res) => {
             city: user.city,
             country: user.country,
             zipCode: user.zipCode
+        }).then(sent => {
+            if (sent) {
+                console.log('[Registration Notification] ✅ Successfully sent notification email for user:', user.email);
+            } else {
+                console.error('[Registration Notification] ❌ Failed to send notification email for user:', user.email);
+            }
         }).catch(err => {
-            console.error('[Registration Notification] Background error:', err);
+            console.error('[Registration Notification] ❌ Background error:', err.message, err.stack);
         });
 
         res.status(200).json({ message: 'OTP sent to your Email.', userId: user._id });

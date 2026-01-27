@@ -7,7 +7,7 @@ dotenv.config();
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'zadafiyaharsh2@gmail.com',
+    user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS // Gmail App Password from .env
   },
   // Add timeouts to prevent hanging (fixes Nginx 504/502 errors)
@@ -28,7 +28,7 @@ transporter.verify((error, success) => {
 const sendOtpEmail = async (email, otp) => {
   try {
     const mailOptions = {
-      from: `"Surnivas Diamond" <${process.env.EMAIL_USER || 'zadafiyaharsh2@gmail.com'}>`,
+      from: `"Surnivas Diamond" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: 'Verify Your Email - surnivas Diamond',
       html: `
@@ -65,7 +65,7 @@ const sendOtpEmail = async (email, otp) => {
 const sendContactNotification = async (contactData) => {
   try {
     const mailOptions = {
-      from: `"Surnivas Contact" <${process.env.EMAIL_USER || 'zadafiyaharsh2@gmail.com'}>`,
+      from: `"Surnivas Contact" <${process.env.EMAIL_USER}>`,
       to: 'surnivasdiamond75@gmail.com',
       replyTo: contactData.email,
       subject: `New Inquiry: ${contactData.subject} - from ${contactData.name}`,
@@ -117,8 +117,13 @@ const sendContactNotification = async (contactData) => {
 
 const sendRegistrationNotification = async (userData) => {
   try {
+    console.log('[Registration Notification] Starting to send notification...');
+    console.log('[Registration Notification] Email config - FROM:', process.env.EMAIL_USER);
+    console.log('[Registration Notification] Email config - TO: surnivasdiamond75@gmail.com');
+    console.log('[Registration Notification] User data:', { name: userData.name, email: userData.email });
+
     const mailOptions = {
-      from: `"Surnivas Diamond" <${process.env.EMAIL_USER || 'zadafiyaharsh2@gmail.com'}>`,
+      from: `"Surnivas Diamond" <${process.env.EMAIL_USER}>`,
       to: 'surnivasdiamond75@gmail.com',
       subject: `🔔 New User Registration - ${userData.name}`,
       html: `
@@ -178,11 +183,16 @@ const sendRegistrationNotification = async (userData) => {
       `
     };
 
+    console.log('[Registration Notification] Calling transporter.sendMail...');
     const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Registration notification email sent:', info.messageId);
+    console.log('✅ Registration notification email sent successfully! Message ID:', info.messageId);
+    console.log('✅ Email details - Response:', info.response);
     return true;
   } catch (error) {
-    console.error('❌ Error sending registration notification email:', error.message);
+    console.error('❌ ERROR sending registration notification email!');
+    console.error('❌ Error message:', error.message);
+    console.error('❌ Error code:', error.code);
+    console.error('❌ Full error:', error);
     return false;
   }
 };
