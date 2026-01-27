@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import Topbar from '../../components/Topbar';
-import { FaPlus, FaEdit, FaTrash, FaSearch, FaUpload, FaFilter, FaDownload } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaSearch, FaUpload, FaFilter, FaDownload, FaChartBar } from 'react-icons/fa';
+import InventorySummary from '../../components/InventorySummary';
 import * as XLSX from 'xlsx';
 import { exportDiamondsToExcel } from '../../utils/exportUtils';
 
@@ -47,6 +48,7 @@ const ManageDiamondList = () => {
   });
   
   // Modal State
+  const [showSummary, setShowSummary] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingDiamond, setEditingDiamond] = useState(null);
   const [formData, setFormData] = useState({
@@ -454,6 +456,13 @@ const ManageDiamondList = () => {
                   )}
 
                   <button 
+                    onClick={() => setShowSummary(true)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg flex items-center gap-2 hover:bg-purple-700 whitespace-nowrap"
+                  >
+                    <FaChartBar /> Summary
+                  </button>
+
+                  <button 
                     onClick={() => openModal()}
                     className="px-4 py-2 bg-black text-white rounded-lg flex items-center gap-2 hover:bg-gray-800 whitespace-nowrap"
                   >
@@ -801,6 +810,9 @@ const ManageDiamondList = () => {
           </div>
         </main>
       </div>
+
+      {/* Modals */}
+      <InventorySummary isOpen={showSummary} onClose={() => setShowSummary(false)} />
 
       {/* Add/Edit Modal */}
       {showModal && (

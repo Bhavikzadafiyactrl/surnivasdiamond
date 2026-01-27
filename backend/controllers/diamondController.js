@@ -442,24 +442,110 @@ exports.unholdDiamonds = async (req, res) => {
                 }
             }
         );
-
-        // Broadcast update
-        const io = req.app.get('io');
-        if (io) {
-            diamondIds.forEach(id => {
-                io.emit('diamond:update', { id, status: 'available', heldBy: null });
-            });
-        }
-
-        res.json({
-            success: true,
-            message: `${result.modifiedCount} diamond(s) released`,
-            modifiedCount: result.modifiedCount
-        });
+        res.json({ success: true, message: 'Diamonds unheld successfully' });
 
     } catch (error) {
         console.error('Unhold error:', error);
         res.status(500).json({ success: false, message: 'Server error releasing diamonds' });
+    }
+};
+
+exports.getDiamondSummary = async (req, res) => {
+    try {
+        const summary = await Diamond.aggregate([
+            {
+                $facet: {
+                    // Overall Stats
+                    overall: [
+                        {
+                            $group: {
+                                _id: null,
+                                totalPcs: { $sum: 1 },
+                                totalCts: { $sum: "$Carats" },
+                                availablePcs: {
+                                    $sum: { $cond: [{ $eq: ["$Status", "available"] }, 1, 0] }
+                                },
+                                availableCts: {
+                                    $sum: { $cond: [{ $eq: ["$Status", "available"] }, "$Carats", 0] }
+                                },
+                                soldPcs: {
+                                    $sum: { $cond: [{ $eq: ["$Status", "sold"] }, 1, 0] }
+                                },
+                                soldCts: {
+                                    $sum: { $cond: [{ $eq: ["$Status", "sold"] }, "$Carats", 0] }
+                                }
+                            }
+                        }
+                    ],
+                    // By Shape
+                    byShape: [
+                        {
+                            $group: {
+                                _id: "$Shape",
+                                totalPcs: { $sum: 1 },
+                                totalCts: { $sum: "$Carats" },
+                                availablePcs: { $sum: { $cond: [{ $eq: ["$Status", "available"] }, 1, 0] } },
+                                availableCts: { $sum: { $cond: [{ $eq: ["$Status", "available"] }, "$Carats", 0] } },
+                                soldPcs: { $sum: { $cond: [{ $eq: ["$Status", "sold"] }, 1, 0] } },
+                                soldCts: { $sum: { $cond: [{ $eq: ["$Status", "sold"] }, "$Carats", 0] } }
+                            }
+                        },
+                        { $sort: { _id: 1 } }
+                    ],
+                    // By Color
+                    byColor: [
+                        {
+                            $group: {
+                                _id: "$Color",
+                                totalPcs: { $sum: 1 },
+                                totalCts: { $sum: "$Carats" },
+                                availablePcs: { $sum: { $cond: [{ $eq: ["$Status", "available"] }, 1, 0] } },
+                                availableCts: { $sum: { $cond: [{ $eq: ["$Status", "available"] }, "$Carats", 0] } },
+                                soldPcs: { $sum: { $cond: [{ $eq: ["$Status", "sold"] }, 1, 0] } },
+                                soldCts: { $sum: { $cond: [{ $eq: ["$Status", "sold"] }, "$Carats", 0] } }
+                            }
+                        },
+                        { $sort: { _id: 1 } }
+                    ],
+                    // By Clarity
+                    byClarity: [
+                        {
+                            $group: {
+                                _id: "$Clarity",
+                                totalPcs: { $sum: 1 },
+                                totalCts: { $sum: "$Carats" },
+                                availablePcs: { $sum: { $cond: [{ $eq: ["$Status", "available"] }, 1, 0] } },
+                                availableCts: { $sum: { $cond: [{ $eq: ["$Status", "available"] }, "$Carats", 0] } },
+                                soldPcs: { $sum: { $cond: [{ $eq: ["$Status", "sold"] }, 1, 0] } },
+                                soldCts: { $sum: { $cond: [{ $eq: ["$Status", "sold"] }, "$Carats", 0] } }
+                            }
+                        },
+                        { $sort: { _id: 1 } }
+                    ],
+                    // By Location
+                    byLocation: [
+                        {
+                            $group: {
+                                _id: "$Location",
+                                totalPcs: { $sum: 1 },
+                                totalCts: { $sum: "$Carats" },
+                                availablePcs: { $sum: { $cond: [{ $eq: ["$Status", "available"] }, 1, 0] } },
+                                availableCts: { $sum: { $cond: [{ $eq: ["$Status", "available"] }, "$Carats", 0] } },
+                                soldPcs: { $sum: { $cond: [{ $eq: ["$Status", "sold"] }, 1, 0] } },
+                                soldCts: { $sum: { $cond: [{ $eq: ["$Status", "sold"] }, "$Carats", 0] } }
+                            }
+                        },
+                        { $sort: { _id: 1 } }
+                    ]
+                }
+            }
+        ]);
+
+        res.json({ success: true, data: summary[0] });
+
+    } catch (error) {
+        console.error('Summary error:', error);
+        res.status(500).json({ success: false, message: 'Server error fetching summary' });
     }
 };
 

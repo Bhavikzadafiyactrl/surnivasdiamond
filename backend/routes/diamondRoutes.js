@@ -30,6 +30,7 @@ router.post('/admin/orders/update-payment', auth, diamondController.adminUpdateP
 router.get('/admin/stats', auth, diamondController.getDashboardStats);
 
 // Admin: Manage Diamond List
+router.get('/summary', auth, diamondController.getDiamondSummary);
 router.get('/admin/list', auth, diamondController.getAdminDiamonds);
 router.post('/admin/create', auth, diamondController.createDiamond);
 router.put('/admin/update/:id', auth, diamondController.updateDiamond);
