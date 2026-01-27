@@ -1463,15 +1463,25 @@ exports.getAdminDiamonds = async (req, res) => {
         // Filter by Date Added (createdAt)
         const { dateFrom, dateTo } = req.query;
         if (dateFrom || dateTo) {
+            console.log('===== DATE FILTER DEBUG =====');
+            console.log('dateFrom (raw):', dateFrom);
+            console.log('dateTo (raw):', dateTo);
+
             query.createdAt = {};
             if (dateFrom) {
-                // Parse datetime-local value directly (already includes time)
-                query.createdAt.$gte = new Date(dateFrom);
+                const fromDate = new Date(dateFrom);
+                console.log('dateFrom (parsed):', fromDate);
+                console.log('dateFrom (ISO):', fromDate.toISOString());
+                query.createdAt.$gte = fromDate;
             }
             if (dateTo) {
-                // Parse datetime-local value directly (already includes time)
-                query.createdAt.$lte = new Date(dateTo);
+                const toDate = new Date(dateTo);
+                console.log('dateTo (parsed):', toDate);
+                console.log('dateTo (ISO):', toDate.toISOString());
+                query.createdAt.$lte = toDate;
             }
+            console.log('createdAt query:', query.createdAt);
+            console.log('===== END DATE FILTER DEBUG =====');
         }
 
         const total = await Diamond.countDocuments(query);
