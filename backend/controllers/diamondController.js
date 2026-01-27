@@ -1461,6 +1461,8 @@ exports.getAdminDiamonds = async (req, res) => {
         }
 
         // Filter by Date Added (createdAt)
+        // NOTE: datetime-local sends time WITHOUT timezone (e.g., "2026-01-27T12:04")
+        // We need to append IST timezone (+05:30) before converting to UTC for MongoDB
         const { dateFrom, dateTo } = req.query;
         if (dateFrom || dateTo) {
             console.log('===== DATE FILTER DEBUG =====');
@@ -1469,15 +1471,21 @@ exports.getAdminDiamonds = async (req, res) => {
 
             query.createdAt = {};
             if (dateFrom) {
-                const fromDate = new Date(dateFrom);
+                // Append IST timezone offset (+05:30) to the datetime string
+                const fromDateIST = dateFrom + '+05:30';
+                const fromDate = new Date(fromDateIST);
+                console.log('dateFrom (with IST):', fromDateIST);
                 console.log('dateFrom (parsed):', fromDate);
-                console.log('dateFrom (ISO):', fromDate.toISOString());
+                console.log('dateFrom (UTC ISO):', fromDate.toISOString());
                 query.createdAt.$gte = fromDate;
             }
             if (dateTo) {
-                const toDate = new Date(dateTo);
+                // Append IST timezone offset (+05:30) to the datetime string
+                const toDateIST = dateTo + '+05:30';
+                const toDate = new Date(toDateIST);
+                console.log('dateTo (with IST):', toDateIST);
                 console.log('dateTo (parsed):', toDate);
-                console.log('dateTo (ISO):', toDate.toISOString());
+                console.log('dateTo (UTC ISO):', toDate.toISOString());
                 query.createdAt.$lte = toDate;
             }
             console.log('createdAt query:', query.createdAt);
