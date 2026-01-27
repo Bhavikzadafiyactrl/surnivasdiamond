@@ -168,38 +168,39 @@ export default function DiamondSearch() {
         nextFilters[category] = value;
       }
 
-      // 1. Logic for "3EX" selection
-      // "when user select 3EX in finishing then all three EXshoud be selected autot maticaly"
+      // 1. Logic for "3EX" selection/deselection
+      // "when user select 3EX in finishing then all three EX shoud be selected automaticaly"
+      // "when user deselect 3EX then all EX shoud be deselected"
       if (category === 'finishing' && value === '3EX') {
-        // Check if we just turned ON 3EX
-        if (!prev.finishing.includes('3EX')) { // It wasn't there, so we added it
-           
-           // Check if shapes are selected and "ROUND" is NOT among them (i.e. only fancy shapes)
-           // "if client click on any shape rather than round ... cut shoud not be selcted"
+        if (!prev.finishing.includes('3EX')) {
+           // Selecting 3EX - auto-select EX
            const isFancyShapeOnly = nextFilters.shape.length > 0 && !nextFilters.shape.includes('ROUND');
 
            if (!isFancyShapeOnly) {
               // Standard behavior (Round included or All shapes): Select Cut EX
               if (!nextFilters.cut.includes('EX')) nextFilters.cut = [...nextFilters.cut, 'EX'];
            } else {
-              // Fancy shape only: Ensure Cut is NOT selected (optional, per user "cut shoud not be selcted")
-              // Or just don't add it. User said "any cut can not be selected" implying we might want to clear it?
-              // The request says "cut shoud not be selcted". I will effectively NOT add it.
-              // If it was already selected, should I remove it? "any cut can not be selected" suggests yes.
+              // Fancy shape only: Clear cut
               nextFilters.cut = []; 
            }
 
            // Always select Polish and Sym for 3EX
            if (!nextFilters.polish.includes('EX')) nextFilters.polish = [...nextFilters.polish, 'EX'];
            if (!nextFilters.symmetry.includes('EX')) nextFilters.symmetry = [...nextFilters.symmetry, 'EX'];
+        } else {
+           // Deselecting 3EX - clear all EX
+           nextFilters.cut = nextFilters.cut.filter(c => c !== 'EX');
+           nextFilters.polish = nextFilters.polish.filter(p => p !== 'EX');
+           nextFilters.symmetry = nextFilters.symmetry.filter(s => s !== 'EX');
         }
       }
 
-      // 1B. Logic for "3VG+" selection
+      // 1B. Logic for "3VG+" selection/deselection
       // "when user select 3vg+ then also select all VG and EX if round if not then only polish and symetri"
+      // "when user deselect 3vg+ then all VG shoud be deselected"
       if (category === 'finishing' && value === '3VG+') {
-        // Check if we just turned ON 3VG+
         if (!prev.finishing.includes('3VG+')) {
+           // Selecting 3VG+ - auto-select VG and EX
            const isFancyShapeOnly = nextFilters.shape.length > 0 && !nextFilters.shape.includes('ROUND');
 
            if (!isFancyShapeOnly) {
@@ -223,6 +224,11 @@ export default function DiamondSearch() {
            if (nextFilters.finishing.includes('3EX')) {
              nextFilters.finishing = nextFilters.finishing.filter(f => f !== '3EX');
            }
+        } else {
+           // Deselecting 3VG+ - clear all VG
+           nextFilters.cut = nextFilters.cut.filter(c => c !== 'VG');
+           nextFilters.polish = nextFilters.polish.filter(p => p !== 'VG');
+           nextFilters.symmetry = nextFilters.symmetry.filter(s => s !== 'VG');
         }
       }
 

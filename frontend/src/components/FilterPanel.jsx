@@ -65,6 +65,28 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
   // Logic to lock "EX" buttons if 3EX is Active
   const is3EXActive = filters.finishing && filters.finishing.includes('3EX');
 
+  // Handle "ALL" button click for filter categories
+  const handleSelectAll = (category) => {
+    const allOptions = {
+      clarity: clarities,
+      color: colors,
+      fluorescence: fluorescences,
+      certificate: certificates,
+      location: locations
+    };
+    
+    const options = allOptions[category];
+    const currentSelection = filters[category] || [];
+    
+    if (currentSelection.length === options.length) {
+      // All selected, deselect all
+      setFilters(prev => ({ ...prev, [category]: [] }));
+    } else {
+      // Not all selected, select all
+      setFilters(prev => ({ ...prev, [category]: [...options] }));
+    }
+  };
+
   return (
     <div className="relative w-full h-full bg-white flex flex-col overflow-hidden">
       
@@ -123,6 +145,12 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
           </FilterRow>
 
           <FilterRow label="Clarity">
+            <SelectButton 
+              active={filters.clarity.length === clarities.length && clarities.length > 0}
+              onClick={() => handleSelectAll('clarity')}
+            >
+              ALL
+            </SelectButton>
             {clarities.map(c => (
               <SelectButton 
                 key={c} 
@@ -136,6 +164,12 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
 
           {/* COLOR */}
           <FilterRow label="Color">
+            <SelectButton 
+              active={filters.color.length === colors.length && colors.length > 0}
+              onClick={() => handleSelectAll('color')}
+            >
+              ALL
+            </SelectButton>
             {colors.map(c => (
               <SelectButton 
                 key={c} 
@@ -281,6 +315,12 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
 
           {/* FLUORESCENCE */}
           <FilterRow label="Fluorescence">
+            <SelectButton 
+              active={filters.fluorescence?.length === fluorescences.length && fluorescences.length > 0}
+              onClick={() => handleSelectAll('fluorescence')}
+            >
+              ALL
+            </SelectButton>
             {fluorescences.map(f => (
               <SelectButton 
                 key={f} 
@@ -294,6 +334,12 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
 
           {/* CERTIFICATE */}
           <FilterRow label="Certificate">
+            <SelectButton 
+              active={filters.certificate?.length === certificates.length && certificates.length > 0}
+              onClick={() => handleSelectAll('certificate')}
+            >
+              ALL
+            </SelectButton>
             {certificates.map(c => (
               <SelectButton 
                 key={c} 
@@ -307,6 +353,12 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
 
           {/* LOCATION */}
           <FilterRow label="Location">
+            <SelectButton 
+              active={filters.location?.length === locations.length && locations.length > 0}
+              onClick={() => handleSelectAll('location')}
+            >
+              ALL
+            </SelectButton>
             {locations.map(l => (
               <SelectButton 
                 key={l} 
