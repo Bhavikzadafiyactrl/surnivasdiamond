@@ -1637,13 +1637,24 @@ exports.bulkUploadCSV = async (req, res) => {
                 existingStockIds.push(...existing.map(d => d.StockID));
             }
 
-            if (existingStockIds.length > 0) {
+            // Filter out duplicates instead of rejecting entire upload
+            const originalCount = diamonds.length;
+            const newDiamonds = diamonds.filter(d => !existingStockIds.includes(d.StockID));
+            const skippedCount = originalCount - newDiamonds.length;
+
+            // If all diamonds are duplicates, inform the user
+            if (newDiamonds.length === 0) {
                 return res.status(400).json({
                     success: false,
-                    message: `Database already contains these Stock IDs: ${existingStockIds.slice(0, 5).join(', ')}... Please update or delete them first.`,
-                    existing: existingStockIds
+                    message: `All ${originalCount} diamond(s) already exist in the database. No new diamonds to upload.`,
+                    totalInCSV: originalCount,
+                    skippedDuplicates: skippedCount,
+                    duplicateStockIds: existingStockIds.slice(0, 20)
                 });
             }
+
+            // Continue with only new diamonds
+            diamonds = newDiamonds;
 
             // Bulk Insert with Error Capture
             // Bulk Insert with Partial Success Handling
@@ -1677,13 +1688,16 @@ exports.bulkUploadCSV = async (req, res) => {
 
             if (insertedCount > 0) {
                 // Success or Partial Success
-                let msg = `Successfully imported ${insertedCount} diamonds.`;
+                let msg = `Successfully imported ${insertedCount} new diamond(s).`;
+                if (skippedCount > 0) {
+                    msg += ` Skipped ${skippedCount} duplicate(s).`;
+                }
                 if (writeErrors.length > 0) {
-                    msg += ` WARNING: Skipped ${writeErrors.length} duplicates/errors.`;
+                    msg += ` WARNING: ${writeErrors.length} item(s) had insertion errors.`;
                     // Log details to server log
                     fs.appendFileSync('csv_error.log', `[${new Date().toISOString()}] Partial Success. Skipped: ${JSON.stringify(writeErrors)}\n`);
                 } else {
-                    fs.appendFileSync('csv_upload.log', `[${new Date().toISOString()}] Success: Imported ${insertedCount} diamonds\n`);
+                    fs.appendFileSync('csv_upload.log', `[${new Date().toISOString()}] Success: Imported ${insertedCount} diamonds, Skipped ${skippedCount} duplicates\n`);
                 }
 
                 // Broadcast
@@ -1693,7 +1707,10 @@ exports.bulkUploadCSV = async (req, res) => {
                 return res.status(200).json({
                     success: true,
                     message: msg,
-                    count: insertedCount,
+                    inserted: insertedCount,
+                    skippedDuplicates: skippedCount,
+                    totalInCSV: originalCount,
+                    duplicateStockIds: existingStockIds.slice(0, 20),
                     warnings: writeErrors.slice(0, 10) // Limit output
                 });
 
