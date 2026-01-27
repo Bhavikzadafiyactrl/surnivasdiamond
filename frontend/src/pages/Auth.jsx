@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import brandingVideo from "../assets/surnivas_diamond.mp4";
@@ -13,17 +13,40 @@ const StyledInput = ({
   className, 
   ...props 
 }) => {
+  const inputRef = React.useRef(null);
+  const [hasContent, setHasContent] = React.useState(false);
+  
   const isCentered = className.includes("text-center");
+  
+  // Check for autofill and actual value
+  React.useEffect(() => {
+    const checkContent = () => {
+      if (inputRef.current) {
+        const hasValue = inputRef.current.value.length > 0;
+        setHasContent(hasValue);
+      }
+    };
+    
+    checkContent();
+    // Check again after a short delay to catch autofill
+    const timer = setTimeout(checkContent, 100);
+    
+    return () => clearTimeout(timer);
+  }, [value]);
+  
   return (
     <div className={containerClassName}>
       <input
         {...props}
+        ref={inputRef}
         value={value}
         required={required}
         placeholder={placeholder}
         className={`${className.replace("placeholder-gray-400", "placeholder-transparent")}`}
+        onFocus={() => setHasContent(true)}
+        onBlur={(e) => setHasContent(e.target.value.length > 0)}
       />
-      {!value && (
+      {!value && !hasContent && (
         <span 
           className={`absolute top-3 text-gray-400 text-sm pointer-events-none select-none ${isCentered ? 'left-0 right-0 text-center' : 'left-4'}`}
         >
