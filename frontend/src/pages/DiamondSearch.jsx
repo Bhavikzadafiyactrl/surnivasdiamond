@@ -226,9 +226,9 @@ export default function DiamondSearch() {
            }
         } else {
            // Deselecting 3VG+ - clear all VG
-           nextFilters.cut = nextFilters.cut.filter(c => c !== 'VG');
-           nextFilters.polish = nextFilters.polish.filter(p => p !== 'VG');
-           nextFilters.symmetry = nextFilters.symmetry.filter(s => s !== 'VG');
+           nextFilters.cut = nextFilters.cut.filter(c => c !== 'VG' && c !== 'EX');
+           nextFilters.polish = nextFilters.polish.filter(p => p !== 'VG' && p !== 'EX');
+           nextFilters.symmetry = nextFilters.symmetry.filter(s => s !== 'VG' && s !== 'EX');
         }
       }
 
