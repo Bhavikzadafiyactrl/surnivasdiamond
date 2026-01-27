@@ -369,6 +369,7 @@ const Auth = () => {
               loop 
               muted 
               playsInline
+              poster={logo}
               className="w-full h-full object-cover"
             />
             {/* Overlay to ensure text readability */}

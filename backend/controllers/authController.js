@@ -20,8 +20,8 @@ const sendVerifyOtp = async (user, email) => {
 
     console.log(`[OTP] Generated OTP ${otp} for ${email}`);
 
-    // Send via Email
-    return await sendOtpEmail(email, otp);
+    // Send via Email (Promise)
+    return sendOtpEmail(email, otp);
 };
 
 // Signup
@@ -103,23 +103,21 @@ exports.signup = async (req, res) => {
         console.log(`[OTP] Device ${deviceId.substring(0, 20)}... has ${limitCheck.remaining} attempts remaining`);
         // -------------------------
 
-        // Send OTP via Email
-        const sent = await sendVerifyOtp(user, email);
-
-        if (sent) {
-            // Increment device counter on successful send
-            incrementOtpCount(deviceId);
-        }
+        // Send OTP via Email (Non-blocking)
+        sendVerifyOtp(user, email).then(sent => {
+            if (sent) {
+                incrementOtpCount(deviceId);
+            } else {
+                console.error('[OTP Background] Failed to send OTP email to', email);
+            }
+        }).catch(err => {
+            console.error('[OTP Background] Error sending OTP email:', err);
+        });
 
         // Emit socket regardless of SMS result (user created)
         const io = req.app.get('io');
         if (io) {
             io.emit('user:registered', { userId: user._id, name: user.name });
-        }
-
-        if (!sent) {
-            // If Email fails, we might warn user but usually we want to block or fallback.
-            return res.status(500).json({ message: 'Account created but failed to send Email OTP. Please contact support or try login to Resend.', userId: user._id });
         }
 
         res.status(200).json({ message: 'OTP sent to your Email.', userId: user._id });
@@ -395,17 +393,10 @@ exports.resendOtp = async (req, res) => {
         console.log(`[OTP Resend] Device ${deviceId.substring(0, 20)}... has ${limitCheck.remaining} attempts remaining`);
         // -------------------------
 
-        // Send OTP via Email
-        const sent = await sendVerifyOtp(user, user.email);
-
-        if (sent) {
-            // Increment device counter on successful send
-            incrementOtpCount(deviceId);
-        }
-
-        if (!sent) {
-            return res.status(500).json({ message: 'Error sending Email.' });
-        }
+        // Send OTP via Email (Non-blocking)
+        sendVerifyOtp(user, user.email).then(sent => {
+            if (sent) incrementOtpCount(deviceId);
+        }).catch(err => console.error('[OTP Resend Background] Error:', err));
 
         res.status(200).json({ message: 'New OTP sent to your Email' });
 
