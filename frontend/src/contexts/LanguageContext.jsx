@@ -9,9 +9,12 @@ export const LanguageProvider = ({ children }) => {
     return localStorage.getItem('language') || 'en';
   });
 
-  // Update localStorage when language changes
+  // Update localStorage and HTML lang attribute when language changes
   useEffect(() => {
     localStorage.setItem('language', language);
+    // Update HTML lang attribute for Vietnamese font optimization
+    const langCode = language === 'vn' ? 'vi' : 'en';
+    document.documentElement.setAttribute('lang', langCode);
   }, [language]);
 
   const toggleLanguage = () => {

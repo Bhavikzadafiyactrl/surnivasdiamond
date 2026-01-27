@@ -370,17 +370,17 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
             ))}
           </FilterRow>
 
-          {/* ACTION BUTTONS - FLOATING */}
-          <div className="fixed bottom-4 right-4 flex gap-2 z-50">
+          {/* ACTION BUTTONS - UNDER FILTERS */}
+          <div className="flex flex-col sm:flex-row gap-2 pt-4 pb-2 px-4 border-t border-gray-200 mt-2">
                 <button 
                     onClick={() => setFilters({ shape: [], carat: { min: '', max: '' }, color: [], clarity: [], finishing: [], cut: [], polish: [], symmetry: [], fluorescence: [], certificate: [], location: [], length: { min: '', max: '' }, width: { min: '', max: '' }, diameter: '', price: { min: 0, max: 1000000 } })}
-                    className="px-3 py-2 text-xs font-semibold text-gray-600 bg-white hover:bg-gray-100 rounded-lg transition-colors shadow-md border border-gray-200"
+                    className="flex-1 sm:flex-none px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 rounded-lg transition-colors border border-gray-300"
                 >
                     {t('diamondSearch.buttons.reset')}
                 </button>
                 <button 
                   onClick={handleSearch}
-                  className="px-4 py-2 bg-black text-white text-xs font-semibold rounded-lg hover:bg-gray-800 transition-colors shadow-lg"
+                  className="flex-1 sm:flex-none px-6 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors"
                 >
                     {t('diamondSearch.buttons.search')}
                 </button>

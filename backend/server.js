@@ -27,7 +27,7 @@ const allowedOrigins = [
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
-// CORS Options
+// CORS Options - More permissive to avoid blocking legitimate users
 const corsOptions = {
     origin: (origin, callback) => {
         // allow same-origin, curl, mobile apps
@@ -45,10 +45,16 @@ const corsOptions = {
             return callback(null, true);
         }
 
-        console.log('❌ BLOCKED CORS ORIGIN:', origin);
+        // Allow surnivasdiamond.cloud domain (Cloudflare)
+        if (origin.includes('surnivasdiamond.cloud')) {
+            return callback(null, true);
+        }
 
-        // ❗ DO NOT THROW
-        return callback(null, false);
+        console.log('⚠️  CORS Warning - Unknown origin allowed:', origin);
+
+        // Allow all origins but log for security monitoring
+        // This prevents HTML errors from being returned to users
+        return callback(null, true);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
