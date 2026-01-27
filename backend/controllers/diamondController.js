@@ -1523,7 +1523,7 @@ exports.bulkUploadCSV = async (req, res) => {
         }
 
         const filePath = req.file.path;
-        const diamonds = [];
+        let diamonds = [];
         const errors = [];
         let lineNumber = 0;
         let headers = [];
