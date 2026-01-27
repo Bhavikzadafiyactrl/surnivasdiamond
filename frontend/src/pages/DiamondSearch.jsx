@@ -467,6 +467,7 @@ export default function DiamondSearch() {
     
     // Custom sort orders
     const gradeOrders = {
+       'Shape': ['ROUND', 'PRINCESS', 'CUSHION', 'OVAL', 'EMERALD', 'PEAR', 'RADIANT', 'MARQUISE', 'HEART', 'OTHER'],
        'Clarity': ['FL', 'IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2', 'I1', 'I2', 'I3'],
        'Color': ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
        'Cut': ['3EX', 'EX', 'VG', 'GD', 'F'],
@@ -661,7 +662,7 @@ export default function DiamondSearch() {
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Report</th>
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Video</th>
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Lab</th>
-                                   <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Shape</th>
+                                   <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Shape')}>Shape {getSortIndicator('Shape')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Carats')}>Carat {getSortIndicator('Carats')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Color')}>Color {getSortIndicator('Color')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Clarity')}>Clarity {getSortIndicator('Clarity')}</th>
