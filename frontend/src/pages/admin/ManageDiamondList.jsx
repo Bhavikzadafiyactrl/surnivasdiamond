@@ -486,20 +486,20 @@ const ManageDiamondList = () => {
               </div>
             </div>
 
-            {/* Date Range Filter Section */}
+            {/* Date & Time Range Filter Section */}
             <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl shadow-sm border border-purple-200 p-4 mb-4">
               <div className="flex flex-col md:flex-row items-center gap-4">
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span className="font-bold text-gray-700">Filter by Date Added</span>
+                  <span className="font-bold text-gray-700">Filter by Date & Time Added</span>
                 </div>
                 <div className="flex items-center gap-3 flex-1">
                   <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-gray-600">From:</label>
                     <input
-                      type="date"
+                      type="datetime-local"
                       value={dateFilter.from}
                       onChange={(e) => setDateFilter(prev => ({ ...prev, from: e.target.value }))}
                       className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -508,7 +508,7 @@ const ManageDiamondList = () => {
                   <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-gray-600">To:</label>
                     <input
-                      type="date"
+                      type="datetime-local"
                       value={dateFilter.to}
                       onChange={(e) => setDateFilter(prev => ({ ...prev, to: e.target.value }))}
                       className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -519,7 +519,7 @@ const ManageDiamondList = () => {
                       onClick={() => setDateFilter({ from: '', to: '' })}
                       className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
                     >
-                      Clear Dates
+                      Clear
                     </button>
                   )}
                 </div>
@@ -752,13 +752,14 @@ const ManageDiamondList = () => {
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Key</th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">BGM</th>
                       <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Status</th>
-                      <th className="px-2 py-2 whitespace-nowrap text-center">Price</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Price</th>
+                      <th className="px-2 py-2 whitespace-nowrap border-r border-gray-200 text-center">Date Added</th>
                       <th className="px-2 py-2 whitespace-nowrap text-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {loading ? (
-                      <tr><td colSpan="21" className="text-center py-10">Loading...</td></tr>
+                      <tr><td colSpan="22" className="text-center py-10">Loading...</td></tr>
                     ) : diamonds.length > 0 ? (
                       diamonds.map((diamond) => (
                         <tr key={diamond._id} className={`hover:bg-blue-50/50 text-xs transition-colors ${selectedDiamonds.some(sd => sd._id === diamond._id) ? 'bg-blue-50' : ''}`}>
@@ -817,7 +818,19 @@ const ManageDiamondList = () => {
                               {diamond.Status || 'available'}
                             </span>
                           </td>
-                          <td className="px-2 py-2 text-green-600 font-semibold text-center">${diamond["Amount$"] || '-'}</td>
+                          <td className="px-2 py-2 text-green-600 font-semibold border-r border-gray-200 text-center">${diamond["Amount$"] || '-'}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 text-center text-xs">
+                            {diamond.createdAt ? (
+                              <div className="flex flex-col">
+                                <span className="font-medium text-gray-700">
+                                  {new Date(diamond.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </span>
+                                <span className="text-gray-500 text-[10px]">
+                                  {new Date(diamond.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                </span>
+                              </div>
+                            ) : '-'}
+                          </td>
                           <td className="px-2 py-2 flex gap-1 justify-center">
                             <button onClick={() => openModal(diamond)} className="text-blue-500 hover:text-blue-700"><FaEdit size={12} /></button>
                             <button onClick={() => handleDelete(diamond._id)} className="text-red-500 hover:text-red-700"><FaTrash size={12} /></button>
@@ -825,7 +838,7 @@ const ManageDiamondList = () => {
                         </tr>
                       ))
                     ) : (
-                      <tr><td colSpan="21" className="text-center py-10 text-gray-500">No diamonds found.</td></tr>
+                      <tr><td colSpan="22" className="text-center py-10 text-gray-500">No diamonds found.</td></tr>
                     )}
                   </tbody>
                 </table>
