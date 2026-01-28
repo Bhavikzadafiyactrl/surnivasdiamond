@@ -1329,7 +1329,7 @@ exports.deleteDiamond = async (req, res) => {
 exports.getAdminDiamonds = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
+        const limit = parseInt(req.query.limit) || 500; // Show 500 diamonds per page
         const search = req.query.search || '';
 
         // Extract filter parameters

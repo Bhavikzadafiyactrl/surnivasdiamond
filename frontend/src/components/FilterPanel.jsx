@@ -295,6 +295,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
                   </div>
                 </div>
  
+                {/* Diameter filter hidden per user request
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-gray-500 w-16">Diameter</span>
                   <div className="flex items-center gap-2">
@@ -309,6 +310,7 @@ const FilterPanel = ({ isFullPage = false, filters, handleFilterChange, handleSe
                       <span className="text-xs text-gray-400">mm</span>
                   </div>
                 </div>
+                */}
 
               </div>
           </FilterRow>

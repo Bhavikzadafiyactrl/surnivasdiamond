@@ -54,7 +54,7 @@ export default function DiamondSearch() {
   const cuts = ['EX', 'VG', 'GD', 'F'];
   const polishes = ['EX', 'VG', 'GD', 'F'];
   const symmetries = ['EX', 'VG', 'GD', 'F'];
-  const fluorescences = ['NON', 'FNT', 'MED', 'STG', 'VST', 'VSL'];
+  const fluorescences = ['NONE', 'FAINT', 'MED', 'STG', 'VST', 'VSL'];
   const certificates = ['GIA', 'IGI'];
   const locations = ['INDIA', 'HONG KONG', 'VIETNAM'];
 
@@ -657,11 +657,10 @@ export default function DiamondSearch() {
                                       />
                                     </th>
                                     <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Status</th>
-                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Location</th>
+
                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Stock ID</th>
-                                   <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Report</th>
-                                   <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Video</th>
-                                   <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Lab</th>
+                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Lab</th>
+                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Report</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Shape')}>Shape {getSortIndicator('Shape')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Carats')}>Carat {getSortIndicator('Carats')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Color')}>Color {getSortIndicator('Color')}</th>
@@ -675,8 +674,10 @@ export default function DiamondSearch() {
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Depth %')}>Depth {getSortIndicator('Depth %')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Table %')}>Table {getSortIndicator('Table %')}</th>
                                    <th className="px-2 py-3 border-r border-gray-200 cursor-pointer hover:bg-gray-100 bg-[#f8f9fa]" onClick={() => handleSort('Amount$')}>Price {getSortIndicator('Amount$')}</th>
-                                   <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Key</th>
-                                   <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">BGM</th>
+                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Key</th>
+                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Video</th>
+                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">Location</th>
+                                    <th className="px-2 py-3 border-r border-gray-200 bg-[#f8f9fa]">BGM</th>
 
                                   </tr>
                                 </thead>
@@ -711,40 +712,25 @@ export default function DiamondSearch() {
                                              <span className="inline-block w-2 h-2 rounded-full bg-green-400"></span>
                                          )}
                                        </td>
-                                      <td className="px-2 py-2 border-r border-gray-100 font-medium text-gray-700">{diamond.Location}</td>
+
                                      <td className="px-2 py-2 border-r border-gray-100 font-medium">{diamond.StockID}</td>
-                                     <td className="px-2 py-2 border-r border-gray-100">
-                                       {diamond['Report No'] ? (
-                                         <a 
-                                           href={diamond.GIALINK || `https://www.gia.edu/report-check?reportno=${diamond['Report No']}`} 
-                                           target="_blank" 
-                                           rel="noopener noreferrer"
-                                           className="text-blue-600 hover:text-blue-800 underline hover:no-underline font-medium"
-                                           title="View Certificate"
-                                           onClick={(e) => e.stopPropagation()}
-                                         >
-                                           {diamond['Report No']}
-                                         </a>
-                                       ) : (
-                                         <span className="text-gray-500">-</span>
-                                       )}
-                                     </td>
-                                       <td className="px-2 py-2 border-r border-gray-100 text-center">
-                                         {diamond.videoLink ? (
-                                           <a 
-                                             href={diamond.videoLink.match(/^https?:\/\//) ? diamond.videoLink : `https://${diamond.videoLink}`}
-                                             target="_blank" 
-                                             rel="noopener noreferrer"
-                                             className="text-blue-600 hover:text-blue-800 underline hover:no-underline font-medium"
-                                             onClick={(e) => e.stopPropagation()}
-                                           >
-                                             Link
-                                           </a>
-                                         ) : (
-                                           <span className="text-gray-500">-</span>
-                                         )}
-                                       </td>
-                                     <td className="px-2 py-2 border-r border-gray-100 text-gray-600">{diamond.Lab}</td>
+                                      <td className="px-2 py-2 border-r border-gray-100 text-gray-600">{diamond.Lab}</td>
+                                      <td className="px-2 py-2 border-r border-gray-100">
+                                        {diamond['Report No'] ? (
+                                          <a 
+                                            href={diamond.GIALINK || `https://www.gia.edu/report-check?reportno=${diamond['Report No']}`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="text-blue-600 hover:text-blue-800 underline hover:no-underline font-medium"
+                                            title="View Certificate"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
+                                            {diamond['Report No']}
+                                          </a>
+                                        ) : (
+                                          <span className="text-gray-500">-</span>
+                                        )}
+                                      </td>
                                      <td className="px-2 py-2 border-r border-gray-100 font-semibold text-gray-800">{diamond.Shape}</td>
                                      <td className="px-2 py-2 border-r border-gray-100 font-bold text-gray-900">{Number(diamond.Carats).toFixed(2)}</td>
                                      <td className="px-2 py-2 border-r border-gray-100 font-medium">{diamond.Color}</td>
@@ -758,8 +744,24 @@ export default function DiamondSearch() {
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Depth %']}</td>
                                      <td className="px-2 py-2 border-r border-gray-100">{diamond['Table %']}</td>
                                       <td className="px-2 py-2 border-r border-gray-100 font-bold text-green-600 tracking-wide">${Number(diamond['Amount$']).toFixed(2)}</td>
-                                      <td className="px-2 py-2 border-r border-gray-100 max-w-xs truncate font-medium" title={diamond['Key To Symbols']}>{diamond['Key To Symbols']}</td>
-                                      <td className="px-2 py-2 border-r border-gray-100">{diamond.BGM}</td>
+                                       <td className="px-2 py-2 border-r border-gray-100 max-w-xs truncate font-medium" title={diamond['Key To Symbols']}>{diamond['Key To Symbols']}</td>
+                                        <td className="px-2 py-2 border-r border-gray-100 text-center">
+                                          {diamond.videoLink ? (
+                                            <a 
+                                              href={diamond.videoLink.match(/^https?:\/\//) ? diamond.videoLink : `https://${diamond.videoLink}`}
+                                              target="_blank" 
+                                              rel="noopener noreferrer"
+                                              className="text-blue-600 hover:text-blue-800 underline hover:no-underline font-medium"
+                                              onClick={(e) => e.stopPropagation()}
+                                            >
+                                              Link
+                                            </a>
+                                          ) : (
+                                            <span className="text-gray-500">-</span>
+                                          )}
+                                        </td>
+                                       <td className="px-2 py-2 border-r border-gray-100 font-medium text-gray-700">{diamond.Location}</td>
+                                       <td className="px-2 py-2 border-r border-gray-100">{diamond.BGM}</td>
                                     </tr>
                                     );
                                   })}
