@@ -94,7 +94,7 @@ const ManageDiamondList = () => {
       // Build query params with filters
       const params = new URLSearchParams({
         page,
-        limit: 20,
+        limit: 500,
         search
       });
       
