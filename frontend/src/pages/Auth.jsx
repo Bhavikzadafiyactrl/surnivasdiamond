@@ -166,7 +166,7 @@ const Auth = () => {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          mobile: `${countryCode}${formData.mobile}`,
+          mobile: `${countryCode}${formData.mobile.replace(/\D/g, '')}`,
           companyName: formData.companyName,
           address: formData.address,
           city: formData.city,
