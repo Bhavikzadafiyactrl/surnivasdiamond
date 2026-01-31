@@ -34,6 +34,11 @@ exports.signup = async (req, res) => {
         // Normalize email
         if (email) email = email.toLowerCase().trim();
 
+        // Restriction: Only allow gmail.com
+        if (!email.endsWith('@gmail.com')) {
+            return res.status(400).json({ message: 'Only @gmail.com email addresses are allowed.' });
+        }
+
         // Check if user already exists
         let user = await User.findOne({ email });
         if (user && user.isVerified) {
@@ -553,7 +558,7 @@ exports.updateProfile = async (req, res) => {
 // Get All Users (Admin)
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('-password -otp -otpExpires').sort({ createdAt: -1 });
+        const users = await User.find({ isVerified: true }).select('-password -otp -otpExpires').sort({ createdAt: -1 });
         res.json(users);
     } catch (error) {
         console.error("Get All Users Error:", error);

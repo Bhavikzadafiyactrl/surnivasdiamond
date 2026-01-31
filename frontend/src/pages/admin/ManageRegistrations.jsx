@@ -125,8 +125,7 @@ export default function ManageRegistrations() {
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
 
   const filteredUsers = users.filter(u => {
-    // Exclude self
-    if (u._id === (user.id || user._id)) return false;
+
 
     const term = searchTerm.toLowerCase();
     return (
