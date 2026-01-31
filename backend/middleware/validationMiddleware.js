@@ -14,9 +14,7 @@ const signupValidation = [
 
     body('password')
         .notEmpty().withMessage('Password is required')
-        .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-        .withMessage('Password must contain: 1 uppercase, 1 lowercase, 1 number, 1 special character'),
+        .isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
 
     body('mobile')
         .notEmpty().withMessage('Mobile number is required')
@@ -89,8 +87,6 @@ const resetPasswordValidation = [
     body('newPassword')
         .notEmpty().withMessage('New password is required')
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-        .withMessage('Password must contain: 1 uppercase, 1 lowercase, 1 number, 1 special character')
 ];
 
 // Middleware to handle validation errors
