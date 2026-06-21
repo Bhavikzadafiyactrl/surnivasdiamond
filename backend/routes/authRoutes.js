@@ -91,4 +91,9 @@ router.put('/users/update', auth, authController.adminUpdateUser);
 // @access  Private
 router.delete('/users/delete', auth, authController.deleteUser);
 
+// @route   POST api/auth/users/send-email
+// @desc    Admin send email to users
+// @access  Private
+router.post('/users/send-email', auth, authController.sendEmailToUsers);
+
 module.exports = router;

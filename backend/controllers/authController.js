@@ -785,3 +785,37 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// Send Bulk Email to Users (Admin)
+exports.sendEmailToUsers = async (req, res) => {
+    try {
+        const { userIds, subject, message } = req.body;
+
+        if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+            return res.status(400).json({ message: 'No users selected' });
+        }
+        if (!subject || !message) {
+            return res.status(400).json({ message: 'Subject and message are required' });
+        }
+
+        // Fetch users to get their emails
+        const users = await User.find({ _id: { $in: userIds } }).select('email');
+        const emails = users.map(u => u.email).filter(Boolean);
+
+        if (emails.length === 0) {
+            return res.status(400).json({ message: 'No valid email addresses found for selected users' });
+        }
+
+        const { sendBulkEmail } = require('../utils/emailService');
+        const sent = await sendBulkEmail(emails, subject, message);
+
+        if (sent) {
+            res.json({ success: true, message: `Email sent successfully to ${emails.length} user(s)` });
+        } else {
+            res.status(500).json({ success: false, message: 'Failed to send emails' });
+        }
+    } catch (error) {
+        console.error("Send Email to Users Error:", error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

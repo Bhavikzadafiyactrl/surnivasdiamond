@@ -13,6 +13,12 @@ export default function ManageRegistrations() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
   
+  // Email Modal State
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  
   // Auth state
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : { name: 'Admin' };
@@ -122,6 +128,43 @@ export default function ManageRegistrations() {
     }
   };
 
+  const handleSendEmail = async () => {
+    if (!emailSubject.trim() || !emailMessage.trim()) {
+        alert("Please enter both subject and message.");
+        return;
+    }
+
+    setIsSendingEmail(true);
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/users/send-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                userIds: selectedUsers,
+                subject: emailSubject,
+                message: emailMessage
+            })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            alert(data.message);
+            setIsEmailModalOpen(false);
+            setEmailSubject('');
+            setEmailMessage('');
+            setSelectedUsers([]);
+        } else {
+            alert(data.message || "Failed to send email");
+        }
+    } catch (error) {
+        console.error("Failed to send email:", error);
+        alert("An error occurred while sending the email.");
+    } finally {
+        setIsSendingEmail(false);
+    }
+  };
+
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
 
   const filteredUsers = users.filter(u => {
@@ -208,6 +251,15 @@ export default function ManageRegistrations() {
                              </button>
                         )}
                         
+                        <div className="w-px h-8 bg-gray-700 mx-2"></div>
+                        
+                        <button 
+                            onClick={() => setIsEmailModalOpen(true)}
+                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                        >
+                            <FaEnvelope /> Send Message
+                        </button>
+
                         <div className="w-px h-8 bg-gray-700 mx-2"></div>
                         
                         {availableRoles.includes('client') && (
@@ -389,6 +441,67 @@ export default function ManageRegistrations() {
           </div>
         </main>
       </div>
+
+      {/* Email Modal */}
+      {isEmailModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+              <div>
+                <h3 className="text-xl font-serif font-bold text-gray-900">Send Message</h3>
+                <p className="text-sm text-gray-500 mt-1">To {selectedUsers.length} selected user(s)</p>
+              </div>
+              <button 
+                onClick={() => setIsEmailModalOpen(false)}
+                className="text-gray-400 hover:text-gray-700 transition-colors p-2 hover:bg-gray-100 rounded-full"
+              >
+                <FaTimes />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1 space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Subject</label>
+                <input 
+                  type="text"
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  placeholder="Enter email subject"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Message</label>
+                <textarea 
+                  value={emailMessage}
+                  onChange={(e) => setEmailMessage(e.target.value)}
+                  placeholder="Type your message here... It will be formatted nicely in the email."
+                  rows="6"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black resize-none"
+                ></textarea>
+              </div>
+            </div>
+            
+            <div className="p-6 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-3">
+              <button 
+                onClick={() => setIsEmailModalOpen(false)}
+                className="px-5 py-2 text-sm font-bold text-gray-600 hover:bg-gray-200 bg-gray-100 rounded-lg transition-colors"
+                disabled={isSendingEmail}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSendEmail}
+                disabled={isSendingEmail}
+                className="px-5 py-2 text-sm font-bold text-white bg-black hover:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isSendingEmail ? 'Sending...' : <><FaEnvelope /> Send Email</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

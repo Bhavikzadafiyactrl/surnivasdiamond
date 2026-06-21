@@ -9,7 +9,10 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const socketInstance = io({
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const socketUrl = (apiUrl || '').replace('/api', '');
+    
+    const socketInstance = io(socketUrl, {
       path: "/socket.io",
       transports: ["websocket"],
     });

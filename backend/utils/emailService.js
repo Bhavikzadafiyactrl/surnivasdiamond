@@ -196,5 +196,40 @@ const sendRegistrationNotification = async (userData) => {
     return false;
   }
 };
+const sendBulkEmail = async (emails, subject, message) => {
+  try {
+    // Send an individual email to each person so the "To:" field is correct
+    const emailPromises = emails.map(email => {
+      const mailOptions = {
+        from: `"Surnivas Diamond" <${process.env.EMAIL_USER}>`,
+        to: email, // Now sending directly to the user's email
+        subject: subject,
+        html: `
+          <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px; border: 1px solid #e1e1e1; border-radius: 12px; background-color: #ffffff;">
+            <div style="text-align: center; margin-bottom: 30px;">
+               <h2 style="color: #000; letter-spacing: 2px; text-transform: uppercase; font-size: 24px; margin: 0;">Surnivas Diamond</h2>
+            </div>
+            
+            <div style="color: #444; font-size: 16px; line-height: 1.6; margin-bottom: 30px; white-space: pre-wrap;">
+              ${message}
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+              <p style="color: #aaa; font-size: 11px;">&copy; ${new Date().getFullYear()} Surnivas Diamond. All rights reserved.</p>
+            </div>
+          </div>
+        `
+      };
+      return transporter.sendMail(mailOptions);
+    });
 
-module.exports = { sendOtpEmail, sendContactNotification, sendRegistrationNotification };
+    await Promise.all(emailPromises);
+    console.log(`✅ Bulk email sent successfully to ${emails.length} users`);
+    return true;
+  } catch (error) {
+    console.error('❌ Error sending bulk email:', error.message);
+    return false;
+  }
+};
+
+module.exports = { sendOtpEmail, sendContactNotification, sendRegistrationNotification, sendBulkEmail };
