@@ -1628,6 +1628,7 @@ exports.bulkUploadCSV = async (req, res) => {
                             'Location': (getVal(['location', 'loc', 'city']) || '').toUpperCase(),
                             'Key To Symbols': getVal(['keytosymbols', 'keytosymbol', 'symboldescription']) || '',
                             'BGM': (getVal(['bgm']) || '').toUpperCase(),
+                            'Company': req.body.companyName || getVal(['company', 'compney']) || '',
                             'Status': 'available'
                         };
 
@@ -1798,3 +1799,40 @@ exports.bulkDeleteDiamonds = async (req, res) => {
     }
 };
 
+// ==================== COMPANY & ADMIN FUNCTIONS ====================
+
+exports.getCompanies = async (req, res) => {
+    try {
+        const companies = await Diamond.distinct('Company', { Company: { $nin: [null, ""] } });
+        res.json({ success: true, data: companies.sort() });
+    } catch (error) {
+        console.error('Error fetching companies:', error);
+        res.status(500).json({ success: false, message: 'Server error fetching companies' });
+    }
+};
+
+exports.bulkDeleteByCompany = async (req, res) => {
+    try {
+        const { companyName } = req.body;
+
+        if (!companyName) {
+            return res.status(400).json({ success: false, message: 'Company name is required' });
+        }
+
+        // Only delete diamonds that are 'available'. Don't delete held/sold/confirmed.
+        const result = await Diamond.deleteMany({
+            Company: companyName,
+            Status: 'available'
+        });
+
+        res.json({
+            success: true,
+            message: `Successfully deleted ${result.deletedCount} available diamond(s) belonging to company "${companyName}".`,
+            deletedCount: result.deletedCount
+        });
+
+    } catch (error) {
+        console.error('Bulk delete by company error:', error);
+        res.status(500).json({ success: false, message: 'Server error deleting diamonds by company' });
+    }
+};

@@ -20,6 +20,7 @@ const diamondSchema = new mongoose.Schema({
     BGM: String,
     Lab: String,
     "Amount$": Number, // Price field
+    Company: String, // Company name assigned during CSV upload
     Status: { type: String, default: 'available' }, // 'available', 'hold', 'reviewing', 'confirmed', 'sold'
     HeldBy: String, // User ID who held the diamond
     HeldAt: Date, // Timestamp when it was held

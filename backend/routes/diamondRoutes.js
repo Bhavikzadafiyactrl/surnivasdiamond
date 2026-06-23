@@ -37,5 +37,7 @@ router.put('/admin/update/:id', auth, diamondController.updateDiamond);
 router.delete('/admin/delete/:id', auth, diamondController.deleteDiamond);
 router.post('/admin/bulk-upload-csv', auth, diamondController.bulkUploadCSV);
 router.post('/admin/bulk-delete', auth, diamondController.bulkDeleteDiamonds);
+router.get('/admin/companies', auth, diamondController.getCompanies);
+router.post('/admin/bulk-delete-company', auth, diamondController.bulkDeleteByCompany);
 
 module.exports = router;

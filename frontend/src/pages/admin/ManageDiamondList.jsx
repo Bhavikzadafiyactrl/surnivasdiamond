@@ -51,6 +51,17 @@ const ManageDiamondList = () => {
   // Modal State
   const [showSummary, setShowSummary] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  
+  // Company Upload & Delete State
+  const [showCompanyModal, setShowCompanyModal] = useState(false);
+  const [uploadCompanyName, setUploadCompanyName] = useState('');
+  const [pendingFile, setPendingFile] = useState(null);
+  
+  const [showDeleteCompanyModal, setShowDeleteCompanyModal] = useState(false);
+  const [companiesList, setCompaniesList] = useState([]);
+  const [selectedCompanyToDelete, setSelectedCompanyToDelete] = useState('');
+  const [deletingCompany, setDeletingCompany] = useState(false);
+
   const [editingDiamond, setEditingDiamond] = useState(null);
   const [formData, setFormData] = useState({
     StockID: '',
@@ -253,14 +264,24 @@ const ManageDiamondList = () => {
       return;
     }
 
-    const conf = confirm(`Upload "${file.name}"? This will import all diamonds from the CSV file.`);
-    if (!conf) return;
+    setPendingFile(file);
+    setUploadCompanyName('');
+    setShowCompanyModal(true);
+    e.target.value = ''; // Reset input
+  };
+
+  const confirmCSVUpload = async () => {
+    if (!pendingFile) return;
 
     setUploading(true);
+    setShowCompanyModal(false);
     try {
       const token = localStorage.getItem('token');
       const formData = new FormData();
-      formData.append('csvFile', file);
+      formData.append('csvFile', pendingFile);
+      if (uploadCompanyName.trim()) {
+        formData.append('companyName', uploadCompanyName.trim());
+      }
 
       const response = await fetch(`${API_URL}/diamonds/admin/bulk-upload-csv`, {
         method: 'POST',
@@ -270,7 +291,7 @@ const ManageDiamondList = () => {
 
       const data = await response.json();
       if (data.success) {
-        alert(`Success! Imported ${data.count} diamonds.`);
+        alert(`Success! Imported ${data.count || 0} diamonds.`);
         fetchDiamonds();
       } else {
         const fullError = data.error ? `\n\nDetails: ${data.error}` : '';
@@ -281,7 +302,65 @@ const ManageDiamondList = () => {
       alert('Network or Server Error uploading CSV');
     } finally {
       setUploading(false);
-      e.target.value = ''; // Reset input
+      setPendingFile(null);
+    }
+  };
+
+  const openDeleteCompanyModal = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/diamonds/admin/companies`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (data.success) {
+        setCompaniesList(data.data);
+        setSelectedCompanyToDelete('');
+        setShowDeleteCompanyModal(true);
+      }
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      alert("Error fetching companies list");
+    }
+  };
+
+  const handleBulkDeleteByCompany = async () => {
+    if (!selectedCompanyToDelete) {
+      alert("Please select a company to delete");
+      return;
+    }
+    
+    if (!window.confirm(`Are you absolutely sure you want to delete ALL available diamonds belonging to "${selectedCompanyToDelete}"? This cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingCompany(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/diamonds/admin/bulk-delete-company`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include',
+        body: JSON.stringify({ companyName: selectedCompanyToDelete })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert(`✅ ${data.message}`);
+        setShowDeleteCompanyModal(false);
+        fetchDiamonds(); // Refresh list
+      } else {
+        alert(`❌ Failed to delete: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Delete by company error:", error);
+      alert("❌ Error deleting diamonds.");
+    } finally {
+      setDeletingCompany(false);
     }
   };
 
@@ -483,6 +562,12 @@ const ManageDiamondList = () => {
                       disabled={uploading}
                     />
                   </label>
+                  <button 
+                    onClick={openDeleteCompanyModal}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg flex items-center gap-2 hover:bg-red-700 whitespace-nowrap"
+                  >
+                    <FaTrash /> Delete by Company
+                  </button>
               </div>
             </div>
 
@@ -994,6 +1079,76 @@ const ManageDiamondList = () => {
           </div>
         </div>
       )}
+
+      {/* Upload CSV Company Modal */}
+      {showCompanyModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-4 border-b flex justify-between items-center bg-gray-50">
+              <h2 className="text-lg font-bold">Upload CSV - Set Company</h2>
+              <button onClick={() => { setShowCompanyModal(false); setPendingFile(null); }} className="text-gray-500 hover:text-black">✕</button>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-gray-600 mb-4">You are uploading <strong>{pendingFile?.name}</strong>. What company name should be applied to these diamonds?</p>
+              <label className="block text-sm font-bold mb-2">Company Name</label>
+              <input 
+                type="text" 
+                value={uploadCompanyName} 
+                onChange={(e) => setUploadCompanyName(e.target.value)} 
+                placeholder="e.g. Acme Diamonds (Optional)"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="p-4 border-t bg-gray-50 flex gap-3">
+              <button onClick={() => { setShowCompanyModal(false); setPendingFile(null); }} className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-100 font-medium">Cancel</button>
+              <button onClick={confirmCSVUpload} disabled={uploading} className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                {uploading ? 'Uploading...' : 'Confirm Upload'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete by Company Modal */}
+      {showDeleteCompanyModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-4 border-b flex justify-between items-center bg-red-50 text-red-700">
+              <h2 className="text-lg font-bold">Bulk Delete by Company</h2>
+              <button onClick={() => setShowDeleteCompanyModal(false)} className="text-red-500 hover:text-red-800">✕</button>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-gray-600 mb-4">Select a company to delete all of its <span className="font-bold text-black">available</span> diamonds.</p>
+              <label className="block text-sm font-bold mb-2">Select Company</label>
+              {companiesList.length === 0 ? (
+                <p className="text-sm text-gray-500 italic">No companies found.</p>
+              ) : (
+                <select 
+                  value={selectedCompanyToDelete} 
+                  onChange={(e) => setSelectedCompanyToDelete(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <option value="">-- Choose a company --</option>
+                  {companiesList.map(comp => (
+                    <option key={comp} value={comp}>{comp}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+            <div className="p-4 border-t bg-gray-50 flex gap-3">
+              <button onClick={() => setShowDeleteCompanyModal(false)} className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-100 font-medium">Cancel</button>
+              <button 
+                onClick={handleBulkDeleteByCompany} 
+                disabled={!selectedCompanyToDelete || deletingCompany} 
+                className={`flex-1 px-4 py-2 text-white rounded-lg font-medium ${(!selectedCompanyToDelete || deletingCompany) ? 'bg-red-300' : 'bg-red-600 hover:bg-red-700'}`}
+              >
+                {deletingCompany ? 'Deleting...' : 'Delete Diamonds'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
