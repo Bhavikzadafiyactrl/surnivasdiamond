@@ -33,7 +33,7 @@ const ManageDiamondList = () => {
     location: [],
     status: []
   });
-  
+
   // Temporary Filters (UI state before Apply)
   const [tempFilters, setTempFilters] = useState({
     shape: [],
@@ -291,7 +291,7 @@ const ManageDiamondList = () => {
 
       const data = await response.json();
       if (data.success) {
-        alert(`Success! Imported ${data.count || 0} diamonds.`);
+        alert(`Success! Imported ${data.inserted || 0} diamonds.${data.skippedDuplicates ? ` (${data.skippedDuplicates} duplicates skipped)` : ''}`);
         fetchDiamonds();
       } else {
         const fullError = data.error ? `\n\nDetails: ${data.error}` : '';
