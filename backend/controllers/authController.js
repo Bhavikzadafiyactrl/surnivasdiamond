@@ -807,13 +807,13 @@ exports.sendEmailToUsers = async (req, res) => {
         }
 
         const { sendBulkEmail } = require('../utils/emailService');
-        const sent = await sendBulkEmail(emails, subject, message);
+        
+        // Send asynchronously to prevent timeout if there are many users
+        sendBulkEmail(emails, subject, message).catch(err => {
+            console.error('Background bulk email error:', err);
+        });
 
-        if (sent) {
-            res.json({ success: true, message: `Email sent successfully to ${emails.length} user(s)` });
-        } else {
-            res.status(500).json({ success: false, message: 'Failed to send emails' });
-        }
+        res.json({ success: true, message: `Email sending process started for ${emails.length} user(s). They will receive it shortly.` });
     } catch (error) {
         console.error("Send Email to Users Error:", error);
         res.status(500).json({ message: 'Server error' });
