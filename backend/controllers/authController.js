@@ -34,9 +34,10 @@ exports.signup = async (req, res) => {
         // Normalize email
         if (email) email = email.toLowerCase().trim();
 
-        // Restriction: Only allow gmail.com
-        if (!email.endsWith('@gmail.com')) {
-            return res.status(400).json({ message: 'Only @gmail.com email addresses are allowed.' });
+        // Validate email format (allow any valid email domain)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Please enter a valid email address.' });
         }
 
         // Check if user already exists
