@@ -75,6 +75,14 @@ const Footer = () => {
                 <span className="text-lg tracking-wide hover:text-white transition-colors">surnivasdiamond75@gmail.com</span>
                 <span className="text-blue-400 text-xl"><FaEnvelope /></span>
              </div>
+             <div className="flex items-center gap-3 mt-1">
+                <a href="mailto:bhavik@surnivasdiamond.com" className="text-lg tracking-wide hover:text-white transition-colors">bhavik@surnivasdiamond.com</a>
+                <span className="text-blue-400 text-xl"><FaEnvelope /></span>
+             </div>
+             <div className="flex items-center gap-3 mt-1">
+                <a href="mailto:nikul@surnivasdiamond.com" className="text-lg tracking-wide hover:text-white transition-colors">nikul@surnivasdiamond.com</a>
+                <span className="text-blue-400 text-xl"><FaEnvelope /></span>
+             </div>
            </div>
         </div>
 
